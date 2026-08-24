@@ -7,21 +7,35 @@ interface Props {
   description: string;
   path?: string;
   type?: 'website' | 'article';
+  image?: string;
+  imageAlt?: string;
+  structuredData?: Record<string, unknown>;
 }
 
-const { title, description, path = '/', type = 'website' } = Astro.props;
+const { title, description, path = '/', type = 'website', image: imagePath = '/images/headshot.png', imageAlt = 'Rio Espinosa, Software & AI Engineer', structuredData } = Astro.props;
 const site = Astro.site ?? new URL('https://programmingrio.top');
 const canonical = new URL(path, site);
-const image = new URL('/images/headshot.png', site);
+const image = new URL(imagePath, site);
 const person = {
-  '@context': 'https://schema.org',
   '@type': 'Person',
   name: 'Rio Espinosa',
   jobTitle: 'Software & AI Engineer',
   url: site.href,
   email: 'programmingrio@gmail.com',
-  sameAs: ['https://github.com/raio-rio/', 'https://www.linkedin.com/in/rioespinosa02/'],
+  image: new URL('/images/headshot.png', site).href,
+  address: { '@type': 'PostalAddress', addressLocality: 'Cainta', addressCountry: 'PH' },
+  sameAs: ['https://github.com/raio-rio/', 'https://www.linkedin.com/in/rioespinosa02/', 'https://www.instagram.com/_sprio/'],
   knowsAbout: ['Artificial intelligence', 'Machine learning', 'SaaS', 'Full-stack development', 'Blockchain'],
+};
+const website = {
+  '@type': 'WebSite',
+  name: 'Rio Espinosa',
+  url: site.href,
+  inLanguage: 'en',
+};
+const schema = {
+  '@context': 'https://schema.org',
+  '@graph': [person, website, ...(structuredData ? [structuredData] : [])],
 };
 ---
 
@@ -31,7 +45,10 @@ const person = {
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content={description} />
+    <meta name="author" content="Rio Espinosa" />
     <meta name="robots" content="index, follow" />
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff" />
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#171716" />
     <link rel="canonical" href={canonical} />
     <link rel="icon" type="image/webp" href="/images/main.webp" />
     <link rel="apple-touch-icon" href="/images/main.webp" />
@@ -39,21 +56,23 @@ const person = {
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
     <meta property="og:type" content={type} />
+    <meta property="og:site_name" content="Rio Espinosa" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
     <meta property="og:image" content={image} />
-    <meta property="og:image:alt" content="Rio Espinosa, Software & AI Engineer" />
+    <meta property="og:image:alt" content={imageAlt} />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={image} />
+    <meta name="twitter:image:alt" content={imageAlt} />
     <script is:inline>
       try {
         if (localStorage.getItem('rio-theme') === 'dark') document.documentElement.classList.add('theme-dark');
       } catch {}
     </script>
-    <script type="application/ld+json" set:html={JSON.stringify(person)}></script>
+    <script type="application/ld+json" set:html={JSON.stringify(schema)}></script>
     <title>{title}</title>
   </head>
   <body>

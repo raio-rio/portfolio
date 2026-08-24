@@ -14,9 +14,20 @@ const displayDate = new Intl.DateTimeFormat('en-US', {
   day: 'numeric',
   year: 'numeric',
 }).format(new Date(`${post.data.date}T12:00:00Z`));
+const site = Astro.site ?? new URL('https://programmingrio.top');
+const path = `/blog/${post.id}/`;
+const structuredData = {
+  '@type': 'BlogPosting',
+  headline: post.data.title,
+  description: post.data.description,
+  datePublished: post.data.date,
+  url: new URL(path, site).href,
+  keywords: post.data.tags.join(', '),
+  author: { '@type': 'Person', name: 'Rio Espinosa' },
+};
 ---
 
-<Layout title={`${post.data.title} — Rio Espinosa`} description={post.data.description} path={`/blog/${post.id}/`} type="article">
+<Layout title={`${post.data.title} — Rio Espinosa`} description={post.data.description} path={path} type="article" structuredData={structuredData}>
   <main class="page-container subpage">
     <a class="back-link" href="/blog/">← Back to blog</a>
     <header class="subpage-intro slide">

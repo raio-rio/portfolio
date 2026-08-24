@@ -14,7 +14,7 @@ const posts = (await getCollection('blog')).sort((a, b) => b.data.date.localeCom
       <h1>Blog</h1>
       <p class="stack-intro">Notes on technology, coding, and AI.</p>
     </header>
-    <section class="blog-list all-posts section slide" aria-label="All posts">
+    <section class="blog-list section slide" aria-label="All posts">
       {posts.map((post) => <BlogPost post={post} />)}
     </section>
   </main>
