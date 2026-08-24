@@ -1,0 +1,19 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  project: CollectionEntry<'projects'>;
+  showImage?: boolean;
+}
+
+const { project, showImage = false } = Astro.props;
+---
+
+<article class="project">
+  <a class="project-card" href={`/projects/${project.id}/`} aria-label={`Read the ${project.data.title} case study`}>
+    {showImage && <img class="project-image" src={project.data.image} alt={`${project.data.title} project preview`} loading="lazy" decoding="async" />}
+    <h2><strong>{project.data.title}</strong><span class="project-arrow" aria-hidden="true">↗</span></h2>
+    <p class="project-tagline">{project.data.tagline}</p>
+    <p class="project-category">{project.data.category}</p>
+  </a>
+</article>

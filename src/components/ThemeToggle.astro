@@ -1,0 +1,27 @@
+<button class="theme-toggle" type="button" aria-label="Enable night mode" aria-pressed="false">
+  <svg class="sun-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"></path></svg>
+  <svg class="moon-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.6 15.7A9 9 0 0 1 8.3 3.4 9 9 0 1 0 20.6 15.7Z"></path></svg>
+  <span class="theme-toggle-label">Night mode</span>
+</button>
+
+<script>
+  const toggle = document.querySelector<HTMLButtonElement>('.theme-toggle');
+  const root = document.documentElement;
+
+  const updateToggle = () => {
+    const isDark = root.classList.contains('theme-dark');
+    toggle?.setAttribute('aria-pressed', String(isDark));
+    toggle?.setAttribute('aria-label', isDark ? 'Enable light mode' : 'Enable night mode');
+    const label = toggle?.querySelector('.theme-toggle-label');
+    if (label) label.textContent = isDark ? 'Light mode' : 'Night mode';
+  };
+
+  updateToggle();
+
+  toggle?.addEventListener('click', () => {
+    const isDark = root.classList.contains('theme-dark');
+    root.classList.toggle('theme-dark', !isDark);
+    localStorage.setItem('rio-theme', isDark ? 'light' : 'dark');
+    updateToggle();
+  });
+</script>

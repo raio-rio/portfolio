@@ -1,0 +1,107 @@
+---
+import { Image } from 'astro:assets';
+import { getCollection } from 'astro:content';
+import headshot from '../assets/headshot.png';
+import BlogPost from '../components/BlogPost.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import Layout from '../layouts/Layout.astro';
+
+const projects = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
+const posts = (await getCollection('blog')).sort((a, b) => b.data.date.localeCompare(a.data.date));
+---
+
+<Layout title="Rio Espinosa — Software & AI Engineer" description="Rio Espinosa is a full-stack developer building AI/ML models, SaaS products, full-stack web apps, and blockchain solutions.">
+  <main class="page-container">
+    <section class="intro slide" aria-labelledby="intro-title">
+      <div class="profile-header">
+        <Image class="portrait portrait-day" src={headshot} alt="Portrait of Rio Espinosa" loading="eager" fetchpriority="high" />
+        <img class="portrait portrait-night" src="/images/headshot-night.png" alt="" aria-hidden="true" />
+        <div class="profile-identity">
+          <h1 id="intro-title">Rio Espinosa</h1>
+          <p class="profile-role">Software &amp; AI Engineer</p>
+          <p class="profile-availability">Based in the Philippines · UTC+8 · <time id="philippines-time" class="local-time" aria-label="Current time in the Philippines">--:--</time></p>
+          <p class="profile-email"><a class="text-link" href="mailto:programmingrio@gmail.com">programmingrio@gmail.com</a></p>
+        </div>
+      </div>
+      <p>A full-stack developer with experience building AI/ML models, SaaS products, full-stack web apps, and blockchain solutions—from presenting at an international conference to applications that serve thousands of users daily.</p>
+      <ul class="about-focus">
+        <li><strong>Builds:</strong> AI/ML models, SaaS products, full-stack web apps, and blockchain solutions</li>
+        <li><strong>Approach:</strong> creative solutions for practical problems</li>
+        <li><strong>Interests:</strong> games and anime, plus automotive culture</li>
+      </ul>
+      <p><a class="text-link" href="https://www.programmingrio.top/resume.pdf" target="_blank" rel="noreferrer">Resume</a> · <a class="text-link" href="https://www.linkedin.com/in/rioespinosa02/" target="_blank" rel="noreferrer">LinkedIn</a> · <a class="text-link" href="https://www.instagram.com/_sprio/" target="_blank" rel="noreferrer">Instagram</a></p>
+    </section>
+
+    <div class="highlights slide" aria-label="Career highlights">
+      <div><strong>3+</strong><span>Years of experience</span></div>
+      <div><strong>4</strong><span>Professional roles</span></div>
+      <div><strong>1</strong><span>Published study</span></div>
+      <div><strong>6</strong><span>Featured projects</span></div>
+    </div>
+
+    <section class="section slide experience-section" aria-labelledby="experience-title">
+      <h2 id="experience-title">Experience</h2>
+      <ul class="experience-list">
+        <li><time datetime="2025/2026">2025–2026</time><strong>Lead Developer</strong><span>Speranza Innovations</span></li>
+        <li><time datetime="2025">2025</time><strong>Software Developer</strong><span>Lightweight Solutions</span></li>
+        <li><time datetime="2024">2024</time><strong>Data Science Intern</strong><span>Arthaland Corp</span></li>
+        <li><time datetime="2022/2023">2022–2023</time><strong>Software Developer</strong><span>MinTech</span></li>
+      </ul>
+    </section>
+
+    <section id="work" class="projects slide" aria-label="Selected projects">
+      <div class="section-heading projects-heading">
+        <h2 class="projects-title">Projects</h2>
+        <a class="see-all" href="/projects/">See all <span aria-hidden="true">→</span></a>
+      </div>
+      {projects.slice(0, 4).map((project) => <ProjectCard project={project} />)}
+    </section>
+
+    <section id="blog" class="section slide blog-section" aria-labelledby="blog-title">
+      <div class="section-heading">
+        <h2 id="blog-title">Blog</h2>
+        <a class="see-all" href="/blog/">See all <span aria-hidden="true">→</span></a>
+      </div>
+      <div class="blog-list">
+        {posts.slice(0, 3).map((post) => <BlogPost post={post} />)}
+      </div>
+    </section>
+
+    <section class="section slide stack-section" aria-labelledby="stack-title">
+      <div class="section-heading">
+        <h2 id="stack-title">Core stack</h2>
+        <a class="see-all" href="/stack/">See all <span aria-hidden="true">→</span></a>
+      </div>
+      <div class="stack-list">
+        <p><strong>Frontend:</strong> Next.js, React, TypeScript, Tailwind CSS</p>
+        <p><strong>Backend:</strong> NestJS, Express, Prisma, Supabase, Redis</p>
+        <p><strong>AI/ML:</strong> Python, PyTorch, TensorFlow, LangChain</p>
+      </div>
+    </section>
+
+    <footer class="section footer">
+      <h2>Let’s work together</h2>
+      <p><a class="text-link" href="https://www.linkedin.com/in/rioespinosa02/" target="_blank" rel="noreferrer">LinkedIn</a> · <a class="text-link" href="https://www.instagram.com/_sprio/" target="_blank" rel="noreferrer">Instagram</a> · <a class="text-link" href="https://github.com/raio-rio/" target="_blank" rel="noreferrer">GitHub</a> · <a class="text-link" href="mailto:programmingrio@gmail.com">Email</a> · <a class="text-link" href="https://wa.me/639338259751?text=Hi%20Rio%2C%20found%20your%20portfolio%20and%20would%20love%20to%20chat!" target="_blank" rel="noreferrer">WhatsApp</a></p>
+    </footer>
+  </main>
+</Layout>
+
+<script>
+  const localTime = document.querySelector<HTMLTimeElement>('#philippines-time');
+  const timeFormatter = new Intl.DateTimeFormat('en-PH', {
+    timeZone: 'Asia/Manila',
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true,
+  });
+
+  const updateLocalTime = () => {
+    if (!localTime) return;
+    const now = new Date();
+    localTime.textContent = timeFormatter.format(now);
+    localTime.dateTime = now.toISOString();
+  };
+
+  updateLocalTime();
+  window.setInterval(updateLocalTime, 30_000);
+</script>

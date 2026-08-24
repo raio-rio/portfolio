@@ -1,0 +1,20 @@
+---
+import { getCollection } from 'astro:content';
+import ProjectCard from '../../components/ProjectCard.astro';
+import Layout from '../../layouts/Layout.astro';
+
+const projects = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
+---
+
+<Layout title="Projects — Rio Espinosa" description="Selected software, AI, and full-stack projects by Rio Espinosa." path="/projects/">
+  <main class="listing">
+    <a class="back-link" href="/#work">← Back home</a>
+    <header class="listing-header">
+      <p class="eyebrow">Selected work</p>
+      <h1>Projects</h1>
+    </header>
+    <section class="projects all-projects" aria-label="All projects">
+      {projects.map((project) => <ProjectCard project={project} showImage />)}
+    </section>
+  </main>
+</Layout>
