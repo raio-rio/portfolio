@@ -2,25 +2,25 @@
 import Layout from '../layouts/Layout.astro';
 
 const stack = [
-  { category: 'Frontend', tools: ['JavaScript', 'TypeScript', 'React', 'Next.js', 'Vue.js', 'Tailwind CSS', 'SCSS', 'Styled Components', 'Vite', 'Webpack', 'ESLint', 'Prettier'] },
-  { category: 'Backend', tools: ['Node.js', 'Python', 'Java', 'PHP', 'Express.js', 'NestJS', 'FastAPI', 'Spring Boot', 'Laravel', 'PostgreSQL', 'MySQL', 'MongoDB', 'DynamoDB', 'OAuth', 'JWT', 'LDAP', 'REST', 'GraphQL', 'gRPC', 'AWS Lambda'] },
-  { category: 'DevOps & Cloud', tools: ['AWS', 'GCP', 'Azure', 'GitHub Actions', 'Jenkins', 'GitLab CI', 'Terraform', 'AWS CloudFormation', 'Docker', 'Kubernetes', 'Prometheus', 'Grafana', 'Datadog'] },
-  { category: 'AI & Machine Learning', tools: ['TensorFlow', 'PyTorch', 'LangChain', 'Transformers', 'OpenAI', 'Anthropic', 'Mistral', 'Hugging Face', 'LlamaIndex', 'AutoGPT', 'Claude Code', 'Codex'] },
-  { category: 'Security & Identity', tools: ['AWS IAM', 'Azure AD', 'Okta', 'SAP CDC', 'Auth0', 'Cognito', 'AES', 'RSA', 'SHA', 'GDPR', 'SOC 2', 'ISO 27001'] },
-  { category: 'CMS & No-Code', tools: ['WordPress', 'Strapi', 'Bubble', 'Webflow', 'Microsoft Power Platform', 'n8n'] },
-  { category: 'Developer Tools', tools: ['Git', 'GitHub', 'GitLab', 'Bitbucket', 'VS Code', 'JetBrains', 'IntelliJ', 'PyCharm', 'Slack', 'Discord', 'Teams', 'JIRA', 'Trello', 'ClickUp'] },
+  { category: 'Frontend', tools: ['JavaScript', 'TypeScript', 'React', 'Next.js', 'Framer Motion', 'Tailwind CSS', 'Vue.js', 'Vite', 'ESLint', 'Prettier', 'Webpack', 'SCSS', 'Styled Components'] },
+  { category: 'Backend', tools: ['Node.js', 'Python', 'PostgreSQL', 'MySQL', 'MongoDB', 'Express.js', 'REST', 'JWT', 'GraphQL', 'Java', 'PHP', 'NestJS', 'FastAPI', 'DynamoDB', 'OAuth'] },
+  { category: 'DevOps & Cloud', tools: ['AWS', 'Docker', 'GitHub Actions', 'Kubernetes', 'Azure', 'GCP', 'Datadog'] },
+  { category: 'AI & Machine Learning', tools: ['OpenAI', 'Jupyter', 'PyTorch', 'TensorFlow', 'LangChain', 'Hugging Face', 'Anthropic', 'Transformers', 'LlamaIndex', 'Mistral', 'Claude Code', 'Codex', 'AutoGPT'] },
+  { category: 'Security & Identity', tools: ['AWS IAM', 'Azure AD', 'Auth0'] },
+  { category: 'CMS & No-Code', tools: ['WordPress', 'Webflow', 'n8n', 'Bubble', 'Microsoft Power Platform'] },
+  { category: 'Developer Tools', tools: ['Git', 'GitHub', 'VS Code', 'Slack', 'GitLab', 'Discord', 'Teams', 'JetBrains', 'Trello', 'IntelliJ', 'PyCharm'] },
 ];
 ---
 
 <Layout title="Tech stack — Rio Espinosa" description="Tools, frameworks, and platforms Rio Espinosa uses across frontend, backend, cloud, and AI work." path="/stack/">
-  <main class="listing">
+  <main class="page-container subpage">
     <a class="back-link" href="/#work">← Back home</a>
-    <header class="listing-header">
+    <header class="subpage-intro slide">
       <p class="eyebrow">Tools and technologies</p>
       <h1>Tech stack</h1>
       <p class="stack-intro">The tools, frameworks, and platforms I use across the front end, back end, infrastructure, and AI.</p>
     </header>
-    <section class="stack-catalog" aria-label="Complete tech stack">
+    <section class="stack-catalog section slide" aria-label="Complete tech stack">
       {stack.map(({ category, tools }) => (
         <article class="stack-group">
           <h2>{category}</h2>

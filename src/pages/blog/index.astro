@@ -7,14 +7,14 @@ const posts = (await getCollection('blog')).sort((a, b) => b.data.date.localeCom
 ---
 
 <Layout title="Blog — Rio Espinosa" description="Writing by Rio Espinosa on technology, coding, and AI." path="/blog/">
-  <main class="listing">
+  <main class="page-container subpage">
     <a class="back-link" href="/#blog">← Back home</a>
-    <header class="listing-header">
+    <header class="subpage-intro slide">
       <p class="eyebrow">Writing</p>
       <h1>Blog</h1>
       <p class="stack-intro">Notes on technology, coding, and AI.</p>
     </header>
-    <section class="blog-list all-posts" aria-label="All posts">
+    <section class="blog-list all-posts section slide" aria-label="All posts">
       {posts.map((post) => <BlogPost post={post} />)}
     </section>
   </main>

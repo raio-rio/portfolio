@@ -13,9 +13,9 @@ const description = `${project.data.title}: ${project.data.tagline}`;
 ---
 
 <Layout title={`${project.data.title} — Rio Espinosa`} description={description} path={`/projects/${project.id}/`} type="article">
-  <main class="case-study">
+  <main class="page-container subpage">
     <a class="back-link" href="/#work">← Back to selected work</a>
-    <header class="case-hero">
+    <header class="subpage-intro slide">
       <p class="eyebrow">{project.data.category}</p>
       <h1>{project.data.title}<span class="period">.</span></h1>
       <p class="case-tagline">{project.data.tagline}</p>
@@ -23,7 +23,7 @@ const description = `${project.data.title}: ${project.data.tagline}`;
         {project.data.url && <a href={project.data.url} target="_blank" rel="noreferrer">{project.data.urlLabel ?? 'Open project'} ↗</a>}
       </div>
     </header>
-    <div class="case-body">
+    <div class="detail-content section slide">
       <aside><p class="eyebrow">Stack</p><ul>{project.data.stack.map((item) => <li>{item}</li>)}</ul></aside>
       <article class="prose"><Content /></article>
     </div>

@@ -7,13 +7,13 @@ const projects = (await getCollection('projects')).sort((a, b) => a.data.order -
 ---
 
 <Layout title="Projects — Rio Espinosa" description="Selected software, AI, and full-stack projects by Rio Espinosa." path="/projects/">
-  <main class="listing">
+  <main class="page-container subpage">
     <a class="back-link" href="/#work">← Back home</a>
-    <header class="listing-header">
+    <header class="subpage-intro slide">
       <p class="eyebrow">Selected work</p>
       <h1>Projects</h1>
     </header>
-    <section class="projects all-projects" aria-label="All projects">
+    <section class="projects all-projects section slide" aria-label="All projects">
       {projects.map((project) => <ProjectCard project={project} showImage />)}
     </section>
   </main>

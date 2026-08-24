@@ -17,14 +17,14 @@ const displayDate = new Intl.DateTimeFormat('en-US', {
 ---
 
 <Layout title={`${post.data.title} — Rio Espinosa`} description={post.data.description} path={`/blog/${post.id}/`} type="article">
-  <main class="case-study">
+  <main class="page-container subpage">
     <a class="back-link" href="/blog/">← Back to blog</a>
-    <header class="case-hero">
+    <header class="subpage-intro slide">
       <p class="eyebrow">{displayDate} · {post.data.readingTime}</p>
       <h1>{post.data.title}</h1>
       <p class="case-tagline">{post.data.description}</p>
     </header>
-    <div class="case-body">
+    <div class="detail-content section slide">
       <aside><p class="eyebrow">Topics</p><ul>{post.data.tags.map((tag) => <li>{tag}</li>)}</ul></aside>
       <article class="prose"><Content /></article>
     </div>
