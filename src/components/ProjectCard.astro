@@ -1,19 +1,60 @@
 ---
 import type { CollectionEntry } from 'astro:content';
+import { getProjectImages } from '../lib/project-images';
 
 interface Props {
   project: CollectionEntry<'projects'>;
-  showImage?: boolean;
+  expanded?: boolean;
 }
 
-const { project, showImage = false } = Astro.props;
+const { project, expanded = false } = Astro.props;
+const images = getProjectImages(project.id);
 ---
 
 <article class="project">
-  <a class="project-card" href={`/projects/${project.id}/`} aria-label={`Read the ${project.data.title} case study`}>
-    {showImage && <img class="project-image" src={project.data.image} alt={`${project.data.title} project preview`} loading="lazy" decoding="async" />}
-    <h2><strong>{project.data.title}</strong><span class="project-arrow" aria-hidden="true">↗</span></h2>
+  {expanded && images.length > 0 && (
+    <div class="project-gallery-frame">
+      <a
+        class="project-gallery-link"
+        href={project.data.url}
+        target={project.data.url ? '_blank' : undefined}
+        rel={project.data.url ? 'noreferrer' : undefined}
+        aria-label={project.data.url ? `Open ${project.data.title}` : project.data.title}
+        aria-disabled={!project.data.url}
+      >
+        <div class="project-gallery" data-project-gallery>
+          <div class="project-gallery-track" data-gallery-track>
+            {images.map((image, index) => <img src={image} alt={`${project.data.title} project preview${images.length > 1 ? ` ${index + 1}` : ''}`} loading="lazy" decoding="async" />)}
+          </div>
+        </div>
+      </a>
+      {images.length > 1 && (
+        <>
+          <button class="project-gallery-control project-gallery-prev" type="button" data-gallery-prev aria-label={`Show previous ${project.data.title} image`}>←</button>
+          <button class="project-gallery-control project-gallery-next" type="button" data-gallery-next aria-label={`Show next ${project.data.title} image`}>→</button>
+        </>
+      )}
+    </div>
+  )}
+  <a class:list={['project-card', { 'project-card-expanded': expanded }]} href={project.data.url} target={project.data.url ? '_blank' : undefined} rel={project.data.url ? 'noreferrer' : undefined} aria-label={project.data.url ? `Open ${project.data.title}` : project.data.title} aria-disabled={!project.data.url}>
+    <h2><strong>{project.data.title}</strong>{project.data.url && <span class="project-arrow" aria-hidden="true">↗</span>}</h2>
     <p class="project-tagline">{project.data.tagline}</p>
-    <p class="project-category">{project.data.category}</p>
+    {expanded && project.data.stack.length > 0 && <p class="project-stack">Built with {project.data.stack.join(' · ')}</p>}
   </a>
 </article>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-project-gallery]').forEach((gallery) => {
+    const track = gallery.querySelector<HTMLElement>('[data-gallery-track]');
+    const frame = gallery.closest<HTMLElement>('.project-gallery-frame');
+    const previous = frame?.querySelector<HTMLButtonElement>('[data-gallery-prev]');
+    const next = frame?.querySelector<HTMLButtonElement>('[data-gallery-next]');
+
+    const scrollGallery = (direction: -1 | 1) => {
+      track?.scrollBy({ left: direction * track.clientWidth, behavior: 'smooth' });
+    };
+
+    previous?.addEventListener('click', () => scrollGallery(-1));
+    next?.addEventListener('click', () => scrollGallery(1));
+  });
+</script>

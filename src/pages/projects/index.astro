@@ -14,7 +14,7 @@ const projects = (await getCollection('projects')).sort((a, b) => a.data.order -
       <h1>Projects</h1>
     </header>
     <section class="projects all-projects section slide" aria-label="All projects">
-      {projects.map((project) => <ProjectCard project={project} showImage />)}
+      {projects.map((project) => <ProjectCard project={project} expanded />)}
     </section>
   </main>
 </Layout>
