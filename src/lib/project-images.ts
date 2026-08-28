@@ -1,12 +1,12 @@
 import { readdirSync } from 'node:fs';
-import { fileURLToPath } from 'node:url';
+import { resolve } from 'node:path';
 
 const imagePattern = /\.(avif|gif|jpe?g|png|webp)$/i;
-const projectImagesRoot = new URL('../../public/images/projects/', import.meta.url);
+const projectImagesRoot = resolve(process.cwd(), 'public', 'images', 'projects');
 
 export function getProjectImages(projectId: string): string[] {
   try {
-    const directory = fileURLToPath(new URL(`${projectId}/`, projectImagesRoot));
+    const directory = resolve(projectImagesRoot, projectId);
 
     return readdirSync(directory, { withFileTypes: true })
       .filter((entry) => entry.isFile() && imagePattern.test(entry.name))

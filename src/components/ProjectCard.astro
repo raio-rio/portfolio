@@ -9,25 +9,20 @@ interface Props {
 
 const { project, expanded = false } = Astro.props;
 const images = getProjectImages(project.id);
+const detail = project.body.replace(/^\s*## Overview\s*/m, '').trim() || project.data.tagline;
+const modalId = `project-modal-${project.id}`;
 ---
 
 <article class="project">
   {expanded && images.length > 0 && (
-    <div class="project-gallery-frame">
-      <a
-        class="project-gallery-link"
-        href={project.data.url}
-        target={project.data.url ? '_blank' : undefined}
-        rel={project.data.url ? 'noreferrer' : undefined}
-        aria-label={project.data.url ? `Open ${project.data.title}` : project.data.title}
-        aria-disabled={!project.data.url}
-      >
-        <div class="project-gallery" data-project-gallery>
+    <div class="project-gallery-frame" data-gallery-frame>
+      <button class="project-gallery-link project-modal-trigger" type="button" data-project-modal-trigger aria-controls={modalId} aria-haspopup="dialog" aria-label={`View ${project.data.title} details`}>
+        <div class="project-gallery" data-gallery>
           <div class="project-gallery-track" data-gallery-track>
             {images.map((image, index) => <img src={image} alt={`${project.data.title} project preview${images.length > 1 ? ` ${index + 1}` : ''}`} loading="lazy" decoding="async" />)}
           </div>
         </div>
-      </a>
+      </button>
       {images.length > 1 && (
         <>
           <button class="project-gallery-control project-gallery-prev" type="button" data-gallery-prev aria-label={`Show previous ${project.data.title} image`}>←</button>
@@ -36,17 +31,50 @@ const images = getProjectImages(project.id);
       )}
     </div>
   )}
-  <a class:list={['project-card', { 'project-card-expanded': expanded }]} href={project.data.url} target={project.data.url ? '_blank' : undefined} rel={project.data.url ? 'noreferrer' : undefined} aria-label={project.data.url ? `Open ${project.data.title}` : project.data.title} aria-disabled={!project.data.url}>
-    <h2><strong>{project.data.title}</strong>{project.data.url && <span class="project-arrow" aria-hidden="true">↗</span>}</h2>
+
+  <button class:list={['project-card', { 'project-card-expanded': expanded }]} type="button" data-project-modal-trigger aria-controls={modalId} aria-haspopup="dialog" aria-label={`View ${project.data.title} details`}>
+    <h2><strong>{project.data.title}</strong><span class="project-arrow" aria-hidden="true">→</span></h2>
     <p class="project-tagline">{project.data.tagline}</p>
     {expanded && project.data.stack.length > 0 && <p class="project-stack">Built with {project.data.stack.join(' · ')}</p>}
-  </a>
+  </button>
+
+  <dialog class="project-modal" id={modalId} aria-labelledby={`${modalId}-title`} data-project-modal>
+    <article class="project-modal-content">
+      <button class="project-modal-close" type="button" data-modal-close aria-label={`Close ${project.data.title} details`}>×</button>
+      {images.length > 0 && (
+        <div class="project-modal-gallery-frame" data-gallery-frame>
+          <div class="project-gallery project-modal-gallery" data-gallery>
+            <div class="project-gallery-track" data-gallery-track>
+              {images.map((image, index) => <img src={image} alt={`${project.data.title} enlarged preview${images.length > 1 ? ` ${index + 1}` : ''}`} loading="lazy" decoding="async" />)}
+            </div>
+          </div>
+          {images.length > 1 && (
+            <>
+              <button class="project-gallery-control project-gallery-prev" type="button" data-gallery-prev aria-label={`Show previous ${project.data.title} image`}>←</button>
+              <button class="project-gallery-control project-gallery-next" type="button" data-gallery-next aria-label={`Show next ${project.data.title} image`}>→</button>
+            </>
+          )}
+        </div>
+      )}
+      <div class="project-modal-copy">
+        <p class="eyebrow">Project details</p>
+        <h2 id={`${modalId}-title`}>{project.data.title}</h2>
+        <p class="project-modal-description">{detail}</p>
+        {project.data.stack.length > 0 && (
+          <ul class="project-modal-stack" aria-label={`${project.data.title} technology stack`}>
+            {project.data.stack.map((tool) => <li>{tool}</li>)}
+          </ul>
+        )}
+        {project.data.url && <a class="project-modal-link" href={project.data.url} target="_blank" rel="noreferrer">{project.data.urlLabel ?? 'View project'} <span aria-hidden="true">↗</span></a>}
+      </div>
+    </article>
+  </dialog>
 </article>
 
 <script>
-  document.querySelectorAll<HTMLElement>('[data-project-gallery]').forEach((gallery) => {
+  document.querySelectorAll<HTMLElement>('[data-gallery]').forEach((gallery) => {
     const track = gallery.querySelector<HTMLElement>('[data-gallery-track]');
-    const frame = gallery.closest<HTMLElement>('.project-gallery-frame');
+    const frame = gallery.closest<HTMLElement>('[data-gallery-frame]');
     const previous = frame?.querySelector<HTMLButtonElement>('[data-gallery-prev]');
     const next = frame?.querySelector<HTMLButtonElement>('[data-gallery-next]');
 
@@ -56,5 +84,17 @@ const images = getProjectImages(project.id);
 
     previous?.addEventListener('click', () => scrollGallery(-1));
     next?.addEventListener('click', () => scrollGallery(1));
+  });
+
+  document.querySelectorAll<HTMLButtonElement>('[data-project-modal-trigger]').forEach((trigger) => {
+    const modal = document.getElementById(trigger.getAttribute('aria-controls') ?? '') as HTMLDialogElement | null;
+    trigger.addEventListener('click', () => modal?.showModal());
+  });
+
+  document.querySelectorAll<HTMLDialogElement>('[data-project-modal]').forEach((modal) => {
+    modal.querySelector<HTMLButtonElement>('[data-modal-close]')?.addEventListener('click', () => modal.close());
+    modal.addEventListener('click', (event) => {
+      if (event.target === modal) modal.close();
+    });
   });
 </script>
