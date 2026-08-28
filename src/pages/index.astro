@@ -1,6 +1,5 @@
 ---
 import { getCollection } from 'astro:content';
-import BlogPost from '../components/BlogPost.astro';
 import ProjectCard from '../components/ProjectCard.astro';
 import { experience } from '../data/experience';
 import Layout from '../layouts/Layout.astro';
@@ -8,7 +7,6 @@ import Layout from '../layouts/Layout.astro';
 const projects = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
 const featuredProjectIds = new Set(['promorph', 'memorikey', 'juan-scan', 'mazvantage']);
 const featuredProjects = projects.filter((project) => featuredProjectIds.has(project.id));
-const posts = (await getCollection('blog')).sort((a, b) => b.data.date.localeCompare(a.data.date));
 ---
 
 <Layout title="Rio Espinosa — Software & AI Engineer" description="Rio Espinosa is a full-stack developer building AI/ML models, SaaS products, full-stack web apps, and blockchain solutions.">
@@ -86,16 +84,6 @@ const posts = (await getCollection('blog')).sort((a, b) => b.data.date.localeCom
         <span class="see-all">See all <span aria-hidden="true">→</span></span>
       </a>
       {featuredProjects.map((project) => <ProjectCard project={project} />)}
-    </section>
-
-    <section id="blog" class="section slide blog-section" aria-labelledby="blog-title">
-      <a class="section-heading" href="/blog/">
-        <h2 id="blog-title">Blog</h2>
-        <span class="see-all">See all <span aria-hidden="true">→</span></span>
-      </a>
-      <div class="blog-list">
-        {posts.slice(0, 3).map((post) => <BlogPost post={post} />)}
-      </div>
     </section>
 
     <section class="section slide stack-section" aria-labelledby="stack-title">
