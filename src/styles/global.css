@@ -241,9 +241,10 @@ li + li { margin-top: 3px; }
 .home-cta-copy > p { margin: 22px 0 0; color: var(--muted); font-size: 16px; }
 .home-contact-details { display: grid; gap: 16px; margin: 0; font-style: normal; }
 .home-contact-details a, .home-contact-details p { display: grid; grid-template-columns: 21px 1fr; gap: 3px 10px; align-items: start; margin: 0; color: var(--ink); text-decoration: none; }
-.home-contact-details i { grid-row: span 2; color: var(--accent); font-size: 19px; line-height: 1; }
+.home-contact-details > a > i, .home-contact-details > p > i { grid-row: span 2; color: var(--accent); font-size: 19px; line-height: 1; }
 .home-contact-details span { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: .08em; }
 .home-contact-details strong { font-size: 13px; font-weight: 500; overflow-wrap: anywhere; }
+.home-contact-details strong i, .home-project-preview-copy em i, .project-modal-link i, .blog-post-arrow i, .site-nav-links i { display: inline-block; margin-left: 3px; font-size: .95em; line-height: 1; vertical-align: -.08em; }
 .home-contact-details a:hover strong, .home-contact-details a:focus-visible strong { color: var(--accent); }
 .scroll-progress { position: fixed; z-index: 900; top: 50%; right: 18px; display: block; width: 2px; height: 108px; overflow: hidden; background: var(--line); transform: translateY(-50%); pointer-events: none; }
 .scroll-progress span { display: block; width: 100%; height: 100%; background: var(--accent); transform: scaleY(0); transform-origin: top; }
@@ -303,7 +304,7 @@ li + li { margin-top: 3px; }
 .experience-stack { margin-top: 7px; color: var(--ink); }
 .experience-card ul { display: grid; gap: 8px; padding: 0; margin: 22px 0 0; list-style: none; }
 .experience-card li { position: relative; padding-left: 14px; color: var(--muted); font-size: 13px; line-height: 1.5; }
-.experience-card li::before { position: absolute; left: 0; color: var(--accent); content: '↗'; }
+.experience-card li::before { position: absolute; left: 0; color: var(--accent); content: '•'; }
 .stack-grid-card { position: relative; min-height: 150px; padding: 22px; color: var(--ink); transition: border-color .15s ease; }
 .stack-grid-card h2 { display: flex; align-items: center; gap: 9px; margin: 0; color: var(--ink); font-size: 18px; font-weight: 650; letter-spacing: -.035em; }
 .stack-grid-card h2 i { color: var(--accent); font-size: 21px; line-height: 1; }
@@ -332,11 +333,19 @@ li + li { margin-top: 3px; }
   .home-contact-details strong { font-size: 12px; }
   .scroll-progress { display: none; }
   .experience-page { width: calc(100% - 48px); }
-  .experience-grid { grid-template-columns: 1fr; gap: 36px; }
+  .experience-grid { grid-template-columns: 1fr; gap: 30px; }
+  .experience-card { max-width: 100%; }
+  .experience-card-header h2, .experience-card-header strong, .experience-context, .experience-stack, .experience-card li { overflow-wrap: anywhere; }
 }
 
 @media (max-width: 480px) {
   .home-section { width: calc(100% - 40px); }
+  .experience-page { width: calc(100% - 40px); margin-bottom: 72px; }
+  .experience-grid { gap: 28px; }
+  .experience-card-header h2 { font-size: 17px; overflow-wrap: anywhere; }
+  .experience-card-header strong, .experience-context, .experience-stack, .experience-card li { overflow-wrap: anywhere; }
+  .experience-card ul { margin-top: 16px; }
+  .experience-card li { padding-left: 12px; font-size: 12px; }
 }
 
 @media (prefers-reduced-motion: reduce) {

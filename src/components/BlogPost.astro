@@ -15,7 +15,7 @@ const displayDate = new Intl.DateTimeFormat('en-US', {
 
 <article class="blog-post">
   <a href={`/blog/${post.id}/`}>
-    <span class="blog-post-title">{post.data.title}<span class="blog-post-arrow" aria-hidden="true">↗</span></span>
+    <span class="blog-post-title">{post.data.title}<span class="blog-post-arrow" aria-hidden="true"><i class="ph-duotone ph-arrow-square-out"></i></span></span>
     <span class="blog-post-description">{post.data.description}</span>
     <span class="blog-post-meta"><time datetime={post.data.date}>{displayDate}</time> · {post.data.readingTime}</span>
   </a>

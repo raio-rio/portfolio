@@ -67,7 +67,7 @@ const modalId = `project-modal-${project.id}`;
             {project.data.stack.map((tool) => <li>{tool}</li>)}
           </ul>
         )}
-        {project.data.url && <a class="project-modal-link" href={project.data.url} target="_blank" rel="noreferrer">{project.data.urlLabel ?? 'View project'} <span aria-hidden="true">↗</span></a>}
+        {project.data.url && <a class="project-modal-link" href={project.data.url} target="_blank" rel="noreferrer">{project.data.urlLabel ?? 'View project'} <i class="ph-duotone ph-arrow-square-out" aria-hidden="true"></i></a>}
       </div>
     </article>
   </dialog>
