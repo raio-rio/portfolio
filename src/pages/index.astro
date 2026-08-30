@@ -14,8 +14,8 @@ const philippinesTime = new Intl.DateTimeFormat('en-PH', {
     <main id="smooth-content" class="express-home" aria-label="Rio Espinosa portfolio">
     <section class="express-hero">
       <div class="express-intro">
-        <h1 data-home-headline>
-          <span class="headline-line"><span class="headline-line-content">Hi! I’m <span class="headline-accent headline-pop">Rio.</span></span></span>
+        <h1 data-home-headline aria-label="Hi! I’m Rio.">
+          <span class="headline-line"><span class="headline-line-content"><span data-typewriter-prefix>Hi! I’m </span><span class="headline-accent headline-pop" data-typewriter-name>Rio.</span><span class="typewriter-cursor" aria-hidden="true">|</span></span></span>
         </h1>
         <p class="express-role">Full Stack Developer &amp; AI Engineer</p>
         <p class="express-summary">Building products, automation, and full-stack systems that solve real problems.</p>
@@ -71,13 +71,16 @@ const philippinesTime = new Intl.DateTimeFormat('en-PH', {
 
 <script data-astro-rerun>
   import { gsap } from 'gsap';
+  import { TextPlugin } from 'gsap/TextPlugin';
   import { ScrollTrigger } from 'gsap/ScrollTrigger';
   import { ScrollSmoother } from 'gsap/ScrollSmoother';
 
-  gsap.registerPlugin(ScrollTrigger, ScrollSmoother);
+  gsap.registerPlugin(TextPlugin, ScrollTrigger, ScrollSmoother);
 
   const headlineLines = gsap.utils.toArray<HTMLElement>('.headline-line-content');
   const headlineAccents = gsap.utils.toArray<HTMLElement>('.headline-pop');
+  const typewriterPrefix = document.querySelector<HTMLElement>('[data-typewriter-prefix]');
+  const typewriterName = document.querySelector<HTMLElement>('[data-typewriter-name]');
   const homeIcons = gsap.utils.toArray<HTMLElement>('.express-stats i');
   const aboutReveal = gsap.utils.toArray<HTMLElement>('.home-about-copy, .home-project-preview');
   const contactReveal = gsap.utils.toArray<HTMLElement>('.home-cta-copy, .home-contact-details');
@@ -129,14 +132,23 @@ const philippinesTime = new Intl.DateTimeFormat('en-PH', {
   }, { once: true });
 
   media.add('(prefers-reduced-motion: no-preference)', () => {
-    const headlineIntro = gsap.timeline()
-      .from(headlineLines, { autoAlpha: 0, yPercent: 112, duration: 0.7, ease: 'power4.out', stagger: 0.12, overwrite: 'auto' })
-      .from(headlineAccents, { scale: 0.76, duration: 0.32, ease: 'back.out(1.7)', transformOrigin: 'center bottom', overwrite: 'auto' }, '-=0.3');
-    const iconIntro = gsap.from(homeIcons, { autoAlpha: 0, scale: 0.55, rotation: -12, duration: 0.46, ease: 'back.out(1.7)', stagger: 0.055, delay: 0.12, overwrite: 'auto' });
+    const headlineIntro = gsap.timeline();
+    if (typewriterPrefix && typewriterName) {
+      headlineIntro
+        .set([typewriterPrefix, typewriterName], { text: '' })
+        .from(headlineLines, { autoAlpha: 0, yPercent: 112, duration: 0.7, ease: 'power4.out', stagger: 0.12, overwrite: 'auto' })
+        .to(typewriterPrefix, { text: 'Hi! I’m ', duration: 0.54, ease: 'none' })
+        .to(typewriterName, { text: 'Rio.', duration: 0.36, ease: 'none' });
+    } else {
+      headlineIntro.from(headlineLines, { autoAlpha: 0, yPercent: 112, duration: 0.7, ease: 'power4.out', stagger: 0.12, overwrite: 'auto' });
+    }
+    const iconIntro = gsap.from(homeIcons, { autoAlpha: 0, scale: 0.55, rotation: -12, duration: 0.46, ease: 'back.out(1.7)', stagger: 0.055, delay: 1.15, overwrite: 'auto' });
 
     return () => {
       headlineIntro.kill();
       iconIntro.kill();
+      if (typewriterPrefix) typewriterPrefix.textContent = 'Hi! I’m ';
+      if (typewriterName) typewriterName.textContent = 'Rio.';
       gsap.set([...headlineLines, ...headlineAccents, ...homeIcons], { clearProps: 'opacity,visibility,transform' });
     };
   });

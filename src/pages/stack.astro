@@ -20,94 +20,13 @@ const stack = [
     </header>
     <section class="project-grid stack-grid section" data-stack-grid aria-label="Complete technology stack">
       {stack.map(({ category, icon, tools }) => (
-        <button
+        <article
           class:list={['project-grid-card', 'stack-grid-card']}
-          type="button"
-          data-stack-card
-          aria-expanded="false"
         >
           <h2><i class:list={['ph-duotone', icon]} aria-hidden="true"></i>{category}</h2>
-          {category === 'Frontend' && <span class="stack-click-hint" aria-hidden="true">Click me</span>}
-          <p class="stack-grid-preview">{tools.slice(0, 4).join(' · ')}</p>
-          {tools.length > 4 && <div class="stack-grid-details" data-stack-details><p>{tools.slice(4).join(' · ')}</p></div>}
-        </button>
+          <p class="stack-grid-preview">{tools.join(' · ')}</p>
+        </article>
       ))}
     </section>
   </main>
 </Layout>
-
-<script data-astro-rerun>
-  import { gsap } from 'gsap';
-
-  const stackGrid = document.querySelector<HTMLElement>('[data-stack-grid]');
-  const stackCards = stackGrid
-    ? Array.from(stackGrid.querySelectorAll<HTMLButtonElement>('[data-stack-card]'))
-    : [];
-  const media = gsap.matchMedia();
-
-  media.add('(min-width: 601px)', () => {
-    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    let openCard: HTMLButtonElement | null = null;
-
-    const closeCard = (card: HTMLButtonElement) => {
-      card.classList.remove('is-expanded');
-      card.setAttribute('aria-expanded', 'false');
-      const details = card.querySelector<HTMLElement>('[data-stack-details]');
-      if (details) {
-        gsap.to(details, {
-          height: 0,
-          autoAlpha: 0,
-          y: -8,
-          duration: reduceMotion ? 0 : 0.22,
-          ease: 'power2.in',
-          overwrite: 'auto',
-        });
-      }
-    };
-
-    const expandCard = (card: HTMLButtonElement) => {
-      card.classList.add('is-expanded');
-      card.setAttribute('aria-expanded', 'true');
-      const details = card.querySelector<HTMLElement>('[data-stack-details]');
-      if (details) {
-        gsap.fromTo(details,
-          { height: 0, autoAlpha: 0, y: -8 },
-          {
-            height: 'auto',
-            autoAlpha: 1,
-            y: 0,
-            duration: reduceMotion ? 0 : 0.34,
-            ease: 'power3.out',
-            overwrite: 'auto',
-          },
-        );
-      }
-    };
-
-    const selectCard = (nextCard: HTMLButtonElement) => {
-      if (openCard === nextCard) {
-        closeCard(nextCard);
-        openCard = null;
-        return;
-      }
-
-      if (openCard) closeCard(openCard);
-      expandCard(nextCard);
-      openCard = nextCard;
-    };
-
-    const handlers = stackCards.map((card) => {
-      const handler = () => selectCard(card);
-      card.addEventListener('click', handler);
-      return { card, handler };
-    });
-
-    return () => {
-      handlers.forEach(({ card, handler }) => card.removeEventListener('click', handler));
-      stackCards.forEach((card) => {
-        const details = card.querySelector<HTMLElement>('[data-stack-details]');
-        if (details) gsap.killTweensOf(details);
-      });
-    };
-  });
-</script>
