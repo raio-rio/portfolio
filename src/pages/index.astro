@@ -1,16 +1,24 @@
 ---
 import Layout from '../layouts/Layout.astro';
+
+const philippinesTime = new Intl.DateTimeFormat('en-PH', {
+  timeZone: 'Asia/Manila',
+  hour: 'numeric',
+  minute: '2-digit',
+  hour12: true,
+}).format(new Date());
 ---
 
 <Layout title="Rio Espinosa — Full Stack Developer & AI Engineer" description="Rio Espinosa builds AI/ML models, SaaS products, full-stack web apps, and blockchain solutions.">
-  <main class="express-home" aria-label="Rio Espinosa portfolio">
-    <section class="express-hero home-panel">
+  <div id="smooth-wrapper">
+    <main id="smooth-content" class="express-home" aria-label="Rio Espinosa portfolio">
+    <section class="express-hero">
       <div class="express-intro">
         <h1 data-home-headline>
           <span class="headline-line"><span class="headline-line-content">Hi! I’m <span class="headline-accent headline-pop">Rio.</span></span></span>
         </h1>
         <p class="express-role">Full Stack Developer &amp; AI Engineer</p>
-        <p class="express-summary">I build AI-powered products, automation, and full-stack systems that solve practical problems.</p>
+        <p class="express-summary">Building products, automation, and full-stack systems that solve real problems.</p>
       </div>
 
       <div class="express-stats" aria-label="Career highlights">
@@ -21,7 +29,7 @@ import Layout from '../layouts/Layout.astro';
       </div>
     </section>
 
-    <section class="home-section home-about home-panel" aria-labelledby="about-heading">
+    <section class="home-section home-about" aria-labelledby="about-heading">
       <div class="home-about-copy">
         <h2 id="about-heading">Ideas into<br />products that <span>work.</span></h2>
         <p>I build practical software, automation, and AI for real problems.</p>
@@ -36,7 +44,7 @@ import Layout from '../layouts/Layout.astro';
       </a>
     </section>
 
-    <section class="home-section home-cta home-panel" aria-labelledby="cta-heading">
+    <section class="home-section home-cta" aria-labelledby="cta-heading">
       <div class="home-cta-main">
         <div class="home-cta-copy">
           <h2 id="cta-heading">Let’s make<br />it <span>work.</span></h2>
@@ -47,26 +55,34 @@ import Layout from '../layouts/Layout.astro';
           <a href="https://www.linkedin.com/in/rioespinosa02/" target="_blank" rel="noreferrer"><i class="ph-duotone ph-linkedin-logo" aria-hidden="true"></i><span>LinkedIn</span><strong>Rio Espinosa ↗</strong></a>
           <a href="https://www.instagram.com/_sprio/" target="_blank" rel="noreferrer"><i class="ph-duotone ph-instagram-logo" aria-hidden="true"></i><span>Instagram</span><strong>@_sprio ↗</strong></a>
           <a href="https://wa.me/639338259751?text=Hi%20Rio%2C%20found%20your%20portfolio%20and%20would%20love%20to%20chat!" target="_blank" rel="noreferrer"><i class="ph-duotone ph-whatsapp-logo" aria-hidden="true"></i><span>WhatsApp</span><strong>Message me ↗</strong></a>
-          <p><i class="ph-duotone ph-map-pin" aria-hidden="true"></i><span>Philippines</span><strong>Cainta · UTC+8 · <time id="philippines-time" aria-label="Current time in the Philippines">--:--</time></strong></p>
+          <p><i class="ph-duotone ph-map-pin" aria-hidden="true"></i><span>Philippines</span><strong>Cainta · UTC+8 · <time id="philippines-time" aria-label="Current time in the Philippines">{philippinesTime}</time></strong></p>
         </address>
       </div>
     </section>
-  </main>
+    </main>
+  </div>
 
   <div class="scroll-progress" aria-hidden="true"><span data-scroll-progress></span></div>
+  <button class="back-to-top" type="button" data-back-to-top aria-label="Back to top">
+    <i class="ph-duotone ph-arrow-up" aria-hidden="true"></i>
+    <span>Back to top</span>
+  </button>
 </Layout>
 
 <script data-astro-rerun>
   import { gsap } from 'gsap';
-  import { Observer } from 'gsap/Observer';
   import { ScrollTrigger } from 'gsap/ScrollTrigger';
+  import { ScrollSmoother } from 'gsap/ScrollSmoother';
 
-  gsap.registerPlugin(Observer, ScrollTrigger);
+  gsap.registerPlugin(ScrollTrigger, ScrollSmoother);
 
   const headlineLines = gsap.utils.toArray<HTMLElement>('.headline-line-content');
   const headlineAccents = gsap.utils.toArray<HTMLElement>('.headline-pop');
   const homeIcons = gsap.utils.toArray<HTMLElement>('.express-stats i');
+  const aboutReveal = gsap.utils.toArray<HTMLElement>('.home-about-copy, .home-project-preview');
+  const contactReveal = gsap.utils.toArray<HTMLElement>('.home-cta-copy, .home-contact-details');
   const progress = document.querySelector<HTMLElement>('[data-scroll-progress]');
+  const backToTop = document.querySelector<HTMLButtonElement>('[data-back-to-top]');
   const localTime = document.querySelector<HTMLTimeElement>('#philippines-time');
   const timeFormatter = new Intl.DateTimeFormat('en-PH', {
     timeZone: 'Asia/Manila',
@@ -76,10 +92,6 @@ import Layout from '../layouts/Layout.astro';
   });
   const media = gsap.matchMedia();
 
-  window.addEventListener('portfolio:navigate', () => {
-    media.revert();
-  }, { once: true });
-
   const updateLocalTime = () => {
     if (!localTime) return;
     const now = new Date();
@@ -87,7 +99,34 @@ import Layout from '../layouts/Layout.astro';
     localTime.dateTime = now.toISOString();
   };
   updateLocalTime();
-  window.setInterval(updateLocalTime, 30_000);
+  const localTimeInterval = window.setInterval(updateLocalTime, 1_000);
+  const updateBackToTop = () => {
+    if (!backToTop) return;
+    const smoother = ScrollSmoother.get();
+    const scrollPosition = smoother ? smoother.scrollTop() : window.scrollY;
+    const maxScroll = ScrollTrigger.maxScroll(window);
+    const revealOffset = Math.max(96, window.innerHeight * 0.12);
+    backToTop.classList.toggle('is-visible', maxScroll > 0 && scrollPosition >= maxScroll - revealOffset);
+  };
+  const scrollHomeToTop = () => {
+    const smoother = ScrollSmoother.get();
+    if (smoother) {
+      smoother.scrollTo(0, true);
+      return;
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+  backToTop?.addEventListener('click', scrollHomeToTop);
+  window.addEventListener('scroll', updateBackToTop, { passive: true });
+  ScrollTrigger.addEventListener('refresh', updateBackToTop);
+  updateBackToTop();
+  window.addEventListener('portfolio:navigate', () => {
+    media.revert();
+    window.clearInterval(localTimeInterval);
+    backToTop?.removeEventListener('click', scrollHomeToTop);
+    window.removeEventListener('scroll', updateBackToTop);
+    ScrollTrigger.removeEventListener('refresh', updateBackToTop);
+  }, { once: true });
 
   media.add('(prefers-reduced-motion: no-preference)', () => {
     const headlineIntro = gsap.timeline()
@@ -99,6 +138,43 @@ import Layout from '../layouts/Layout.astro';
       headlineIntro.kill();
       iconIntro.kill();
       gsap.set([...headlineLines, ...headlineAccents, ...homeIcons], { clearProps: 'opacity,visibility,transform' });
+    };
+  });
+
+  media.add('(prefers-reduced-motion: no-preference)', () => {
+    const aboutTween = gsap.from(aboutReveal, {
+      autoAlpha: 0,
+      y: 34,
+      duration: 0.62,
+      ease: 'power3.out',
+      stagger: 0.1,
+      overwrite: 'auto',
+      scrollTrigger: {
+        trigger: '.home-about',
+        start: 'top 78%',
+        toggleActions: 'play none none reverse',
+      },
+    });
+    const contactTween = gsap.from(contactReveal, {
+      autoAlpha: 0,
+      y: 34,
+      duration: 0.62,
+      ease: 'power3.out',
+      stagger: 0.1,
+      overwrite: 'auto',
+      scrollTrigger: {
+        trigger: '.home-cta',
+        start: 'top 78%',
+        toggleActions: 'play none none reverse',
+      },
+    });
+
+    return () => {
+      aboutTween.scrollTrigger?.kill();
+      contactTween.scrollTrigger?.kill();
+      aboutTween.kill();
+      contactTween.kill();
+      gsap.set([...aboutReveal, ...contactReveal], { clearProps: 'opacity,visibility,transform' });
     };
   });
 
@@ -121,66 +197,24 @@ import Layout from '../layouts/Layout.astro';
   });
 
   media.add('(min-width: 769px) and (prefers-reduced-motion: no-preference)', () => {
-    const panels = gsap.utils.toArray<HTMLElement>('.home-panel');
-    if (panels.length < 2) return;
-
-    let activePanel = 0;
-    let isTransitioning = false;
-    const wrapPanel = gsap.utils.wrap(0, panels.length);
-    document.body.classList.add('home-panel-loop-active');
-
-    gsap.set(panels, { autoAlpha: 0, yPercent: 100 });
-    gsap.set(panels[activePanel], { autoAlpha: 1, yPercent: 0 });
-
-    const goToPanel = (index: number, direction: 1 | -1) => {
-      if (isTransitioning) return;
-
-      const nextPanel = wrapPanel(index);
-      const current = panels[activePanel];
-      const next = panels[nextPanel];
-      if (!current || !next) return;
-
-      isTransitioning = true;
-      gsap.set(next, { autoAlpha: 1, yPercent: direction > 0 ? 100 : -100 });
-      gsap.timeline({
-        defaults: { duration: 0.72, ease: 'power3.inOut', overwrite: 'auto' },
-        onComplete: () => {
-          gsap.set(current, { autoAlpha: 0 });
-          activePanel = nextPanel;
-          isTransitioning = false;
-        },
-      })
-        .to(current, { yPercent: direction > 0 ? -100 : 100 }, 0)
-        .to(next, { yPercent: 0 }, 0);
-    };
-
-    const observer = Observer.create({
-      target: window,
-      type: 'wheel,touch',
-      wheelSpeed: -1,
-      tolerance: 12,
-      preventDefault: true,
-      onDown: () => goToPanel(activePanel - 1, -1),
-      onUp: () => goToPanel(activePanel + 1, 1),
+    const smoother = ScrollSmoother.create({
+      wrapper: '#smooth-wrapper',
+      content: '#smooth-content',
+      smooth: 1.1,
+      effects: false,
+      normalizeScroll: true,
+      ignoreMobileResize: true,
+    });
+    const backToTopTrigger = ScrollTrigger.create({
+      trigger: '#smooth-content',
+      start: 'top top',
+      end: 'bottom bottom',
+      onUpdate: (self) => backToTop?.classList.toggle('is-visible', self.progress >= 0.9),
     });
 
-    const onKeydown = (event: KeyboardEvent) => {
-      if (event.key === 'ArrowDown' || event.key === 'PageDown' || event.key === ' ') {
-        event.preventDefault();
-        goToPanel(activePanel + 1, 1);
-      }
-      if (event.key === 'ArrowUp' || event.key === 'PageUp') {
-        event.preventDefault();
-        goToPanel(activePanel - 1, -1);
-      }
-    };
-    window.addEventListener('keydown', onKeydown);
-
     return () => {
-      observer.kill();
-      window.removeEventListener('keydown', onKeydown);
-      document.body.classList.remove('home-panel-loop-active');
-      gsap.set(panels, { clearProps: 'opacity,visibility,transform' });
+      backToTopTrigger.kill();
+      smoother.kill();
     };
   });
 </script>

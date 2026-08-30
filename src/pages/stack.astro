@@ -48,62 +48,51 @@ const stack = [
   media.add('(min-width: 601px)', () => {
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     let openCard: HTMLButtonElement | null = null;
-    const timelines = new Map<HTMLButtonElement, gsap.core.Timeline>();
-
-    stackCards.forEach((card) => {
-      const details = card.querySelector<HTMLElement>('[data-stack-details]');
-      if (!details) return;
-
-      const timeline = gsap.timeline({ paused: true });
-      timeline
-        .to(card, {
-          borderColor: 'var(--accent)',
-          duration: reduceMotion ? 0 : 0.22,
-          ease: 'power2.out',
-          easeReverse: 'power2.in',
-          overwrite: 'auto',
-        }, 0)
-        .to(details, {
-          height: 'auto',
-          autoAlpha: 1,
-          y: 0,
-          duration: reduceMotion ? 0 : 0.46,
-          ease: 'power3.out',
-          easeReverse: 'power2.in',
-          overwrite: 'auto',
-        }, 0.02);
-      timelines.set(card, timeline);
-    });
 
     const closeCard = (card: HTMLButtonElement) => {
-      const timeline = timelines.get(card);
-      if (!timeline) return;
-
       card.classList.remove('is-expanded');
       card.setAttribute('aria-expanded', 'false');
-      timeline.eventCallback('onReverseComplete', () => {
-        if (!card.classList.contains('is-expanded')) gsap.set(card, { clearProps: 'borderColor' });
-      });
-      timeline.reverse();
+      const details = card.querySelector<HTMLElement>('[data-stack-details]');
+      if (details) {
+        gsap.to(details, {
+          height: 0,
+          autoAlpha: 0,
+          y: -8,
+          duration: reduceMotion ? 0 : 0.22,
+          ease: 'power2.in',
+          overwrite: 'auto',
+        });
+      }
+    };
+
+    const expandCard = (card: HTMLButtonElement) => {
+      card.classList.add('is-expanded');
+      card.setAttribute('aria-expanded', 'true');
+      const details = card.querySelector<HTMLElement>('[data-stack-details]');
+      if (details) {
+        gsap.fromTo(details,
+          { height: 0, autoAlpha: 0, y: -8 },
+          {
+            height: 'auto',
+            autoAlpha: 1,
+            y: 0,
+            duration: reduceMotion ? 0 : 0.34,
+            ease: 'power3.out',
+            overwrite: 'auto',
+          },
+        );
+      }
     };
 
     const selectCard = (nextCard: HTMLButtonElement) => {
-      const nextTimeline = timelines.get(nextCard);
-      if (!nextTimeline) return;
-
       if (openCard === nextCard) {
         closeCard(nextCard);
         openCard = null;
         return;
       }
 
-      if (openCard) {
-        closeCard(openCard);
-      }
-
-      nextCard.classList.add('is-expanded');
-      nextCard.setAttribute('aria-expanded', 'true');
-      nextTimeline.play();
+      if (openCard) closeCard(openCard);
+      expandCard(nextCard);
       openCard = nextCard;
     };
 
@@ -115,7 +104,10 @@ const stack = [
 
     return () => {
       handlers.forEach(({ card, handler }) => card.removeEventListener('click', handler));
-      timelines.forEach((timeline) => timeline.kill());
+      stackCards.forEach((card) => {
+        const details = card.querySelector<HTMLElement>('[data-stack-details]');
+        if (details) gsap.killTweensOf(details);
+      });
     };
   });
 </script>
