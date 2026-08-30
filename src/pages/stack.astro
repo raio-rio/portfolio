@@ -2,33 +2,120 @@
 import Layout from '../layouts/Layout.astro';
 
 const stack = [
-  { category: 'Frontend', tools: ['JavaScript', 'TypeScript', 'React', 'Next.js', 'Framer Motion', 'Tailwind CSS', 'Vue.js', 'Vite', 'ESLint', 'Prettier', 'Webpack', 'SCSS', 'Styled Components'] },
-  { category: 'Backend', tools: ['Node.js', 'Python', 'PostgreSQL', 'MySQL', 'MongoDB', 'Express.js', 'REST', 'JWT', 'GraphQL', 'Java', 'PHP', 'NestJS', 'FastAPI', 'DynamoDB', 'OAuth'] },
-  { category: 'DevOps & Cloud', tools: ['AWS', 'Docker', 'GitHub Actions', 'Kubernetes', 'Azure', 'GCP', 'Datadog'] },
-  { category: 'AI & Machine Learning', tools: ['OpenAI', 'Jupyter', 'PyTorch', 'TensorFlow', 'LangChain', 'Hugging Face', 'Anthropic', 'Transformers', 'LlamaIndex', 'Mistral', 'Claude Code', 'Codex', 'AutoGPT'] },
-  { category: 'Security & Identity', tools: ['AWS IAM', 'Azure AD', 'Auth0'] },
-  { category: 'CMS & No-Code', tools: ['WordPress', 'Webflow', 'n8n', 'Bubble', 'Microsoft Power Platform'] },
-  { category: 'Developer Tools', tools: ['Git', 'GitHub', 'VS Code', 'Slack', 'GitLab', 'Discord', 'Teams', 'JetBrains', 'Trello', 'IntelliJ', 'PyCharm'] },
+  { category: 'Frontend', icon: 'ph-code', tools: ['JavaScript', 'TypeScript', 'React', 'Next.js', 'Framer Motion', 'GSAP', 'Tailwind CSS', 'Vue.js', 'Vite', 'ESLint', 'Prettier', 'Webpack', 'SCSS', 'Styled Components'] },
+  { category: 'Backend', icon: 'ph-database', tools: ['Node.js', 'Python', 'PostgreSQL', 'MySQL', 'MongoDB', 'Express.js', 'REST', 'JWT', 'GraphQL', 'Java', 'PHP', 'NestJS', 'FastAPI', 'DynamoDB', 'OAuth'] },
+  { category: 'DevOps & Cloud', icon: 'ph-cloud', tools: ['AWS', 'Docker', 'GitHub Actions', 'Kubernetes', 'Azure', 'GCP', 'Datadog'] },
+  { category: 'AI & Machine Learning', icon: 'ph-brain', tools: ['OpenAI', 'Jupyter', 'PyTorch', 'TensorFlow', 'LangChain', 'Hugging Face', 'Anthropic', 'Transformers', 'LlamaIndex', 'Mistral', 'Claude Code', 'Codex', 'AutoGPT'] },
+  { category: 'Security & Identity', icon: 'ph-shield-check', tools: ['AWS IAM', 'Azure AD', 'Auth0'] },
+  { category: 'CMS & No-Code', icon: 'ph-squares-four', tools: ['WordPress', 'Webflow', 'n8n', 'Bubble', 'Microsoft Power Platform'] },
+  { category: 'Developer Tools', icon: 'ph-wrench', tools: ['Git', 'GitHub', 'VS Code', 'Slack', 'GitLab', 'Discord', 'Teams', 'JetBrains', 'Trello', 'IntelliJ', 'PyCharm'] },
 ];
 ---
 
 <Layout title="Tech stack — Rio Espinosa" description="Tools, frameworks, and platforms Rio Espinosa uses across frontend, backend, cloud, and AI work." path="/stack/">
-  <main class="page-container subpage">
-    <a class="back-link" href="/#work">← Back home</a>
-    <header class="subpage-intro slide">
-      <p class="eyebrow">Tools and technologies</p>
-      <h1>Tech stack</h1>
-      <p class="stack-intro">The tools, frameworks, and platforms I use across the front end, back end, infrastructure, and AI.</p>
+  <main class="project-grid-page stack-grid-page">
+    <header class="project-grid-intro">
+      <h1>Stack<span>.</span></h1>
+      <p>Languages, frameworks, platforms, and tools I use to take products from idea to production.</p>
     </header>
-    <section class="stack-catalog section slide" aria-label="Complete tech stack">
-      {stack.map(({ category, tools }) => (
-        <article class="stack-group">
-          <h2>{category}</h2>
-          <ul class="stack-tools">
-            {tools.map((tool) => <li>{tool}</li>)}
-          </ul>
-        </article>
+    <section class="project-grid stack-grid section" data-stack-grid aria-label="Complete technology stack">
+      {stack.map(({ category, icon, tools }) => (
+        <button
+          class:list={['project-grid-card', 'stack-grid-card']}
+          type="button"
+          data-stack-card
+          aria-expanded="false"
+        >
+          <h2><i class:list={['ph-duotone', icon]} aria-hidden="true"></i>{category}</h2>
+          {category === 'Frontend' && <span class="stack-click-hint" aria-hidden="true">Click me</span>}
+          <p class="stack-grid-preview">{tools.slice(0, 4).join(' · ')}</p>
+          {tools.length > 4 && <div class="stack-grid-details" data-stack-details><p>{tools.slice(4).join(' · ')}</p></div>}
+        </button>
       ))}
     </section>
   </main>
 </Layout>
+
+<script data-astro-rerun>
+  import { gsap } from 'gsap';
+
+  const stackGrid = document.querySelector<HTMLElement>('[data-stack-grid]');
+  const stackCards = stackGrid
+    ? Array.from(stackGrid.querySelectorAll<HTMLButtonElement>('[data-stack-card]'))
+    : [];
+  const media = gsap.matchMedia();
+
+  media.add('(min-width: 601px)', () => {
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let openCard: HTMLButtonElement | null = null;
+    const timelines = new Map<HTMLButtonElement, gsap.core.Timeline>();
+
+    stackCards.forEach((card) => {
+      const details = card.querySelector<HTMLElement>('[data-stack-details]');
+      if (!details) return;
+
+      const timeline = gsap.timeline({ paused: true });
+      timeline
+        .to(card, {
+          borderColor: 'var(--accent)',
+          duration: reduceMotion ? 0 : 0.22,
+          ease: 'power2.out',
+          easeReverse: 'power2.in',
+          overwrite: 'auto',
+        }, 0)
+        .to(details, {
+          height: 'auto',
+          autoAlpha: 1,
+          y: 0,
+          duration: reduceMotion ? 0 : 0.46,
+          ease: 'power3.out',
+          easeReverse: 'power2.in',
+          overwrite: 'auto',
+        }, 0.02);
+      timelines.set(card, timeline);
+    });
+
+    const closeCard = (card: HTMLButtonElement) => {
+      const timeline = timelines.get(card);
+      if (!timeline) return;
+
+      card.classList.remove('is-expanded');
+      card.setAttribute('aria-expanded', 'false');
+      timeline.eventCallback('onReverseComplete', () => {
+        if (!card.classList.contains('is-expanded')) gsap.set(card, { clearProps: 'borderColor' });
+      });
+      timeline.reverse();
+    };
+
+    const selectCard = (nextCard: HTMLButtonElement) => {
+      const nextTimeline = timelines.get(nextCard);
+      if (!nextTimeline) return;
+
+      if (openCard === nextCard) {
+        closeCard(nextCard);
+        openCard = null;
+        return;
+      }
+
+      if (openCard) {
+        closeCard(openCard);
+      }
+
+      nextCard.classList.add('is-expanded');
+      nextCard.setAttribute('aria-expanded', 'true');
+      nextTimeline.play();
+      openCard = nextCard;
+    };
+
+    const handlers = stackCards.map((card) => {
+      const handler = () => selectCard(card);
+      card.addEventListener('click', handler);
+      return { card, handler };
+    });
+
+    return () => {
+      handlers.forEach(({ card, handler }) => card.removeEventListener('click', handler));
+      timelines.forEach((timeline) => timeline.kill());
+    };
+  });
+</script>

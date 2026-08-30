@@ -10,7 +10,9 @@
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.3",
+    "@theme-toggles/react": "^5.0.0-rc.0",
     "astro": "^7.2.4",
+    "gsap": "^3.15.0",
     "typescript": "^5.9.3"
   },
   "devDependencies": {

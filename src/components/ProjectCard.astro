@@ -5,9 +5,10 @@ import { getProjectImages } from '../lib/project-images';
 interface Props {
   project: CollectionEntry<'projects'>;
   expanded?: boolean;
+  showStack?: boolean;
 }
 
-const { project, expanded = false } = Astro.props;
+const { project, expanded = false, showStack = false } = Astro.props;
 const images = getProjectImages(project.id);
 const detail = project.body.replace(/^\s*## Overview\s*/m, '').trim() || project.data.tagline;
 const modalId = `project-modal-${project.id}`;
@@ -33,9 +34,11 @@ const modalId = `project-modal-${project.id}`;
   )}
 
   <button class:list={['project-card', { 'project-card-expanded': expanded }]} type="button" data-project-modal-trigger aria-controls={modalId} aria-haspopup="dialog" aria-label={`View ${project.data.title} details`}>
-    <h2><strong>{project.data.title}</strong><span class="project-arrow" aria-hidden="true">→</span></h2>
-    <p class="project-tagline">{project.data.tagline}</p>
-    {expanded && project.data.stack.length > 0 && <p class="project-stack">Built with {project.data.stack.join(' · ')}</p>}
+    <div class="project-card-copy">
+      <h2><strong>{project.data.title}</strong><span class="project-arrow" aria-hidden="true">→</span></h2>
+      <p class="project-tagline">{project.data.tagline}</p>
+      {(expanded || showStack) && project.data.stack.length > 0 && <p class="project-stack">Built with {project.data.stack.join(' · ')}</p>}
+    </div>
   </button>
 
   <dialog class="project-modal" id={modalId} aria-labelledby={`${modalId}-title`} data-project-modal>
@@ -57,7 +60,6 @@ const modalId = `project-modal-${project.id}`;
         </div>
       )}
       <div class="project-modal-copy">
-        <p class="eyebrow">Project details</p>
         <h2 id={`${modalId}-title`}>{project.data.title}</h2>
         <p class="project-modal-description">{detail}</p>
         {project.data.stack.length > 0 && (

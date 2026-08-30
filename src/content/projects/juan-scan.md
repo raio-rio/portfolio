@@ -1,12 +1,12 @@
 ---
 title: Juan Scan
-tagline: Scans IDs and returns the details instantly, eliminating repetitive manual logging for security desks, condos, events, and offices.
-stack: [React, ID scanning, Workflow automation]
+tagline: A mobile visitor check-in app that scans IDs and returns details instantly, eliminating repetitive manual logging for security desks, condos, events, and offices.
+stack: [Android Studio, React, Google ML Kit, Remotion]
 order: 2
 url: https://juan-scan-web.vercel.app/
-urlLabel: Visit site
+urlLabel: View landing page
 ---
 
 ## Overview
 
-Juan Scan streamlines visitor ID logging for teams that need fast, reliable check-ins.
+Juan Scan is a mobile app that streamlines visitor ID logging for teams that need fast, reliable check-ins. The linked website is its product landing page.

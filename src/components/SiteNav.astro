@@ -1,0 +1,101 @@
+<header class="site-nav" transition:persist="site-nav">
+  <nav aria-label="Primary navigation">
+    <a class="site-nav-brand" href="/" aria-label="Rio Espinosa home"><span class="site-nav-monogram"><img src="/images/main.webp" alt="Rio Espinosa" /></span><span>Rio Espinosa</span></a>
+    <div class="site-nav-links" data-dock>
+      <a data-dock-item href="/">Home</a>
+      <a data-dock-item href="/experience/">Experience</a>
+      <a data-dock-item href="/projects/">Projects</a>
+      <a data-dock-item href="/stack/">Stack</a>
+      <a data-dock-item href="https://www.programmingrio.top/resume.pdf" target="_blank" rel="noreferrer">Resume <span aria-hidden="true">↗</span></a>
+    </div>
+    <a class="site-nav-action" href="mailto:programmingrio@gmail.com">programmingrio@gmail.com</a>
+  </nav>
+</header>
+
+<script>
+  import { gsap } from 'gsap';
+  import { navigate } from 'astro:transitions/client';
+
+  const dock = document.querySelector<HTMLElement>('[data-dock]');
+  const dockItems = dock ? Array.from(dock.querySelectorAll<HTMLElement>('[data-dock-item]')) : [];
+
+  if (dock && dockItems.length) {
+    const media = gsap.matchMedia();
+
+    media.add('(min-width: 681px) and (prefers-reduced-motion: no-preference)', () => {
+      const reset = () => gsap.to(dockItems, { scale: 1, z: 0, duration: 0.28, ease: 'power3.out', overwrite: 'auto' });
+      const updateDock = (event: PointerEvent) => {
+        dockItems.forEach((item) => {
+          const bounds = item.getBoundingClientRect();
+          const distance = Math.abs(event.clientX - (bounds.left + bounds.width / 2));
+          const proximity = Math.max(0, 1 - distance / 105);
+
+          gsap.to(item, {
+            scale: 1 + proximity * 0.42,
+            z: proximity * 48,
+            duration: 0.18,
+            ease: 'power3.out',
+            overwrite: 'auto',
+          });
+        });
+      };
+
+      dock.addEventListener('pointermove', updateDock);
+      dock.addEventListener('pointerleave', reset);
+
+      return () => {
+        dock.removeEventListener('pointermove', updateDock);
+        dock.removeEventListener('pointerleave', reset);
+        gsap.set(dockItems, { clearProps: 'transform' });
+      };
+    });
+  }
+
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const internalLinks = document.querySelectorAll<HTMLAnchorElement>('[data-dock-item][href^="/"]');
+  let isNavigating = false;
+
+  document.addEventListener('astro:after-swap', () => {
+    isNavigating = false;
+  });
+
+  internalLinks.forEach((link) => {
+    link.addEventListener('click', (event) => {
+      if (
+        isNavigating ||
+        event.defaultPrevented ||
+        event.button !== 0 ||
+        event.metaKey ||
+        event.ctrlKey ||
+        event.shiftKey ||
+        event.altKey ||
+        link.pathname === window.location.pathname
+      ) return;
+
+      event.preventDefault();
+      const page = document.querySelector<HTMLElement>('main');
+      if (!page || reducedMotion.matches) {
+        window.location.assign(link.href);
+        return;
+      }
+
+      isNavigating = true;
+      window.dispatchEvent(new Event('portfolio:navigate'));
+      gsap.to(page,
+        {
+          y: -window.innerHeight,
+          autoAlpha: 0,
+          duration: 0.72,
+          ease: 'power3.inOut',
+          overwrite: 'auto',
+          onComplete: () => {
+            try {
+              sessionStorage.setItem('rio-page-panel', 'true');
+            } catch {}
+            navigate(link.href);
+          },
+        },
+      );
+    });
+  });
+</script>

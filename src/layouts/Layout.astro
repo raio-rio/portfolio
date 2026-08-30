@@ -1,5 +1,7 @@
 ---
 import '../styles/global.css';
+import { ClientRouter } from 'astro:transitions';
+import SiteNav from '../components/SiteNav.astro';
 import ThemeToggle from '../components/ThemeToggle.astro';
 
 interface Props {
@@ -12,14 +14,14 @@ interface Props {
   structuredData?: Record<string, unknown>;
 }
 
-const { title, description, path = '/', type = 'website', image: imagePath = '/images/headshot.png', imageAlt = 'Rio Espinosa, Software & AI Engineer', structuredData } = Astro.props;
+const { title, description, path = '/', type = 'website', image: imagePath = '/images/headshot.png', imageAlt = 'Rio Espinosa, Full Stack Developer & AI Engineer', structuredData } = Astro.props;
 const site = Astro.site ?? new URL('https://programmingrio.top');
 const canonical = new URL(path, site);
 const image = new URL(imagePath, site);
 const person = {
   '@type': 'Person',
   name: 'Rio Espinosa',
-  jobTitle: 'Software & AI Engineer',
+  jobTitle: 'Full Stack Developer & AI Engineer',
   url: site.href,
   email: 'programmingrio@gmail.com',
   image: new URL('/images/headshot.png', site).href,
@@ -55,6 +57,7 @@ const schema = {
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/duotone/style.css" />
     <meta property="og:type" content={type} />
     <meta property="og:site_name" content="Rio Espinosa" />
     <meta property="og:title" content={title} />
@@ -74,9 +77,34 @@ const schema = {
     </script>
     <script type="application/ld+json" set:html={JSON.stringify(schema)}></script>
     <title>{title}</title>
+    <ClientRouter fallback="swap" />
   </head>
   <body>
+    <SiteNav />
     <ThemeToggle />
     <slot />
+    <script>
+  import { gsap } from 'gsap';
+
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const animateEntry = () => {
+    const nextPage = document.querySelector<HTMLElement>('main');
+    let enterFromBelow = false;
+    try {
+      enterFromBelow = sessionStorage.getItem('rio-page-panel') === 'true';
+      sessionStorage.removeItem('rio-page-panel');
+    } catch {}
+
+    if (nextPage && enterFromBelow && !reducedMotion.matches) {
+      gsap.fromTo(nextPage,
+        { y: window.innerHeight, autoAlpha: 0 },
+        { y: 0, autoAlpha: 1, duration: 0.72, ease: 'power3.inOut', clearProps: 'transform,visibility', overwrite: 'auto' },
+      );
+    }
+  };
+
+  animateEntry();
+  document.addEventListener('astro:after-swap', animateEntry);
+    </script>
   </body>
 </html>

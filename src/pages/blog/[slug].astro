@@ -30,12 +30,12 @@ const structuredData = {
 <Layout title={`${post.data.title} — Rio Espinosa`} description={post.data.description} path={path} type="article" structuredData={structuredData}>
   <main class="page-container subpage">
     <a class="back-link" href="/blog/">← Back to blog</a>
-    <header class="subpage-intro slide">
+    <header class="subpage-intro">
       <p class="eyebrow">{displayDate} · {post.data.readingTime}</p>
       <h1>{post.data.title}</h1>
       <p class="case-tagline">{post.data.description}</p>
     </header>
-    <div class="detail-content section slide">
+    <div class="detail-content section">
       <aside><p class="eyebrow">Topics</p><ul>{post.data.tags.map((tag) => <li>{tag}</li>)}</ul></aside>
       <article class="prose"><Content /></article>
     </div>

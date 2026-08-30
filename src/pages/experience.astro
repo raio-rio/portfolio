@@ -1,0 +1,29 @@
+---
+import { experience } from '../data/experience';
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Experience — Rio Espinosa" description="Professional experience and outcomes delivered by Rio Espinosa across product, software, and data roles." path="/experience/">
+  <main class="project-grid-page experience-page">
+    <header class="project-grid-intro">
+      <h1>Experience<span>.</span></h1>
+      <p>Product-minded engineering across software, data, and automation.</p>
+    </header>
+
+    <section class="experience-grid section" aria-label="Professional experience">
+      {experience.map((item) => (
+        <article class="experience-card">
+          <header class="experience-card-header">
+            <h2>{item.role}</h2>
+            <strong>{item.company}</strong>
+          </header>
+          <p class="experience-context">{item.period} · {item.location}</p>
+          <p class="experience-stack">{item.stack.join(' · ')}</p>
+          <ul>
+            {item.highlights.map((highlight) => <li>{highlight}</li>)}
+          </ul>
+        </article>
+      ))}
+    </section>
+  </main>
+</Layout>

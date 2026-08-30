@@ -9,12 +9,12 @@ const posts = (await getCollection('blog')).sort((a, b) => b.data.date.localeCom
 <Layout title="Blog — Rio Espinosa" description="Writing by Rio Espinosa on technology, coding, and AI." path="/blog/">
   <main class="page-container subpage">
     <a class="back-link" href="/#blog">← Back home</a>
-    <header class="subpage-intro slide">
+    <header class="subpage-intro">
       <p class="eyebrow">Writing</p>
       <h1>Blog</h1>
       <p class="stack-intro">Notes on technology, coding, and AI.</p>
     </header>
-    <section class="blog-list section slide" aria-label="All posts">
+    <section class="blog-list section" aria-label="All posts">
       {posts.map((post) => <BlogPost post={post} />)}
     </section>
   </main>

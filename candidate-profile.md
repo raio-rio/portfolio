@@ -4,7 +4,7 @@ Keep this document factual. Use it to draft concise, warm, specific job-applicat
 
 ## Professional summary
 
-Rio Espinosa is a Software & AI Engineer based in Cainta, Philippines (UTC+8). He has 4+ years of experience building full-stack web applications, SaaS platforms, AI/ML models, automation tools, and data workflows. He is product-minded and focuses on practical systems that reduce manual work, improve team efficiency, and ship measurable outcomes. He holds a B.S. in Computer Science, Cum Laude, from the University of Santo Tomas Manila, and has presented work at an international conference in Japan about Artificial Intelligence and AI Modeling.
+Rio Espinosa is a Full Stack Developer & AI Engineer based in Cainta, Philippines (UTC+8). He has 4+ years of experience building full-stack web applications, SaaS platforms, AI/ML models, automation tools, and data workflows. He is product-minded and focuses on practical systems that reduce manual work, improve team efficiency, and ship measurable outcomes. He holds a B.S. in Computer Science, Cum Laude, from the University of Santo Tomas Manila, and has presented work at an international conference in Japan about Artificial Intelligence and AI Modeling.
 
 ## Contact and links
 
@@ -88,7 +88,7 @@ A web app that helps people calculate the correct discount in food establishment
 ## Work preferences
 
 - Based in the Philippines, UTC+8.
-- Availability, preferred work arrangement, target role beyond Software & AI Engineer, and compensation are not specified. Do not invent or state them in applications.
+- Availability, preferred work arrangement, target role beyond Full Stack Developer & AI Engineer, and compensation are not specified. Do not invent or state them in applications.
 
 ## Writing style
 
