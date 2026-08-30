@@ -49,6 +49,44 @@
         gsap.set(dockItems, { clearProps: 'transform' });
       };
     });
+
+    media.add('(max-width: 680px) and (prefers-reduced-motion: no-preference)', () => {
+      let idleTimer: number | undefined;
+      const hideNav = () => {
+        window.clearTimeout(idleTimer);
+        gsap.to('.site-nav', { y: -76, duration: 0.2, ease: 'power2.out', overwrite: 'auto' });
+        idleTimer = window.setTimeout(() => {
+          gsap.to('.site-nav', { y: 0, duration: 0.28, ease: 'power3.out', overwrite: 'auto' });
+        }, 240);
+      };
+
+      window.addEventListener('scroll', hideNav, { passive: true });
+
+      return () => {
+        window.clearTimeout(idleTimer);
+        window.removeEventListener('scroll', hideNav);
+        gsap.set('.site-nav', { clearProps: 'transform' });
+      };
+    });
+
+    media.add('(min-width: 681px) and (prefers-reduced-motion: no-preference)', () => {
+      let idleTimer: number | undefined;
+      const hideNav = () => {
+        window.clearTimeout(idleTimer);
+        gsap.to('.site-nav', { y: -76, duration: 0.2, ease: 'power2.out', overwrite: 'auto' });
+        idleTimer = window.setTimeout(() => {
+          gsap.to('.site-nav', { y: 0, duration: 0.28, ease: 'power3.out', overwrite: 'auto' });
+        }, 240);
+      };
+
+      window.addEventListener('scroll', hideNav, { passive: true });
+
+      return () => {
+        window.clearTimeout(idleTimer);
+        window.removeEventListener('scroll', hideNav);
+        gsap.set('.site-nav', { clearProps: 'transform' });
+      };
+    });
   }
 
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
