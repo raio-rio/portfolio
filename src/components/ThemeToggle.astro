@@ -1,5 +1,5 @@
 <button class="theme-toggle within-toggle" type="button" aria-label="Enable night mode" aria-pressed="false" title="Toggle theme" transition:persist="theme-toggle">
-  <svg viewBox="0 0 32 32" aria-hidden="true" fill="currentColor">
+  <svg viewBox="0 0 32 32" aria-hidden="true" fill="currentColor" style="--toggles-within-duration: 500ms">
     <defs>
       <clipPath id="within-toggle-main-clip">
         <path d="M0 0h32v32H0ZM6 16a1 1 0 0 0 20 0 1 1 0 0 0-20 0" />
@@ -28,10 +28,50 @@
 
   updateToggle();
 
-  toggle?.addEventListener('click', () => {
+  toggle?.addEventListener('click', async () => {
     const isDark = root.classList.contains('theme-dark');
-    root.classList.toggle('theme-dark', !isDark);
-    localStorage.setItem('rio-theme', isDark ? 'light' : 'dark');
-    updateToggle();
+    const applyTheme = () => {
+      root.classList.toggle('theme-dark', !isDark);
+      localStorage.setItem('rio-theme', isDark ? 'light' : 'dark');
+      updateToggle();
+    };
+
+    const canAnimate = 'startViewTransition' in document
+      && !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (!canAnimate) {
+      applyTheme();
+      return;
+    }
+
+    const bounds = toggle.getBoundingClientRect();
+    const originX = bounds.left + bounds.width / 2;
+    const originY = bounds.top + bounds.height / 2;
+    const radius = Math.hypot(
+      Math.max(originX, window.innerWidth - originX),
+      Math.max(originY, window.innerHeight - originY),
+    );
+
+    toggle.disabled = true;
+    const transition = document.startViewTransition(applyTheme);
+
+    try {
+      await transition.ready;
+      document.documentElement.animate(
+        {
+          clipPath: [
+            `circle(0px at ${originX}px ${originY}px)`,
+            `circle(${radius}px at ${originX}px ${originY}px)`,
+          ],
+        },
+        {
+          duration: 560,
+          easing: 'cubic-bezier(.76, 0, .24, 1)',
+          pseudoElement: '::view-transition-new(root)',
+        },
+      );
+    } finally {
+      transition.finished.finally(() => { toggle.disabled = false; });
+    }
   });
 </script>

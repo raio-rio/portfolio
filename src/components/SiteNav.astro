@@ -1,6 +1,6 @@
 <header class="site-nav" transition:persist="site-nav">
   <nav aria-label="Primary navigation">
-    <a class="site-nav-brand" href="/" aria-label="Rio Espinosa home"><span class="site-nav-monogram"><img src="/images/main.webp" alt="Rio Espinosa" /></span><span>Rio Espinosa</span></a>
+    <a class="site-nav-brand" href="/" aria-label="Rio Espinosa home"><span class="site-nav-monogram"><img src="/images/pic.jpg" alt="Rio Espinosa" /></span><span>Rio Espinosa</span><span class="site-nav-photo-popout" aria-hidden="true"><img src="/images/pic.jpg" alt="" /></span></a>
     <div class="site-nav-links" data-dock>
       <a data-dock-item href="/">Home</a>
       <a data-dock-item href="/experience/">Experience</a>
@@ -8,7 +8,15 @@
       <a data-dock-item href="/stack/">Stack</a>
       <a data-dock-item href="https://www.programmingrio.top/resume.pdf" target="_blank" rel="noreferrer">Resume <i class="ph-duotone ph-arrow-square-out" aria-hidden="true"></i></a>
     </div>
-    <a class="site-nav-action" href="mailto:programmingrio@gmail.com">programmingrio@gmail.com</a>
+    <div class="site-nav-contact">
+      <button class="site-nav-action" type="button" aria-expanded="false">programmingrio@gmail.com</button>
+      <div class="site-nav-contact-popout" aria-label="Email actions">
+        <div class="site-nav-contact-panel">
+          <button type="button" data-copy-email><i class="ph-duotone ph-copy" aria-hidden="true"></i><span>Copy email</span></button>
+          <a href="mailto:programmingrio@gmail.com"><i class="ph-duotone ph-envelope-simple" aria-hidden="true"></i><span>Email me</span></a>
+        </div>
+      </div>
+    </div>
   </nav>
 </header>
 
@@ -88,6 +96,87 @@
       };
     });
   }
+
+  const brand = document.querySelector<HTMLElement>('.site-nav-brand');
+  const photoPopout = document.querySelector<HTMLElement>('.site-nav-photo-popout');
+
+  if (brand && photoPopout) {
+    const media = gsap.matchMedia();
+
+    media.add('(min-width: 681px) and (prefers-reduced-motion: no-preference)', () => {
+      const popPortrait = () => {
+        gsap.killTweensOf(photoPopout);
+        gsap.fromTo(photoPopout,
+          { autoAlpha: 0, y: -10, scale: 0.78 },
+          { autoAlpha: 1, y: 0, scale: 1, duration: 0.32, ease: 'back.out(1.65)', overwrite: 'auto' },
+        );
+      };
+      const resetPortrait = () => gsap.to(photoPopout, { autoAlpha: 0, y: -7, scale: 0.9, duration: 0.18, ease: 'power2.in', overwrite: 'auto' });
+
+      brand.addEventListener('pointerenter', popPortrait);
+      brand.addEventListener('pointerleave', resetPortrait);
+      brand.addEventListener('focusin', popPortrait);
+      brand.addEventListener('focusout', resetPortrait);
+
+      return () => {
+        brand.removeEventListener('pointerenter', popPortrait);
+        brand.removeEventListener('pointerleave', resetPortrait);
+        brand.removeEventListener('focusin', popPortrait);
+        brand.removeEventListener('focusout', resetPortrait);
+        gsap.set(photoPopout, { clearProps: 'opacity,visibility,transform' });
+      };
+    });
+  }
+
+  const contact = document.querySelector<HTMLElement>('.site-nav-contact');
+  const contactTrigger = contact?.querySelector<HTMLButtonElement>('.site-nav-action');
+  const contactPopout = contact?.querySelector<HTMLElement>('.site-nav-contact-popout');
+  const copyEmail = contact?.querySelector<HTMLButtonElement>('[data-copy-email]');
+
+  if (contact && contactTrigger && contactPopout) {
+    const media = gsap.matchMedia();
+
+    media.add('(min-width: 681px) and (prefers-reduced-motion: no-preference)', () => {
+      const showContact = () => {
+        contactTrigger.setAttribute('aria-expanded', 'true');
+        gsap.fromTo(contactPopout,
+          { autoAlpha: 0, y: -8, scale: 0.92 },
+          { autoAlpha: 1, y: 0, scale: 1, duration: 0.26, ease: 'back.out(1.5)', overwrite: 'auto' },
+        );
+      };
+      const hideContact = () => {
+        contactTrigger.setAttribute('aria-expanded', 'false');
+        gsap.to(contactPopout, { autoAlpha: 0, y: -6, scale: 0.96, duration: 0.16, ease: 'power2.in', overwrite: 'auto' });
+      };
+
+      contact.addEventListener('pointerenter', showContact);
+      contact.addEventListener('pointerleave', hideContact);
+      contact.addEventListener('focusin', showContact);
+      contact.addEventListener('focusout', hideContact);
+
+      return () => {
+        contact.removeEventListener('pointerenter', showContact);
+        contact.removeEventListener('pointerleave', hideContact);
+        contact.removeEventListener('focusin', showContact);
+        contact.removeEventListener('focusout', hideContact);
+        gsap.set(contactPopout, { clearProps: 'opacity,visibility,transform' });
+      };
+    });
+  }
+
+  copyEmail?.addEventListener('click', async () => {
+    const email = 'programmingrio@gmail.com';
+    try {
+      await navigator.clipboard.writeText(email);
+      const label = copyEmail.querySelector('span');
+      if (label) label.textContent = 'Copied!';
+      window.setTimeout(() => {
+        if (label) label.textContent = 'Copy email';
+      }, 1500);
+    } catch {
+      window.location.href = `mailto:${email}`;
+    }
+  });
 
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
   const internalLinks = document.querySelectorAll<HTMLAnchorElement>('[data-dock-item][href^="/"]');
