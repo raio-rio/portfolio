@@ -2,7 +2,7 @@
 title: Vista Salon Suite
 tagline: A salon operations suite for transactions, petty cash, customer profiles, and digital consent forms—reducing manual logging to three taps and saving seconds to minutes per transaction.
 stack: []
-order: 5
+order: 3
 ---
 
 ## Overview

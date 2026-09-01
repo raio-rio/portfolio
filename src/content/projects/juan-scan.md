@@ -2,7 +2,7 @@
 title: Juan Scan
 tagline: A mobile visitor check-in app that scans IDs and returns details instantly, eliminating repetitive manual logging for security desks, condos, events, and offices.
 stack: [Android Studio, React, Google ML Kit, Remotion]
-order: 2
+order: 4
 url: https://juan-scan-web.vercel.app/
 urlLabel: View landing page
 ---
