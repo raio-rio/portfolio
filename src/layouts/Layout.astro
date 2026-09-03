@@ -58,6 +58,8 @@ const schema = {
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/duotone/style.css" />
+    <link rel="stylesheet" href="https://assets.calendly.com/assets/external/widget.css" />
+    <script is:inline src="https://assets.calendly.com/assets/external/widget.js" async></script>
     <meta property="og:type" content={type} />
     <meta property="og:site_name" content="Rio Espinosa" />
     <meta property="og:title" content={title} />
@@ -129,6 +131,20 @@ const schema = {
   document.addEventListener('astro:after-swap', refreshScrollProgress);
   document.addEventListener('astro:page-load', refreshScrollProgress);
   requestProgressUpdate();
+
+  document.addEventListener('click', (event) => {
+    if (!(event.target instanceof Element)) return;
+    const trigger = event.target.closest<HTMLAnchorElement>('[data-calendly-link]');
+    if (!trigger) return;
+
+    event.preventDefault();
+    const calendly = (window as Window & {
+      Calendly?: { initPopupWidget: (options: { url: string }) => void };
+    }).Calendly;
+
+    if (calendly) calendly.initPopupWidget({ url: 'https://calendly.com/programmingrio' });
+    else window.open(trigger.href, '_blank', 'noopener,noreferrer');
+  });
     </script>
   </body>
 </html>

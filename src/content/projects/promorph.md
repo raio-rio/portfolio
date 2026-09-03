@@ -1,5 +1,5 @@
 ---
-title: "ProMorph: Classification Model"
+title: "ProMorph: Classification Model in ICIAC Japan 2024"
 tagline: An innovative classification model using morphological dilation to classify dermoscopic images of skin lesions.
 stack: [Python, TensorFlow, Jupyter, AWS]
 order: 2

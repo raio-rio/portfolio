@@ -26,7 +26,16 @@
     if (label) label.textContent = isDark ? 'Light mode' : 'Night mode';
   };
 
-  updateToggle();
+  const applySavedTheme = () => {
+    try {
+      root.classList.toggle('theme-dark', localStorage.getItem('rio-theme') === 'dark');
+    } catch {}
+    updateToggle();
+  };
+
+  applySavedTheme();
+  document.addEventListener('astro:after-swap', applySavedTheme);
+  document.addEventListener('astro:page-load', applySavedTheme);
 
   toggle?.addEventListener('click', async () => {
     const isDark = root.classList.contains('theme-dark');

@@ -12,6 +12,7 @@ export function getProjectImages(projectId: string): string[] {
       .filter((entry) => entry.isFile() && imagePattern.test(entry.name))
       .map((entry) => entry.name)
       .sort((a, b) => a.localeCompare(b, undefined, { numeric: true }))
+      .slice(0, 2)
       .map((fileName) => `/images/projects/${projectId}/${fileName}`);
   } catch {
     return [];

@@ -18,18 +18,12 @@ const modalId = `project-modal-${project.id}`;
   {expanded && images.length > 0 && (
     <div class="project-gallery-frame" data-gallery-frame>
       <button class="project-gallery-link project-modal-trigger" type="button" data-project-modal-trigger aria-controls={modalId} aria-haspopup="dialog" aria-label={`View ${project.data.title} details`}>
-        <div class="project-gallery" data-gallery>
+        <div class="project-gallery" data-gallery="hover">
           <div class="project-gallery-track" data-gallery-track>
             {images.map((image, index) => <img src={image} alt={`${project.data.title} project preview${images.length > 1 ? ` ${index + 1}` : ''}`} loading="lazy" decoding="async" />)}
           </div>
         </div>
       </button>
-      {images.length > 1 && (
-        <>
-          <button class="project-gallery-control project-gallery-prev" type="button" data-gallery-prev aria-label={`Show previous ${project.data.title} image`}>←</button>
-          <button class="project-gallery-control project-gallery-next" type="button" data-gallery-next aria-label={`Show next ${project.data.title} image`}>→</button>
-        </>
-      )}
     </div>
   )}
 
@@ -46,17 +40,11 @@ const modalId = `project-modal-${project.id}`;
       <button class="project-modal-close" type="button" data-modal-close aria-label={`Close ${project.data.title} details`}>×</button>
       {images.length > 0 && (
         <div class="project-modal-gallery-frame" data-gallery-frame>
-          <div class="project-gallery project-modal-gallery" data-gallery>
+          <div class="project-gallery project-modal-gallery" data-gallery="static">
             <div class="project-gallery-track" data-gallery-track>
               {images.map((image, index) => <img src={image} alt={`${project.data.title} enlarged preview${images.length > 1 ? ` ${index + 1}` : ''}`} loading="lazy" decoding="async" />)}
             </div>
           </div>
-          {images.length > 1 && (
-            <>
-              <button class="project-gallery-control project-gallery-prev" type="button" data-gallery-prev aria-label={`Show previous ${project.data.title} image`}>←</button>
-              <button class="project-gallery-control project-gallery-next" type="button" data-gallery-next aria-label={`Show next ${project.data.title} image`}>→</button>
-            </>
-          )}
         </div>
       )}
       <div class="project-modal-copy">
@@ -74,20 +62,6 @@ const modalId = `project-modal-${project.id}`;
 </article>
 
 <script>
-  document.querySelectorAll<HTMLElement>('[data-gallery]').forEach((gallery) => {
-    const track = gallery.querySelector<HTMLElement>('[data-gallery-track]');
-    const frame = gallery.closest<HTMLElement>('[data-gallery-frame]');
-    const previous = frame?.querySelector<HTMLButtonElement>('[data-gallery-prev]');
-    const next = frame?.querySelector<HTMLButtonElement>('[data-gallery-next]');
-
-    const scrollGallery = (direction: -1 | 1) => {
-      track?.scrollBy({ left: direction * track.clientWidth, behavior: 'smooth' });
-    };
-
-    previous?.addEventListener('click', () => scrollGallery(-1));
-    next?.addEventListener('click', () => scrollGallery(1));
-  });
-
   document.querySelectorAll<HTMLButtonElement>('[data-project-modal-trigger]').forEach((trigger) => {
     const modal = document.getElementById(trigger.getAttribute('aria-controls') ?? '') as HTMLDialogElement | null;
     trigger.addEventListener('click', () => modal?.showModal());

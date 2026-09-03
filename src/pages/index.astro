@@ -1,5 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import { getProjectImages } from '../lib/project-images';
 
 const philippinesTime = new Intl.DateTimeFormat('en-PH', {
   timeZone: 'Asia/Manila',
@@ -7,6 +8,9 @@ const philippinesTime = new Intl.DateTimeFormat('en-PH', {
   minute: '2-digit',
   hour12: true,
 }).format(new Date());
+const promorphImages = getProjectImages('promorph');
+const promorphCover = promorphImages[0] ?? '/images/projects/promorph/01-cover.png';
+const promorphAlternate = promorphImages[1];
 ---
 
 <Layout title="Rio Espinosa — Full Stack Developer & AI Engineer" description="Rio Espinosa builds AI/ML models, SaaS products, full-stack web apps, and blockchain solutions.">
@@ -27,6 +31,7 @@ const philippinesTime = new Intl.DateTimeFormat('en-PH', {
         <div><span class="metric-icon"><i class="ph-duotone ph-chart-line-up" aria-hidden="true"></i></span><p><strong>87.5%</strong><span>Time savings achieved</span></p></div>
         <div><span class="metric-icon"><i class="ph-duotone ph-code" aria-hidden="true"></i></span><p><strong>6</strong><span>Systems reworked</span></p></div>
       </div>
+      <a class="calendly-secondary calendly-hero-link" data-calendly-link href="https://calendly.com/programmingrio"><i class="ph-duotone ph-calendar-check" aria-hidden="true"></i><span class="calendly-hero-prompt">Interested to know more?</span><span class="calendly-link-label">Book a call</span></a>
     </section>
 
     <section class="home-section home-about" aria-labelledby="about-heading">
@@ -34,11 +39,14 @@ const philippinesTime = new Intl.DateTimeFormat('en-PH', {
         <h2 id="about-heading">Ideas into<br />products that <span>work.</span></h2>
         <p>I build practical software, automation, and AI for real problems.</p>
       </div>
-      <a class="home-project-preview" href="/projects/" aria-label="View projects, including ProMorph: Classification Model">
-        <img src="/images/projects/promorph/01-cover.png" alt="ProMorph: Classification Model project preview" width="627" height="417" loading="lazy" />
+      <a class="home-project-preview" href="/projects/" aria-label="View projects, including ProMorph: Classification Model in ICIAC Japan 2024">
+        <span class="home-project-preview-media">
+          <img src={promorphCover} alt="ProMorph: Classification Model in ICIAC Japan 2024 project preview" width="627" height="417" loading="lazy" />
+          {promorphAlternate && <img class="home-project-preview-alternate" src={promorphAlternate} alt="ProMorph: Classification Model in ICIAC Japan 2024 alternate project preview" width="627" height="417" loading="lazy" />}
+        </span>
         <span class="home-project-preview-copy">
           <span>Featured project</span>
-          <strong>ProMorph: Classification Model</strong>
+          <strong>ProMorph: Classification Model in ICIAC Japan 2024</strong>
           <em>View projects <i class="ph-duotone ph-arrow-square-out" aria-hidden="true"></i></em>
         </span>
       </a>
@@ -55,6 +63,7 @@ const philippinesTime = new Intl.DateTimeFormat('en-PH', {
           <a href="https://www.linkedin.com/in/rioespinosa02/" target="_blank" rel="noreferrer"><i class="ph-duotone ph-linkedin-logo" aria-hidden="true"></i><span>LinkedIn</span><strong>Rio Espinosa <i class="ph-duotone ph-arrow-square-out" aria-hidden="true"></i></strong></a>
           <a href="https://www.instagram.com/_sprio/" target="_blank" rel="noreferrer"><i class="ph-duotone ph-instagram-logo" aria-hidden="true"></i><span>Instagram</span><strong>@_sprio <i class="ph-duotone ph-arrow-square-out" aria-hidden="true"></i></strong></a>
           <a href="https://wa.me/639338259751?text=Hi%20Rio%2C%20found%20your%20portfolio%20and%20would%20love%20to%20chat!" target="_blank" rel="noreferrer"><i class="ph-duotone ph-whatsapp-logo" aria-hidden="true"></i><span>WhatsApp</span><strong>Message me <i class="ph-duotone ph-arrow-square-out" aria-hidden="true"></i></strong></a>
+          <a data-calendly-link href="https://calendly.com/programmingrio"><i class="ph-duotone ph-calendar-check" aria-hidden="true"></i><span>Book a call</span><strong>Schedule time <i class="ph-duotone ph-arrow-square-out" aria-hidden="true"></i></strong></a>
           <p><i class="ph-duotone ph-map-pin" aria-hidden="true"></i><span>Philippines</span><strong>Cainta · UTC+8 · <time id="philippines-time" aria-label="Current time in the Philippines">{philippinesTime}</time></strong></p>
         </address>
       </div>
@@ -62,10 +71,6 @@ const philippinesTime = new Intl.DateTimeFormat('en-PH', {
     </main>
   </div>
 
-  <button class="back-to-top" type="button" data-back-to-top aria-label="Back to top">
-    <i class="ph-duotone ph-arrow-up" aria-hidden="true"></i>
-    <span>Back to top</span>
-  </button>
 </Layout>
 
 <script>
@@ -95,7 +100,7 @@ const philippinesTime = new Intl.DateTimeFormat('en-PH', {
     const homeIcons = gsap.utils.toArray<HTMLElement>('.express-stats i');
     const aboutReveal = gsap.utils.toArray<HTMLElement>('.home-about-copy, .home-project-preview');
     const contactReveal = gsap.utils.toArray<HTMLElement>('.home-cta-copy, .home-contact-details');
-    const backToTop = document.querySelector<HTMLButtonElement>('[data-back-to-top]');
+    const alternateProjectPreview = document.querySelector<HTMLElement>('.home-project-preview-alternate');
     const localTime = document.querySelector<HTMLTimeElement>('#philippines-time');
     const media = gsap.matchMedia();
 
@@ -105,29 +110,8 @@ const philippinesTime = new Intl.DateTimeFormat('en-PH', {
       localTime.textContent = timeFormatter.format(now);
       localTime.dateTime = now.toISOString();
     };
-    const updateBackToTop = () => {
-      if (!backToTop) return;
-      const smoother = ScrollSmoother.get();
-      const scrollPosition = smoother ? smoother.scrollTop() : window.scrollY;
-      const maxScroll = ScrollTrigger.maxScroll(window);
-      const revealOffset = Math.max(96, window.innerHeight * 0.12);
-      backToTop.classList.toggle('is-visible', maxScroll > 0 && scrollPosition >= maxScroll - revealOffset);
-    };
-    const scrollHomeToTop = () => {
-      const smoother = ScrollSmoother.get();
-      if (smoother) {
-        smoother.scrollTo(0, true);
-        return;
-      }
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    };
-
     updateLocalTime();
     const localTimeInterval = window.setInterval(updateLocalTime, 1_000);
-    backToTop?.addEventListener('click', scrollHomeToTop);
-    window.addEventListener('scroll', updateBackToTop, { passive: true });
-    ScrollTrigger.addEventListener('refresh', updateBackToTop);
-    updateBackToTop();
 
     media.add('(prefers-reduced-motion: no-preference)', () => {
       const headlineIntro = gsap.timeline()
@@ -162,13 +146,23 @@ const philippinesTime = new Intl.DateTimeFormat('en-PH', {
         overwrite: 'auto',
         scrollTrigger: { trigger: '.home-cta', start: 'top 78%', toggleActions: 'play none none reverse' },
       });
+      const projectImageTween = alternateProjectPreview && gsap.to(alternateProjectPreview, {
+        autoAlpha: 1,
+        duration: 0.38,
+        ease: 'power2.out',
+        overwrite: 'auto',
+        scrollTrigger: { trigger: '.home-cta', start: 'top 78%', toggleActions: 'play none none reverse' },
+      });
 
       return () => {
         aboutTween.scrollTrigger?.kill();
         contactTween.scrollTrigger?.kill();
+        projectImageTween?.scrollTrigger?.kill();
         aboutTween.kill();
         contactTween.kill();
+        projectImageTween?.kill();
         gsap.set([...aboutReveal, ...contactReveal], { clearProps: 'opacity,visibility,transform' });
+        if (alternateProjectPreview) gsap.set(alternateProjectPreview, { clearProps: 'opacity,visibility' });
       };
     });
 
@@ -181,15 +175,7 @@ const philippinesTime = new Intl.DateTimeFormat('en-PH', {
         normalizeScroll: true,
         ignoreMobileResize: true,
       });
-      const backToTopTrigger = ScrollTrigger.create({
-        trigger: '#smooth-content',
-        start: 'top top',
-        end: 'bottom bottom',
-        onUpdate: (self) => backToTop?.classList.toggle('is-visible', self.progress >= 0.9),
-      });
-
       return () => {
-        backToTopTrigger.kill();
         smoother.kill();
       };
     });
@@ -197,9 +183,6 @@ const philippinesTime = new Intl.DateTimeFormat('en-PH', {
     const dispose = () => {
       media.revert();
       window.clearInterval(localTimeInterval);
-      backToTop?.removeEventListener('click', scrollHomeToTop);
-      window.removeEventListener('scroll', updateBackToTop);
-      ScrollTrigger.removeEventListener('refresh', updateBackToTop);
       window.removeEventListener('portfolio:navigate', dispose);
     };
     cleanupHome = dispose;
