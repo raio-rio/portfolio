@@ -10,7 +10,7 @@ interface Props {
 
 const { project, expanded = false, showStack = false } = Astro.props;
 const images = getProjectImages(project.id);
-const detail = project.body.replace(/^\s*## Overview\s*/m, '').trim() || project.data.tagline;
+const detail = (project.body ?? '').replace(/^\s*## Overview\s*/m, '').trim() || project.data.tagline;
 const modalId = `project-modal-${project.id}`;
 ---
 

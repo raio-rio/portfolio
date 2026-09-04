@@ -31,7 +31,61 @@ const promorphAlternate = promorphImages[1];
         <div><span class="metric-icon"><i class="ph-duotone ph-chart-line-up" aria-hidden="true"></i></span><p><strong>87.5%</strong><span>Time savings achieved</span></p></div>
         <div><span class="metric-icon"><i class="ph-duotone ph-code" aria-hidden="true"></i></span><p><strong>6</strong><span>Systems reworked</span></p></div>
       </div>
-      <a class="calendly-secondary calendly-hero-link" data-calendly-link href="https://calendly.com/programmingrio"><i class="ph-duotone ph-calendar-check" aria-hidden="true"></i><span class="calendly-hero-prompt">Interested to know more?</span><span class="calendly-link-label">Book a call</span></a>
+      <a class="calendly-secondary calendly-hero-link" data-contact-choice-open href="#contact-choice-dialog"><i class="ph-duotone ph-chats-circle" aria-hidden="true"></i><span class="calendly-hero-prompt">Interested to know more?</span><span class="calendly-link-label">Book or Message</span></a>
+      <dialog id="contact-choice-dialog" class="contact-email-dialog contact-choice-dialog" data-contact-choice-dialog>
+        <div class="contact-email-dialog-panel">
+          <button class="contact-email-dialog-close" type="button" data-contact-dialog-close aria-label="Close contact options">
+            <i class="ph-duotone ph-x" aria-hidden="true"></i>
+          </button>
+
+          <div class="contact-dialog-step" data-contact-choice-step>
+            <i class="contact-email-dialog-icon ph-duotone ph-chats-circle" aria-hidden="true"></i>
+            <p class="contact-email-dialog-kicker">Let’s talk</p>
+            <h3>How would you like to connect?</h3>
+            <div class="contact-choice-options">
+              <a data-contact-call data-calendly-link href="https://calendly.com/programmingrio">
+                <i class="ph-duotone ph-calendar-check" aria-hidden="true"></i>
+                <span>Book a call</span>
+                <strong>Choose a time</strong>
+              </a>
+              <button type="button" data-contact-message-open>
+                <i class="ph-duotone ph-paper-plane-tilt" aria-hidden="true"></i>
+                <span>Send a message</span>
+                <strong>Write to me</strong>
+              </button>
+            </div>
+          </div>
+
+          <form class="home-contact-form contact-dialog-form" data-contact-form hidden>
+            <div class="contact-dialog-step" data-contact-message-step>
+              <button class="contact-dialog-back" type="button" data-contact-back-choice><i class="ph-duotone ph-arrow-left" aria-hidden="true"></i> Back</button>
+              <h3>What would you like to discuss?</h3>
+              <div class="contact-form-fields">
+                <label class="contact-form-message">
+                  <span>Message</span>
+                  <textarea name="message" minlength="10" maxlength="5000" rows="4" placeholder="Prefer to write? Write your message here…" required></textarea>
+                </label>
+                <label>
+                  <span>Email</span>
+                  <input type="email" name="email" autocomplete="email" inputmode="email" maxlength="254" required data-contact-email />
+                </label>
+              </div>
+              <button class="contact-form-trigger contact-form-submit" type="submit" data-contact-submit>
+                <i class="ph-duotone ph-paper-plane-tilt" aria-hidden="true"></i>
+                <span>Send message</span>
+                <strong data-contact-submit-label>Submit <i class="ph-duotone ph-arrow-right" aria-hidden="true"></i></strong>
+              </button>
+            </div>
+            <p class="contact-dialog-status" data-contact-dialog-status role="alert" aria-live="assertive"></p>
+            <a class="contact-form-fallback" data-contact-fallback href="mailto:programmingrio@gmail.com" hidden>Email me directly</a>
+
+            <label class="contact-form-honeypot" aria-hidden="true">
+              <span>Company</span>
+              <input type="text" name="company" tabindex="-1" autocomplete="off" />
+            </label>
+          </form>
+        </div>
+      </dialog>
     </section>
 
     <section class="home-section home-about" aria-labelledby="about-heading">
@@ -101,8 +155,23 @@ const promorphAlternate = promorphImages[1];
     const aboutReveal = gsap.utils.toArray<HTMLElement>('.home-about-copy, .home-project-preview');
     const contactReveal = gsap.utils.toArray<HTMLElement>('.home-cta-copy, .home-contact-details');
     const alternateProjectPreview = document.querySelector<HTMLElement>('.home-project-preview-alternate');
+    const contactForm = document.querySelector<HTMLFormElement>('[data-contact-form]');
+    const contactOpen = document.querySelector<HTMLAnchorElement>('[data-contact-choice-open]');
+    const contactDialog = document.querySelector<HTMLDialogElement>('[data-contact-choice-dialog]');
+    const contactDialogClose = contactDialog?.querySelectorAll<HTMLButtonElement>('[data-contact-dialog-close]') ?? [];
+    const contactChoiceStep = contactDialog?.querySelector<HTMLElement>('[data-contact-choice-step]');
+    const contactMessageStep = contactForm?.querySelector<HTMLElement>('[data-contact-message-step]');
+    const contactMessageOpen = contactDialog?.querySelector<HTMLButtonElement>('[data-contact-message-open]');
+    const contactBackChoice = contactForm?.querySelector<HTMLButtonElement>('[data-contact-back-choice]');
+    const contactCall = contactDialog?.querySelector<HTMLAnchorElement>('[data-contact-call]');
+    const contactSubmit = contactForm?.querySelector<HTMLButtonElement>('[data-contact-submit]');
+    const contactSubmitLabel = contactForm?.querySelector<HTMLElement>('[data-contact-submit-label]');
+    const contactDialogStatus = contactForm?.querySelector<HTMLElement>('[data-contact-dialog-status]');
+    const contactFallback = contactForm?.querySelector<HTMLAnchorElement>('[data-contact-fallback]');
+    const contactMessage = contactForm?.querySelector<HTMLTextAreaElement>('textarea[name="message"]');
     const localTime = document.querySelector<HTMLTimeElement>('#philippines-time');
     const media = gsap.matchMedia();
+    let contactFormPending = false;
 
     const updateLocalTime = () => {
       if (!localTime) return;
@@ -112,6 +181,105 @@ const promorphAlternate = promorphImages[1];
     };
     updateLocalTime();
     const localTimeInterval = window.setInterval(updateLocalTime, 1_000);
+
+    const clearContactFeedback = () => {
+      if (contactDialogStatus) {
+        contactDialogStatus.textContent = '';
+        contactDialogStatus.dataset.state = '';
+      }
+      if (contactFallback) contactFallback.hidden = true;
+    };
+
+    const showContactStep = (step: 'choice' | 'message') => {
+      if (contactChoiceStep) contactChoiceStep.hidden = step !== 'choice';
+      if (contactForm) contactForm.hidden = step === 'choice';
+      if (contactMessageStep) contactMessageStep.hidden = step !== 'message';
+      clearContactFeedback();
+
+      window.requestAnimationFrame(() => {
+        if (step === 'message') contactMessage?.focus();
+      });
+    };
+
+    const handleContactOpen = (event: MouseEvent) => {
+      event.preventDefault();
+      if (!contactDialog) return;
+      showContactStep('choice');
+      contactDialog.showModal();
+    };
+
+    const handleMessageOpen = () => showContactStep('message');
+
+    const handleMessageInput = () => {
+      contactMessage?.setCustomValidity('');
+    };
+
+    const handleDialogClose = () => {
+      if (!contactFormPending) contactDialog?.close();
+    };
+
+    const handleContactCall = () => contactDialog?.close();
+    const handleBackChoice = () => showContactStep('choice');
+
+    const handleContactSubmit = async (event: SubmitEvent) => {
+      event.preventDefault();
+      if (!contactForm || !contactSubmit || contactFormPending || !contactForm.reportValidity()) return;
+
+      contactFormPending = true;
+      contactSubmit.disabled = true;
+      contactSubmit.setAttribute('aria-busy', 'true');
+      if (contactSubmitLabel) contactSubmitLabel.textContent = 'Submitting…';
+      clearContactFeedback();
+      contactForm.querySelectorAll<HTMLElement>('[aria-invalid="true"]').forEach((field) => field.removeAttribute('aria-invalid'));
+
+      const formData = new FormData(contactForm);
+      try {
+        const response = await fetch('/api/contact', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email: formData.get('email'),
+            whatsapp: '',
+            message: formData.get('message'),
+            company: formData.get('company'),
+          }),
+        });
+        const result = await response.json() as { ok?: boolean; message?: string; errors?: Record<string, string> };
+        if (!response.ok || !result.ok) {
+          if (result.errors) {
+            Object.keys(result.errors).forEach((name) => {
+              const field = contactForm.elements.namedItem(name);
+              if (field instanceof HTMLElement) field.setAttribute('aria-invalid', 'true');
+            });
+          }
+          throw new Error(result.message || 'Your message could not be sent right now.');
+        }
+
+        contactForm.reset();
+        if (contactDialogStatus) {
+          contactDialogStatus.textContent = result.message || 'Message sent — I’ll get back to you soon.';
+          contactDialogStatus.dataset.state = 'success';
+        }
+      } catch (error) {
+        if (contactDialogStatus) {
+          contactDialogStatus.textContent = error instanceof Error ? error.message : 'Your message could not be sent right now.';
+          contactDialogStatus.dataset.state = 'error';
+        }
+        if (contactFallback) contactFallback.hidden = false;
+      } finally {
+        contactFormPending = false;
+        contactSubmit.disabled = false;
+        contactSubmit.removeAttribute('aria-busy');
+        if (contactSubmitLabel) contactSubmitLabel.innerHTML = 'Submit <i class="ph-duotone ph-arrow-right" aria-hidden="true"></i>';
+      }
+    };
+    contactOpen?.addEventListener('click', handleContactOpen);
+    contactMessageOpen?.addEventListener('click', handleMessageOpen);
+    contactBackChoice?.addEventListener('click', handleBackChoice);
+    contactCall?.addEventListener('click', handleContactCall);
+    contactMessage?.addEventListener('input', handleMessageInput);
+    contactDialogClose.forEach((button) => button.addEventListener('click', handleDialogClose));
+    contactForm?.addEventListener('submit', handleContactSubmit);
 
     media.add('(prefers-reduced-motion: no-preference)', () => {
       const headlineIntro = gsap.timeline()
@@ -183,6 +351,13 @@ const promorphAlternate = promorphImages[1];
     const dispose = () => {
       media.revert();
       window.clearInterval(localTimeInterval);
+      contactOpen?.removeEventListener('click', handleContactOpen);
+      contactMessageOpen?.removeEventListener('click', handleMessageOpen);
+      contactBackChoice?.removeEventListener('click', handleBackChoice);
+      contactCall?.removeEventListener('click', handleContactCall);
+      contactMessage?.removeEventListener('input', handleMessageInput);
+      contactDialogClose.forEach((button) => button.removeEventListener('click', handleDialogClose));
+      contactForm?.removeEventListener('submit', handleContactSubmit);
       window.removeEventListener('portfolio:navigate', dispose);
     };
     cleanupHome = dispose;
