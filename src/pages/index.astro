@@ -45,34 +45,34 @@ const promorphAlternate = promorphImages[1];
             <div class="contact-choice-options">
               <a data-contact-call data-calendly-link href="https://calendly.com/programmingrio">
                 <i class="ph-duotone ph-calendar-check" aria-hidden="true"></i>
-                <span>Book a call</span>
-                <strong>Choose a time</strong>
+                <strong>Book a call</strong>
               </a>
               <button type="button" data-contact-message-open>
                 <i class="ph-duotone ph-paper-plane-tilt" aria-hidden="true"></i>
-                <span>Send a message</span>
-                <strong>Write to me</strong>
+                <strong>Send a message</strong>
               </button>
+              <a class="contact-choice-linkedin" href="https://www.linkedin.com/in/rioespinosa02/" target="_blank" rel="noreferrer">
+                <i class="ph-duotone ph-linkedin-logo" aria-hidden="true"></i>
+                <strong>LinkedIn</strong>
+              </a>
             </div>
           </div>
 
           <form class="home-contact-form contact-dialog-form" data-contact-form hidden>
             <div class="contact-dialog-step" data-contact-message-step>
-              <button class="contact-dialog-back" type="button" data-contact-back-choice><i class="ph-duotone ph-arrow-left" aria-hidden="true"></i> Back</button>
               <h3>What would you like to discuss?</h3>
               <div class="contact-form-fields">
+                <label>
+                  <span>Email</span>
+                  <input type="email" name="email" autocomplete="email" inputmode="email" maxlength="254" placeholder="you@example.com" required data-contact-email />
+                </label>
                 <label class="contact-form-message">
                   <span>Message</span>
                   <textarea name="message" minlength="10" maxlength="5000" rows="4" placeholder="Prefer to write? Write your message here…" required></textarea>
                 </label>
-                <label>
-                  <span>Email</span>
-                  <input type="email" name="email" autocomplete="email" inputmode="email" maxlength="254" required data-contact-email />
-                </label>
               </div>
               <button class="contact-form-trigger contact-form-submit" type="submit" data-contact-submit>
                 <i class="ph-duotone ph-paper-plane-tilt" aria-hidden="true"></i>
-                <span>Send message</span>
                 <strong data-contact-submit-label>Submit <i class="ph-duotone ph-arrow-right" aria-hidden="true"></i></strong>
               </button>
             </div>
@@ -162,7 +162,6 @@ const promorphAlternate = promorphImages[1];
     const contactChoiceStep = contactDialog?.querySelector<HTMLElement>('[data-contact-choice-step]');
     const contactMessageStep = contactForm?.querySelector<HTMLElement>('[data-contact-message-step]');
     const contactMessageOpen = contactDialog?.querySelector<HTMLButtonElement>('[data-contact-message-open]');
-    const contactBackChoice = contactForm?.querySelector<HTMLButtonElement>('[data-contact-back-choice]');
     const contactCall = contactDialog?.querySelector<HTMLAnchorElement>('[data-contact-call]');
     const contactSubmit = contactForm?.querySelector<HTMLButtonElement>('[data-contact-submit]');
     const contactSubmitLabel = contactForm?.querySelector<HTMLElement>('[data-contact-submit-label]');
@@ -218,8 +217,11 @@ const promorphAlternate = promorphImages[1];
       if (!contactFormPending) contactDialog?.close();
     };
 
+    const handleDialogBackdrop = (event: MouseEvent) => {
+      if (event.target === contactDialog) handleDialogClose();
+    };
+
     const handleContactCall = () => contactDialog?.close();
-    const handleBackChoice = () => showContactStep('choice');
 
     const handleContactSubmit = async (event: SubmitEvent) => {
       event.preventDefault();
@@ -275,10 +277,10 @@ const promorphAlternate = promorphImages[1];
     };
     contactOpen?.addEventListener('click', handleContactOpen);
     contactMessageOpen?.addEventListener('click', handleMessageOpen);
-    contactBackChoice?.addEventListener('click', handleBackChoice);
     contactCall?.addEventListener('click', handleContactCall);
     contactMessage?.addEventListener('input', handleMessageInput);
     contactDialogClose.forEach((button) => button.addEventListener('click', handleDialogClose));
+    contactDialog?.addEventListener('click', handleDialogBackdrop);
     contactForm?.addEventListener('submit', handleContactSubmit);
 
     media.add('(prefers-reduced-motion: no-preference)', () => {
@@ -353,10 +355,10 @@ const promorphAlternate = promorphImages[1];
       window.clearInterval(localTimeInterval);
       contactOpen?.removeEventListener('click', handleContactOpen);
       contactMessageOpen?.removeEventListener('click', handleMessageOpen);
-      contactBackChoice?.removeEventListener('click', handleBackChoice);
       contactCall?.removeEventListener('click', handleContactCall);
       contactMessage?.removeEventListener('input', handleMessageInput);
       contactDialogClose.forEach((button) => button.removeEventListener('click', handleDialogClose));
+      contactDialog?.removeEventListener('click', handleDialogBackdrop);
       contactForm?.removeEventListener('submit', handleContactSubmit);
       window.removeEventListener('portfolio:navigate', dispose);
     };
