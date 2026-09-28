@@ -3,7 +3,7 @@ title: "ProMorph: Classification Model in ICIAC Japan 2024"
 type: Personal
 tagline: An innovative classification model using morphological dilation to classify dermoscopic images of skin lesions.
 stack: [Python, TensorFlow, Jupyter, AWS]
-order: 2
+order: 3
 url: https://dl.acm.org/doi/10.1145/3655497.3655510
 urlLabel: Read paper
 ---

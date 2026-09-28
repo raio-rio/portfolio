@@ -60,6 +60,45 @@ const currentPath = normalizePath(Astro.url.pathname);
   const timeDifference = document.querySelector<HTMLElement>('[data-time-difference]');
   const dock = document.querySelector<HTMLElement>('[data-dock]');
   const dockItems = dock ? Array.from(dock.querySelectorAll<HTMLElement>('[data-dock-item]')) : [];
+  const siteNav = document.querySelector<HTMLElement>('.site-nav');
+  let navVisibilityTrigger: ScrollTrigger | undefined;
+  let navIsVisible = true;
+
+  const setNavigationVisibility = (visible: boolean, immediate = false) => {
+    if (!siteNav || navIsVisible === visible) return;
+    navIsVisible = visible;
+    gsap.to(siteNav, {
+      '--nav-hide-y': visible ? '0%' : '-140%',
+      autoAlpha: visible ? 1 : 0,
+      pointerEvents: visible ? 'auto' : 'none',
+      duration: immediate ? 0 : 0.28,
+      ease: visible ? 'power2.out' : 'power2.in',
+      overwrite: true,
+    });
+  };
+
+  const initializeNavVisibility = () => {
+    navVisibilityTrigger?.kill();
+    ScrollTrigger.getById('site-nav-visibility')?.kill();
+    navVisibilityTrigger = undefined;
+    navIsVisible = true;
+
+    if (!siteNav) return;
+    gsap.set(siteNav, { clearProps: 'transform' });
+    gsap.set(siteNav, { '--nav-hide-y': '0%', autoAlpha: 1, pointerEvents: 'auto' });
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    navVisibilityTrigger = ScrollTrigger.create({
+      id: 'site-nav-visibility',
+      start: 0,
+      end: 'max',
+      onUpdate: (self) => setNavigationVisibility(self.scroll() <= 20 || self.direction < 0),
+      onLeaveBack: () => setNavigationVisibility(true),
+      onRefresh: (self) => {
+        if (self.scroll() <= 20) setNavigationVisibility(true, true);
+      },
+    });
+  };
 
   const localTimeFormatter = new Intl.DateTimeFormat(undefined, {
     hour: 'numeric',
@@ -287,7 +326,10 @@ const currentPath = normalizePath(Astro.url.pathname);
 
   document.addEventListener('astro:after-swap', initializeSectionNavigation);
   document.addEventListener('astro:page-load', initializeSectionNavigation);
+  document.addEventListener('astro:after-swap', initializeNavVisibility);
+  document.addEventListener('astro:page-load', initializeNavVisibility);
   initializeSectionNavigation();
+  initializeNavVisibility();
 
   internalLinks.forEach((link) => {
     link.addEventListener('click', (event) => {
@@ -313,6 +355,7 @@ const currentPath = normalizePath(Astro.url.pathname);
       gsap.set(window, { scrollTo: { y: targetTop, autoKill: false } });
       ScrollTrigger.update();
       setCurrentSection(link.dataset.sectionLink ?? link.hash.slice(1));
+      setNavigationVisibility(true);
     });
   });
 </script>

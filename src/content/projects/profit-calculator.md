@@ -3,7 +3,7 @@ title: Profit Calculator
 type: Work
 tagline: A Discord bot that calculates NFT collection costs, sales, ROI, and potential profit across a wallet’s activity.
 stack: [Python, Nextcord, Web3.py, Etherscan API, OpenSea API]
-order: 10
+order: 11
 ---
 
 ## Overview

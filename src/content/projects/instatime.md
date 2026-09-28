@@ -3,7 +3,7 @@ title: InstaTime
 type: Personal
 tagline: A Chromium extension that reveals exact local dates and times on Instagram posts, comments, and stories.
 stack: [JavaScript, Chrome Extension API, HTML, CSS, Bootstrap]
-order: 14
+order: 15
 url: https://github.com/raio-rio/InstaTime
 urlLabel: GitHub
 ---

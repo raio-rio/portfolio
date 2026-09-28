@@ -3,6 +3,12 @@
 - 2026-09-27T16:24:38Z [USER] Replace Archivo Expanded with a bolder font similar to the reference site and redesign the homepage metric highlights; visual direction is awaiting selection.
 
 [DECISIONS]
+- 2026-09-28T07:12:31Z [USER] Limit homepage Projects and Experience to featured previews with links to the complete dedicated pages, reducing the amount of scrolling required.
+- 2026-09-28T07:07:38Z [USER] Change the homepage project metric to `13+` and the generated/saved metric to `$8,000+`.
+- 2026-09-28T07:05:03Z [USER] Add a hide-on-scroll navbar animation.
+- 2026-09-28T07:00:41Z [USER] Reduce the mobile navbar-to-hero gap and replace the cramped single-row mobile navigation with a more readable treatment.
+- 2026-09-28T06:53:36Z [USER] On mobile, stack all homepage metrics vertically and hide the dark/light theme toggle.
+- 2026-09-28T05:22:14Z [USER] Add the new planner screenshot as a Work project describing its responsive web/desktop daily task and habit planning, tracking, detail, and AI review/help capabilities.
 - 2026-09-28T04:55:57Z [USER] Set the homepage role text to `a Full Stack Developer/AI Enthusiast`.
 - 2026-09-28T04:48:09Z [USER] Render Personal/Work project types as plain words rather than pills and prefix the homepage role with `a`.
 - 2026-09-28T04:46:00Z [USER] Label X Analytics Dashboard, Vista Salon Suite, Contract Scanner, Twitter/X Monitor, Mint Monitor, Profit Calculator, and Crypto Wallet Manager as Work; label every other project Personal.
@@ -46,6 +52,12 @@
 - 2026-09-27T16:42:55Z [USER] Make the homepage wordmark lowercase and remove its blue color while retaining blue metric accents.
 
 [PROGRESS]
+- 2026-09-28T07:12:31Z [CODE] Homepage Projects now renders the first four featured entries with a `See all projects` link; Experience renders the two most recent roles with a `See all experience` link. Full `/projects/` and `/experience/` pages remain unchanged. Reworked navbar hide translation through a CSS custom property so desktop-to-mobile resizing cannot retain the desktop centering transform.
+- 2026-09-28T07:07:38Z [CODE] Updated the homepage highlights to `13+ Projects` and `$8,000+ Generated/saved by my projects`.
+- 2026-09-28T07:05:03Z [CODE] Added a standalone GSAP ScrollTrigger that slides/fades the navbar out on downward scrolling, restores it on upward scrolling or near the page top, keeps it visible after anchor selections, and leaves it static for reduced-motion users.
+- 2026-09-28T07:00:41Z [CODE] Rebuilt the <=680px navbar as a compact 2x2 grid for Home, Projects, Experience, and Stack, then top-aligned the hero 24px below the taller nav while keeping the mobile theme toggle hidden.
+- 2026-09-28T06:53:36Z [CODE] At the 680px mobile breakpoint, changed the hero metrics to one column, hid the theme toggle, and expanded the navbar into the released space; tablet and desktop layouts remain unchanged.
+- 2026-09-28T05:22:14Z [CODE] Added `My Planner` as the second featured project with the supplied planner image, Work classification, concise card copy, expanded overview, unique order values across all 15 projects, and updated the homepage project metric to `15+`.
 - 2026-09-28T04:55:57Z [CODE] Replaced the homepage hero role with `a Full Stack Developer/AI Enthusiast`.
 - 2026-09-28T04:48:09Z [CODE] Removed project-type borders, backgrounds, radius, and padding while retaining subtle Work accent color; changed the hero role to `a Full Stack Developer & AI Engineer`.
 - 2026-09-28T04:46:00Z [CODE] Added a required Personal/Work enum to project content, classified all 14 project entries, and rendered a compact type badge immediately before every project title through the shared ProjectCard component.
@@ -94,6 +106,7 @@
 - 2026-09-27T16:42:55Z [CODE] Changed the hero wordmark content to lowercase `rio`, set its text transformation to lowercase, and changed its color from the accent to the theme-aware ink color.
 
 [DISCOVERIES]
+- 2026-09-28T07:12:31Z [TOOL] Mobile viewport testing exposed that animating the navbar's transform directly could retain desktop `translateX(-50%)` after a live resize; separating the hide offset into `--nav-hide-y` preserves each breakpoint's own horizontal positioning.
 - 2026-09-28T03:14:10Z [CODE] Native smooth scrolling and the global `html { scroll-behavior: smooth; }` rule were interpolating long navbar jumps while multiple scrubbed/pinned ScrollTriggers updated, producing competing intermediate transforms before Projects or Experience settled.
 - 2026-09-28T02:57:41Z [TOOL] The desktop `body` zoom made ScrollTrigger cache oversized panel widths; after removing it and reloading, all four panels matched the 1317px document viewport, each inner wrapper had a 0px center delta, and horizontal overflow was 0px at rest and while scrolled.
 - 2026-09-28T02:42:03Z [TOOL] The referenced GreenSock CodePen pins each viewport panel without pin spacing, translates overflowing inner content first, then scales and fades the outgoing panel while the next section enters; pinned spacers require explicit resolved destinations for reliable navbar jumps.
@@ -110,6 +123,12 @@
 - 2026-09-27T16:24:38Z [TOOL] Current sahen.site CSS declares `Geist Variable` for its primary typeface; Geist supports weights through 900, making Geist 900 the closest bolder match.
 
 [OUTCOMES]
+- 2026-09-28T07:12:31Z [TOOL] Live desktop/mobile DOM checks confirmed four featured projects, two featured roles, both full-list links, centered responsive navbar behavior, zero horizontal overflow, and no browser errors; `npm run check` passed with 0 errors and 19 existing/deprecation hints, `npm run build` passed, and `git diff --check` passed with line-ending warnings only.
+- 2026-09-28T07:07:38Z [TOOL] Live DOM verification confirmed `5+`, `13+`, and `$8,000+`; `npm run check` passed with 0 errors and 19 existing/deprecation hints, and `npm run build` passed.
+- 2026-09-28T07:05:03Z [TOOL] Live desktop and 375px tests confirmed the navbar hides fully on downward scroll and returns on upward scroll with zero overflow and no browser errors; `npm run check` passed with 0 errors and 19 existing/deprecation hints, `npm run build` passed, and `git diff --check` passed with line-ending warnings only.
+- 2026-09-28T07:00:41Z [TOOL] Live 375px and 320px checks confirmed a 24px navbar-to-hero gap, equal two-column navigation, vertically stacked metrics, hidden theme toggle, and zero horizontal overflow; `npm run check` passed with 0 errors and 19 existing/deprecation hints, `npm run build` passed, and `git diff --check` passed with line-ending warnings only.
+- 2026-09-28T06:53:36Z [TOOL] `npm run check` passed with 0 errors and 19 existing/deprecation hints, `npm run build` passed, and `git diff --check` passed with line-ending warnings only after the mobile metric and toggle update.
+- 2026-09-28T05:22:14Z [TOOL] Live DOM verification confirmed My Planner renders second with the correct image path, Work label, responsive web/desktop and AI copy, 15+ metric, no overflow, and no browser errors; npm check passed with 0 errors and 19 existing/deprecation hints, npm build passed, and git diff --check passed with line-ending warnings only.
 - 2026-09-28T04:55:57Z [TOOL] npm check passed with 0 errors and 19 existing/deprecation hints, npm build passed, and git diff --check passed with line-ending warnings only after the role copy update.
 - 2026-09-28T04:48:09Z [TOOL] Live computed styles confirmed project types are borderless, transparent, unpadded text and the revised role is rendered with no overflow or browser errors; npm check passed with 0 errors and 19 existing/deprecation hints, npm build passed, and git diff --check passed with line-ending warnings only.
 - 2026-09-28T04:46:00Z [TOOL] Live DOM verification confirmed seven Work and seven Personal badges, all before their titles, with the exact requested Work set, no horizontal overflow, and no browser errors; npm check passed with 0 errors and 19 existing/deprecation hints, npm build passed, and git diff --check passed with line-ending warnings only.
