@@ -3,6 +3,7 @@
 - 2026-09-27T16:24:38Z [USER] Replace Archivo Expanded with a bolder font similar to the reference site and redesign the homepage metric highlights; visual direction is awaiting selection.
 
 [DECISIONS]
+- 2026-09-28T03:14:10Z [USER] Navbar selections from Home must reach Projects and Experience without the pinned panels spasming or glitching during the jump.
 - 2026-09-28T03:01:10Z [USER] Reorder both the homepage and primary navigation to Home → Projects → Experience → Stack.
 - 2026-09-28T02:57:41Z [USER] Keep the homepage and every scroll section horizontally centered instead of shifted to the right.
 - 2026-09-28T02:42:03Z [USER] Adapt GreenSock's `Slides Pinning - Overscroll Solution` behavior across the homepage sections.
@@ -41,6 +42,7 @@
 - 2026-09-27T16:42:55Z [USER] Make the homepage wordmark lowercase and remove its blue color while retaining blue metric accents.
 
 [PROGRESS]
+- 2026-09-28T03:14:10Z [CODE] Replaced native smooth section jumps with an immediate registered ScrollToPlugin position update, synchronized ScrollTrigger afterward, stopped the Astro router click from also handling the anchor, and removed the conflicting global CSS smooth-scroll rule.
 - 2026-09-28T03:01:10Z [CODE] Moved the Projects panel before Experience in homepage markup and mirrored that order in the shared primary navigation; ScrollTrigger continues deriving targets from DOM order.
 - 2026-09-28T02:57:41Z [CODE] Removed the desktop-wide `body` zoom and its `/1.15` viewport-height compensations so ScrollTrigger pins and measures every section in the browser's actual viewport coordinate system.
 - 2026-09-28T02:42:03Z [CODE] Wrapped homepage sections in pinned viewport surfaces; GSAP ScrollTrigger now scrolls tall panel content internally, then scales/fades the outgoing surface as the next panel rises over it, with subtle underlay/shadow separation and a normal-flow reduced-motion fallback.
@@ -84,6 +86,7 @@
 - 2026-09-27T16:42:55Z [CODE] Changed the hero wordmark content to lowercase `rio`, set its text transformation to lowercase, and changed its color from the accent to the theme-aware ink color.
 
 [DISCOVERIES]
+- 2026-09-28T03:14:10Z [CODE] Native smooth scrolling and the global `html { scroll-behavior: smooth; }` rule were interpolating long navbar jumps while multiple scrubbed/pinned ScrollTriggers updated, producing competing intermediate transforms before Projects or Experience settled.
 - 2026-09-28T02:57:41Z [TOOL] The desktop `body` zoom made ScrollTrigger cache oversized panel widths; after removing it and reloading, all four panels matched the 1317px document viewport, each inner wrapper had a 0px center delta, and horizontal overflow was 0px at rest and while scrolled.
 - 2026-09-28T02:42:03Z [TOOL] The referenced GreenSock CodePen pins each viewport panel without pin spacing, translates overflowing inner content first, then scales and fades the outgoing panel while the next section enters; pinned spacers require explicit resolved destinations for reliable navbar jumps.
 - 2026-09-28T01:45:46Z [TOOL] The public rioespinosa.com homepage exposes an existing WhatsApp quick link, allowing the local implementation to reuse the verified destination rather than guess contact data.
@@ -99,6 +102,7 @@
 - 2026-09-27T16:24:38Z [TOOL] Current sahen.site CSS declares `Geist Variable` for its primary typeface; Geist supports weights through 900, making Geist 900 the closest bolder match.
 
 [OUTCOMES]
+- 2026-09-28T03:14:10Z [TOOL] Runtime inspection confirmed auto root scroll behavior, valid ordered panel targets, zero horizontal overflow, and no browser errors; npm check passed with 0 errors and 18 existing hints, npm build passed, and git diff --check passed with line-ending warnings only.
 - 2026-09-28T03:01:10Z [TOOL] Live rendering confirmed Home → Projects → Experience → Stack in the nav and panel DOM with increasing ScrollTrigger targets, zero horizontal overflow, and no browser errors; npm check passed with 0 errors and 18 existing hints, npm build passed, and git diff --check passed with line-ending warnings only.
 - 2026-09-28T02:57:41Z [TOOL] Live desktop measurements confirmed centered Home, Experience, Projects, and Stack panels with no horizontal overflow or browser errors; npm check passed with 0 errors and 18 existing hints, npm build passed, and git diff --check passed with line-ending warnings only.
 - 2026-09-28T02:42:03Z [TOOL] Desktop and 320px live tests confirmed pinned transitions, readable long-section scrolling, accurate anchor destinations, automatic active-nav changes, responsive layouts, and zero browser console errors; npm check passed with 0 errors and 18 existing hints, npm build passed, and git diff --check passed with line-ending warnings only.

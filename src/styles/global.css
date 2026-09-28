@@ -1,7 +1,7 @@
 :root { --ink: #111; --muted: #555; --line: #e5e5e5; --page: #fff; --section-hover: #f8f8f6; --accent: #3b5bdb; --header-glow: rgb(59 91 219 / .13); --font: "Inter", sans-serif; --display-font: "Inter", sans-serif; }
 html.theme-dark { --ink: #e8e6e0; --muted: #b9b7b0; --line: #48484f; --page: #242429; --section-hover: #2d2d33; --accent: #3b5bdb; --header-glow: rgb(59 91 219 / .13); color-scheme: dark; }
 * { box-sizing: border-box; }
-html { overflow-x: clip; scroll-behavior: smooth; }
+html { overflow-x: clip; }
 body { display: flow-root; min-height: 100dvh; overflow-x: clip; margin: 0; background: var(--page); color: var(--ink); font-family: var(--font); font-size: 16px; line-height: 1.5; }
 h1 { font-family: var(--display-font); text-transform: lowercase; }
 a { color: inherit; }

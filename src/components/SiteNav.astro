@@ -47,8 +47,9 @@ const currentPath = normalizePath(Astro.url.pathname);
 <script>
   import { gsap } from 'gsap';
   import { ScrollTrigger } from 'gsap/ScrollTrigger';
+  import { ScrollToPlugin } from 'gsap/ScrollToPlugin';
 
-  gsap.registerPlugin(ScrollTrigger);
+  gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
 
   const phTime = document.querySelector<HTMLTimeElement>('[data-ph-time]');
   const phTimeIcon = document.querySelector<HTMLElement>('[data-ph-time-icon]');
@@ -291,7 +292,6 @@ const currentPath = normalizePath(Astro.url.pathname);
   internalLinks.forEach((link) => {
     link.addEventListener('click', (event) => {
       if (
-        event.defaultPrevented ||
         event.button !== 0 ||
         event.metaKey ||
         event.ctrlKey ||
@@ -305,13 +305,14 @@ const currentPath = normalizePath(Astro.url.pathname);
       if (!section) return;
 
       event.preventDefault();
+      event.stopPropagation();
       window.history.pushState({}, '', link.hash);
       const storedTarget = Number(section.dataset.scrollTarget);
       const targetTop = Number.isFinite(storedTarget) ? storedTarget : window.scrollY + section.getBoundingClientRect().top;
-      window.scrollTo({
-        top: targetTop,
-        behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
-      });
+      gsap.killTweensOf(window);
+      gsap.set(window, { scrollTo: { y: targetTop, autoKill: false } });
+      ScrollTrigger.update();
+      setCurrentSection(link.dataset.sectionLink ?? link.hash.slice(1));
     });
   });
 </script>
