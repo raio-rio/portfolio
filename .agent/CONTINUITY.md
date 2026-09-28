@@ -1,9 +1,17 @@
 [PLANS]
+- 2026-09-28T16:49:00+08:00 [USER] Match every Ztext extrusion layer to the face color and make homepage navbar links land on the complete opening frame of each pinned section.
 - 2026-09-28T15:59:00+08:00 [USER] Give the homepage `rio.` wordmark seamless 3D depth and pointer/touch-controlled rotation.
 - 2026-09-27T13:34:16+08:00 [USER] Restyle homepage first section to follow sahen.site layout; preserve Rio identity and exclude reference animations/assets.
 - 2026-09-27T16:24:38Z [USER] Replace Archivo Expanded with a bolder font similar to the reference site and redesign the homepage metric highlights; visual direction is awaiting selection.
 
 [DECISIONS]
+- 2026-09-28T17:17:00+08:00 [USER] Replace the muted-gray Ztext extrusion with the recommended minimal near-background color.
+- 2026-09-28T17:17:00+08:00 [CODE] Use `color-mix(in srgb, var(--ink) 16%, var(--page))` for every extrusion layer, including the period depth, so contrast remains subtle and theme-aware.
+- 2026-09-28T17:08:00+08:00 [USER] Use the exact muted gray from `Let’s build something useful` for the full Ztext extrusion, including the period depth.
+- 2026-09-28T17:02:00+08:00 [USER] Supersede exact face-matched extrusion colors with subtly offset, contrasting Ztext depth colors.
+- 2026-09-28T17:02:00+08:00 [CODE] Mix extrusion layers from 78% ink and 22% page, with the period depth at 82% accent, to retain theme-aware contrast without returning to pale gray.
+- 2026-09-28T16:49:00+08:00 [CODE] Keep panel anchor targets synchronized on every ScrollTrigger refresh, cross the preceding pin boundary by one pixel, and synchronize scrubbed panel timelines immediately after direct navbar jumps.
+- 2026-09-28T16:49:00+08:00 [CODE] Give all Ztext layers the theme-aware face color while preserving the accent color for the period on every layer.
 - 2026-09-28T16:20:00+08:00 [USER] Disable Ztext layer fading and ensure the wordmark interaction works on mobile.
 - 2026-09-28T16:20:00+08:00 [CODE] Retain Ztext's built-in touch listener and add coarse-pointer `touch-action: pan-y` so horizontal wordmark gestures remain available without blocking vertical page scrolling.
 - 2026-09-28T16:18:00+08:00 [USER] Increase the Ztext wordmark extrusion depth.
@@ -66,6 +74,10 @@
 - 2026-09-27T16:42:55Z [USER] Make the homepage wordmark lowercase and remove its blue color while retaining blue metric accents.
 
 [PROGRESS]
+- 2026-09-28T17:17:00+08:00 [CODE] Applied the minimal theme-aware near-background extrusion treatment while retaining the black/cream face and blue front period.
+- 2026-09-28T17:08:00+08:00 [CODE] Replaced the custom ink/accent depth mixes with `var(--muted)`, matching the homepage contact call-to-action gray across themes.
+- 2026-09-28T17:02:00+08:00 [CODE] Added restrained light/dark-aware contrast between the wordmark face and its extrusion layers while retaining the blue punctuation treatment.
+- 2026-09-28T16:49:00+08:00 [CODE] Replaced muted extrusion colors with exact face colors and hardened pinned-section navbar targeting against stale refresh measurements and scrub lag.
 - 2026-09-28T16:20:00+08:00 [CODE] Changed Ztext `fade` back to `false` and added mobile touch gesture styling plus selection suppression to the interactive wordmark.
 - 2026-09-28T16:18:00+08:00 [CODE] Increased the homepage Ztext depth from `.12em` to `.18em` while retaining 12 layers, fading, 45° rotation, and 700px perspective.
 - 2026-09-28T16:15:00+08:00 [CODE] Changed the homepage Ztext `fade` option from `false` to `true` so deeper duplicate layers progressively fade.
@@ -148,6 +160,10 @@
 - 2026-09-27T16:24:38Z [TOOL] Current sahen.site CSS declares `Geist Variable` for its primary typeface; Geist supports weights through 900, making Geist 900 the closest bolder match.
 
 [OUTCOMES]
+- 2026-09-28T17:19:00+08:00 [TOOL] `astro check`, production build, and `git diff --check` passed. Live light-mode CSS confirmed a near-background `~rgb(217, 217, 217)` extrusion, unchanged black face and blue front period, matching period depth, and zero horizontal overflow.
+- 2026-09-28T17:10:00+08:00 [TOOL] `astro check`, production build, and `git diff --check` passed. Live computed styles confirmed the wordmark extrusion, period extrusion, and `Let’s build something useful` text all resolve to `rgb(85, 85, 85)` in light mode.
+- 2026-09-28T17:04:00+08:00 [TOOL] `astro check`, production build, and `git diff --check` passed. Live light-mode CSS reported a black `rgb(17, 17, 17)` face against a restrained dark-gray extrusion and a subtly muted blue period extrusion.
+- 2026-09-28T16:53:00+08:00 [TOOL] `astro check`, production build, and `git diff --check` passed. Live desktop and 390px navbar tests landed Projects/Experience at section top 0 with identity transform and full opacity; every tested Ztext layer matched the black face color, retained the blue period, and mobile had zero horizontal overflow.
 - 2026-09-28T16:21:00+08:00 [TOOL] `astro check`, production build, and `git diff --check` passed. At a 390px viewport, pointer-drag QA changed the Ztext `matrix3d`, all 12 layers remained opacity 1, the wordmark stayed within bounds with zero overflow, and no console warnings/errors occurred.
 - 2026-09-28T16:17:30+08:00 [TOOL] `astro check` and `git diff --check` passed. Live corner-pointer QA confirmed the `.18em` depth spans about 28px across the layered Z-axis at the current desktop size, with zero horizontal overflow and no console warnings/errors.
 - 2026-09-28T16:16:30+08:00 [TOOL] `astro check` and `git diff --check` passed. Live DOM QA confirmed Ztext layer opacity now descends progressively from 0.458 on the first extrusion layer to 0.042 on the deepest layer, with no console warnings/errors.

@@ -236,8 +236,10 @@ li + li { margin-top: 3px; }
 .hero-wordmark h1 { display: block; width: fit-content; margin: 0; color: var(--ink); font-size: clamp(118px, 18vw, 258px); font-weight: 650; letter-spacing: -.055em; line-height: .74; text-transform: lowercase; }
 .hero-wordmark .z-text, .hero-wordmark .z-layers { will-change: transform; }
 .hero-wordmark .z-layers { transition: transform .18s cubic-bezier(.22, 1, .36, 1); }
-.hero-wordmark .z-layer:not(:first-child) { color: color-mix(in srgb, var(--ink) 34%, var(--page)); }
-.hero-wordmark .z-layer:not(:first-child) .hero-wordmark-dot { color: color-mix(in srgb, var(--accent) 55%, var(--page)); }
+.hero-wordmark .z-layer { color: var(--ink); }
+.hero-wordmark .z-layer:not(:first-child) { color: color-mix(in srgb, var(--ink) 16%, var(--page)); }
+.hero-wordmark .z-layer .hero-wordmark-dot { color: var(--accent); }
+.hero-wordmark .z-layer:not(:first-child) .hero-wordmark-dot { color: color-mix(in srgb, var(--ink) 16%, var(--page)); }
 .hero-wordmark-dot { color: var(--accent); }
 @media (hover: none) and (pointer: coarse) {
   .hero-ztext { touch-action: pan-y; user-select: none; -webkit-user-select: none; }

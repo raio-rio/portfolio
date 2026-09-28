@@ -351,11 +351,16 @@ const currentPath = normalizePath(Astro.url.pathname);
       event.preventDefault();
       event.stopPropagation();
       window.history.pushState({}, '', link.hash);
-      const storedTarget = Number(section.dataset.scrollTarget);
-      const targetTop = Number.isFinite(storedTarget) ? storedTarget : window.scrollY + section.getBoundingClientRect().top;
+      const storedTarget = Number.parseFloat(section.dataset.scrollTarget ?? '');
+      const sectionStart = Number.isFinite(storedTarget) ? storedTarget : window.scrollY + section.getBoundingClientRect().top;
+      const targetTop = link.hash === '#home' ? 0 : sectionStart + 1;
       gsap.killTweensOf(window);
       gsap.set(window, { scrollTo: { y: targetTop, autoKill: false } });
       ScrollTrigger.update();
+      ScrollTrigger.getAll().forEach((trigger) => {
+        if (!trigger.vars.id?.startsWith('portfolio-panel-')) return;
+        trigger.animation?.progress(trigger.progress, true);
+      });
       setCurrentSection(link.dataset.sectionLink ?? link.hash.slice(1));
       setNavigationVisibility(true);
     });

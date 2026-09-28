@@ -241,15 +241,21 @@ const featuredExperience = experience.slice(0, 2);
         panelTimelines.push(timeline);
       });
 
+      const updatePanelTargets = () => {
+        panels[0]?.setAttribute('data-scroll-target', '0');
+        panelTimelines.forEach((timeline, index) => {
+          const nextPanel = panels[index + 1];
+          const destination = timeline.scrollTrigger?.end;
+          if (nextPanel && typeof destination === 'number') nextPanel.dataset.scrollTarget = String(destination);
+        });
+      };
+
+      ScrollTrigger.addEventListener('refresh', updatePanelTargets);
       ScrollTrigger.refresh();
-      panels[0]?.setAttribute('data-scroll-target', '0');
-      panelTimelines.forEach((timeline, index) => {
-        const nextPanel = panels[index + 1];
-        const destination = timeline.scrollTrigger?.end;
-        if (nextPanel && typeof destination === 'number') nextPanel.dataset.scrollTarget = String(destination);
-      });
+      updatePanelTargets();
 
       return () => {
+        ScrollTrigger.removeEventListener('refresh', updatePanelTargets);
         panels.forEach((panel) => {
           panel.style.removeProperty('margin-bottom');
           panel.removeAttribute('data-scroll-target');
