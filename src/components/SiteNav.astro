@@ -1,19 +1,43 @@
+---
+const normalizePath = (pathname: string) => pathname === '/' ? '/' : pathname.replace(/\/+$/, '');
+const currentPath = normalizePath(Astro.url.pathname);
+---
+
 <header class="site-nav" transition:persist="site-nav">
   <nav aria-label="Primary navigation">
-    <a class="site-nav-brand" href="/" aria-label="Rio Espinosa home"><span class="site-nav-monogram"><img src="/images/pic.png" alt="Rio Espinosa" /></span><span>Rio Espinosa</span><span class="site-nav-photo-popout" aria-hidden="true"><img src="/images/pic.png" alt="" /></span></a>
+    <a class="site-nav-brand" href="/" aria-label="Rio Espinosa home" aria-describedby="site-nav-time-comparison">
+      <span class="site-nav-time"><i class="ph-duotone ph-sun" data-ph-time-icon aria-hidden="true"></i><time data-ph-time>--:-- PHT</time></span>
+      <span class="site-nav-time-popout" id="site-nav-time-comparison">
+        <span class="site-nav-time-row">
+          <i class="site-nav-weather-icon ph-duotone ph-sun" data-local-time-icon aria-hidden="true"></i>
+          <span class="site-nav-time-copy">
+            <span class="site-nav-time-label">Your local time</span>
+            <time class="site-nav-time-value" data-local-time>--:--</time>
+          </span>
+        </span>
+        <span class="site-nav-time-row">
+          <i class="site-nav-weather-icon ph-duotone ph-sun" data-rio-time-icon aria-hidden="true"></i>
+          <span class="site-nav-time-copy">
+            <span class="site-nav-time-label">Rio · PHT</span>
+            <time class="site-nav-time-value" data-rio-time>--:--</time>
+          </span>
+        </span>
+        <span class="site-nav-time-difference" data-time-difference>Calculating time difference…</span>
+      </span>
+    </a>
     <div class="site-nav-links" data-dock>
-      <a data-dock-item href="/">Home</a>
-      <a data-dock-item href="/experience/">Experience</a>
-      <a data-dock-item href="/projects/">Projects</a>
-      <a data-dock-item href="/stack/">Stack</a>
+      <a data-dock-item data-section-link="home" href="/#home" aria-current={currentPath === '/' ? 'location' : undefined}>Home</a>
+      <a data-dock-item data-section-link="projects" href="/#projects" aria-current={currentPath === '/projects' ? 'page' : undefined}>Projects</a>
+      <a data-dock-item data-section-link="experience" href="/#experience" aria-current={currentPath === '/experience' ? 'page' : undefined}>Experience</a>
+      <a data-dock-item data-section-link="stack" href="/#stack" aria-current={currentPath === '/stack' ? 'page' : undefined}>Stack</a>
       <a data-dock-item href="https://www.programmingrio.top/resume.pdf" target="_blank" rel="noreferrer">Resume <i class="ph-duotone ph-arrow-square-out" aria-hidden="true"></i></a>
     </div>
     <div class="site-nav-contact">
-      <button class="site-nav-action" type="button" aria-expanded="false">programmingrio@gmail.com</button>
+      <button class="site-nav-action" type="button" aria-expanded="false">contact@rioespinosa.com</button>
       <div class="site-nav-contact-popout" aria-label="Email actions">
         <div class="site-nav-contact-panel">
           <button type="button" data-copy-email><i class="ph-duotone ph-copy" aria-hidden="true"></i><span>Copy email</span></button>
-          <a href="mailto:programmingrio@gmail.com"><i class="ph-duotone ph-envelope-simple" aria-hidden="true"></i><span>Email me</span></a>
+          <a href="mailto:contact@rioespinosa.com"><i class="ph-duotone ph-envelope-simple" aria-hidden="true"></i><span>Email me</span></a>
         </div>
       </div>
     </div>
@@ -22,10 +46,79 @@
 
 <script>
   import { gsap } from 'gsap';
-  import { navigate } from 'astro:transitions/client';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
+  gsap.registerPlugin(ScrollTrigger);
+
+  const phTime = document.querySelector<HTMLTimeElement>('[data-ph-time]');
+  const phTimeIcon = document.querySelector<HTMLElement>('[data-ph-time-icon]');
+  const localTime = document.querySelector<HTMLTimeElement>('[data-local-time]');
+  const rioTime = document.querySelector<HTMLTimeElement>('[data-rio-time]');
+  const localTimeIcon = document.querySelector<HTMLElement>('[data-local-time-icon]');
+  const rioTimeIcon = document.querySelector<HTMLElement>('[data-rio-time-icon]');
+  const timeDifference = document.querySelector<HTMLElement>('[data-time-difference]');
   const dock = document.querySelector<HTMLElement>('[data-dock]');
   const dockItems = dock ? Array.from(dock.querySelectorAll<HTMLElement>('[data-dock-item]')) : [];
+
+  const localTimeFormatter = new Intl.DateTimeFormat(undefined, {
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true,
+  });
+  const phTimeFormatter = new Intl.DateTimeFormat('en-US', {
+    timeZone: 'Asia/Manila',
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true,
+  });
+  const phHourFormatter = new Intl.DateTimeFormat('en-US', {
+    timeZone: 'Asia/Manila',
+    hour: 'numeric',
+    hourCycle: 'h23',
+  });
+  const setDayPeriodIcon = (icon: HTMLElement | null, isDaytime: boolean) => {
+    icon?.classList.toggle('ph-sun', isDaytime);
+    icon?.classList.toggle('ph-moon', !isDaytime);
+    icon?.classList.toggle('is-daytime', isDaytime);
+    icon?.classList.toggle('is-nighttime', !isDaytime);
+  };
+  const updateTimes = () => {
+    const now = new Date();
+    const rioHour = Number(phHourFormatter.format(now));
+    const isRioDaytime = rioHour >= 6 && rioHour < 18;
+    const isLocalDaytime = now.getHours() >= 6 && now.getHours() < 18;
+    const isoTime = now.toISOString();
+
+    if (phTime) {
+      phTime.textContent = `${phTimeFormatter.format(now)} PHT`;
+      phTime.dateTime = isoTime;
+    }
+    if (localTime) {
+      localTime.textContent = localTimeFormatter.format(now);
+      localTime.dateTime = isoTime;
+    }
+    if (rioTime) {
+      rioTime.textContent = phTimeFormatter.format(now);
+      rioTime.dateTime = isoTime;
+    }
+
+    setDayPeriodIcon(phTimeIcon, isRioDaytime);
+    setDayPeriodIcon(localTimeIcon, isLocalDaytime);
+    setDayPeriodIcon(rioTimeIcon, isRioDaytime);
+
+    if (timeDifference) {
+      const rioMinusLocalHours = Math.round((8 + now.getTimezoneOffset() / 60) * 100) / 100;
+      const absoluteDifference = Math.abs(rioMinusLocalHours);
+      const formattedDifference = new Intl.NumberFormat(undefined, { maximumFractionDigits: 2 }).format(absoluteDifference);
+      const unit = absoluteDifference === 1 ? 'hour' : 'hours';
+
+      if (rioMinusLocalHours === 0) timeDifference.textContent = 'Same time · 0-hour difference';
+      else timeDifference.textContent = `Rio is ${formattedDifference} ${unit} ${rioMinusLocalHours > 0 ? 'ahead' : 'behind'}`;
+    }
+  };
+
+  updateTimes();
+  window.setInterval(updateTimes, 30_000);
 
   if (dock && dockItems.length) {
     const media = gsap.matchMedia();
@@ -57,73 +150,41 @@
         gsap.set(dockItems, { clearProps: 'transform' });
       };
     });
-
-    media.add('(max-width: 680px) and (prefers-reduced-motion: no-preference)', () => {
-      let idleTimer: number | undefined;
-      const hideNav = () => {
-        window.clearTimeout(idleTimer);
-        gsap.to('.site-nav', { y: -76, duration: 0.2, ease: 'power2.out', overwrite: 'auto' });
-        idleTimer = window.setTimeout(() => {
-          gsap.to('.site-nav', { y: 0, duration: 0.28, ease: 'power3.out', overwrite: 'auto' });
-        }, 240);
-      };
-
-      window.addEventListener('scroll', hideNav, { passive: true });
-
-      return () => {
-        window.clearTimeout(idleTimer);
-        window.removeEventListener('scroll', hideNav);
-        gsap.set('.site-nav', { clearProps: 'transform' });
-      };
-    });
-
-    media.add('(min-width: 681px) and (prefers-reduced-motion: no-preference)', () => {
-      let idleTimer: number | undefined;
-      const hideNav = () => {
-        window.clearTimeout(idleTimer);
-        gsap.to('.site-nav', { y: -76, duration: 0.2, ease: 'power2.out', overwrite: 'auto' });
-        idleTimer = window.setTimeout(() => {
-          gsap.to('.site-nav', { y: 0, duration: 0.28, ease: 'power3.out', overwrite: 'auto' });
-        }, 240);
-      };
-
-      window.addEventListener('scroll', hideNav, { passive: true });
-
-      return () => {
-        window.clearTimeout(idleTimer);
-        window.removeEventListener('scroll', hideNav);
-        gsap.set('.site-nav', { clearProps: 'transform' });
-      };
-    });
   }
 
   const brand = document.querySelector<HTMLElement>('.site-nav-brand');
-  const photoPopout = document.querySelector<HTMLElement>('.site-nav-photo-popout');
+  const timePopout = document.querySelector<HTMLElement>('.site-nav-time-popout');
 
-  if (brand && photoPopout) {
+  if (brand && timePopout) {
     const media = gsap.matchMedia();
 
-    media.add('(min-width: 681px) and (prefers-reduced-motion: no-preference)', () => {
-      const popPortrait = () => {
-        gsap.killTweensOf(photoPopout);
-        gsap.fromTo(photoPopout,
-          { autoAlpha: 0, y: -10, scale: 0.78 },
-          { autoAlpha: 1, y: 0, scale: 1, duration: 0.32, ease: 'back.out(1.65)', overwrite: 'auto' },
+    media.add('(min-width: 681px)', () => {
+      const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const showTimeComparison = () => {
+        updateTimes();
+        gsap.killTweensOf(timePopout);
+        if (reducedMotion) gsap.set(timePopout, { autoAlpha: 1, y: 0, scale: 1 });
+        else gsap.fromTo(timePopout,
+          { autoAlpha: 0, y: -8, scale: 0.92 },
+          { autoAlpha: 1, y: 0, scale: 1, duration: 0.28, ease: 'back.out(1.5)', overwrite: true },
         );
       };
-      const resetPortrait = () => gsap.to(photoPopout, { autoAlpha: 0, y: -7, scale: 0.9, duration: 0.18, ease: 'power2.in', overwrite: 'auto' });
+      const hideTimeComparison = () => {
+        if (reducedMotion) gsap.set(timePopout, { autoAlpha: 0, y: -6, scale: 0.96 });
+        else gsap.to(timePopout, { autoAlpha: 0, y: -6, scale: 0.96, duration: 0.16, ease: 'power2.in', overwrite: true });
+      };
 
-      brand.addEventListener('pointerenter', popPortrait);
-      brand.addEventListener('pointerleave', resetPortrait);
-      brand.addEventListener('focusin', popPortrait);
-      brand.addEventListener('focusout', resetPortrait);
+      brand.addEventListener('pointerenter', showTimeComparison);
+      brand.addEventListener('pointerleave', hideTimeComparison);
+      brand.addEventListener('focusin', showTimeComparison);
+      brand.addEventListener('focusout', hideTimeComparison);
 
       return () => {
-        brand.removeEventListener('pointerenter', popPortrait);
-        brand.removeEventListener('pointerleave', resetPortrait);
-        brand.removeEventListener('focusin', popPortrait);
-        brand.removeEventListener('focusout', resetPortrait);
-        gsap.set(photoPopout, { clearProps: 'opacity,visibility,transform' });
+        brand.removeEventListener('pointerenter', showTimeComparison);
+        brand.removeEventListener('pointerleave', hideTimeComparison);
+        brand.removeEventListener('focusin', showTimeComparison);
+        brand.removeEventListener('focusout', hideTimeComparison);
+        gsap.set(timePopout, { clearProps: 'opacity,visibility,transform' });
       };
     });
   }
@@ -165,7 +226,7 @@
   }
 
   copyEmail?.addEventListener('click', async () => {
-    const email = 'programmingrio@gmail.com';
+    const email = 'contact@rioespinosa.com';
     try {
       await navigator.clipboard.writeText(email);
       const label = copyEmail.querySelector('span');
@@ -178,18 +239,58 @@
     }
   });
 
-  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
   const internalLinks = document.querySelectorAll<HTMLAnchorElement>('[data-dock-item][href^="/"]');
-  let isNavigating = false;
+  const sectionLinks = Array.from(document.querySelectorAll<HTMLAnchorElement>('[data-section-link]'));
+  let sectionScrollTriggers: ScrollTrigger[] = [];
 
-  document.addEventListener('astro:after-swap', () => {
-    isNavigating = false;
-  });
+  const setCurrentSection = (sectionName: string) => {
+    sectionLinks.forEach((link) => {
+      if (link.dataset.sectionLink === sectionName) link.setAttribute('aria-current', 'location');
+      else link.removeAttribute('aria-current');
+    });
+  };
+
+  const updateCurrentLink = () => {
+    const currentPath = window.location.pathname === '/' ? '/' : window.location.pathname.replace(/\/+$/, '');
+    if (currentPath === '/') {
+      setCurrentSection(window.location.hash.slice(1) || 'home');
+      return;
+    }
+
+    setCurrentSection(currentPath.slice(1));
+  };
+
+  const initializeSectionNavigation = () => {
+    sectionScrollTriggers.forEach((trigger) => trigger.kill());
+    sectionScrollTriggers = [];
+    updateCurrentLink();
+
+    if (window.location.pathname !== '/') return;
+
+    const sections = Array.from(document.querySelectorAll<HTMLElement>('[data-scroll-section]'));
+    sections.forEach((section) => {
+      const sectionName = section.dataset.scrollSection;
+      if (!sectionName) return;
+
+      sectionScrollTriggers.push(ScrollTrigger.create({
+        trigger: section,
+        start: 'top 55%',
+        end: 'bottom 55%',
+        onEnter: () => setCurrentSection(sectionName),
+        onEnterBack: () => setCurrentSection(sectionName),
+      }));
+    });
+
+    ScrollTrigger.refresh();
+  };
+
+  document.addEventListener('astro:after-swap', initializeSectionNavigation);
+  document.addEventListener('astro:page-load', initializeSectionNavigation);
+  initializeSectionNavigation();
 
   internalLinks.forEach((link) => {
     link.addEventListener('click', (event) => {
       if (
-        isNavigating ||
         event.defaultPrevented ||
         event.button !== 0 ||
         event.metaKey ||
@@ -198,38 +299,19 @@
         event.altKey
       ) return;
 
-      if (link.pathname === window.location.pathname) {
-        if (link.pathname === '/') {
-          event.preventDefault();
-          window.dispatchEvent(new Event('portfolio:home-replay'));
-        }
-        return;
-      }
+      if (link.pathname !== window.location.pathname || !link.hash) return;
+
+      const section = document.querySelector<HTMLElement>(link.hash);
+      if (!section) return;
 
       event.preventDefault();
-      const page = document.querySelector<HTMLElement>('main');
-      if (!page || reducedMotion.matches) {
-        window.location.assign(link.href);
-        return;
-      }
-
-      isNavigating = true;
-      window.dispatchEvent(new Event('portfolio:navigate'));
-      gsap.to(page,
-        {
-          y: -window.innerHeight,
-          autoAlpha: 0,
-          duration: 0.72,
-          ease: 'power3.inOut',
-          overwrite: 'auto',
-          onComplete: () => {
-            try {
-              sessionStorage.setItem('rio-page-panel', 'true');
-            } catch {}
-            navigate(link.href);
-          },
-        },
-      );
+      window.history.pushState({}, '', link.hash);
+      const storedTarget = Number(section.dataset.scrollTarget);
+      const targetTop = Number.isFinite(storedTarget) ? storedTarget : window.scrollY + section.getBoundingClientRect().top;
+      window.scrollTo({
+        top: targetTop,
+        behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
+      });
     });
   });
 </script>

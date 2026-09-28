@@ -23,7 +23,7 @@ const person = {
   name: 'Rio Espinosa',
   jobTitle: 'Full Stack Developer & AI Engineer',
   url: site.href,
-  email: 'programmingrio@gmail.com',
+  email: 'contact@rioespinosa.com',
   image: new URL('/images/headshot.png', site).href,
   address: { '@type': 'PostalAddress', addressLocality: 'Cainta', addressCountry: 'PH' },
   sameAs: ['https://github.com/raio-rio/', 'https://www.linkedin.com/in/rioespinosa02/', 'https://www.instagram.com/_sprio/'],
@@ -53,10 +53,10 @@ const schema = {
     <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#242429" />
     <link rel="canonical" href={canonical} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="apple-touch-icon" href="/images/pic.png" />
+    <link rel="apple-touch-icon" href="/images/pic.jpg" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400..900&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/duotone/style.css" />
     <link rel="stylesheet" href="https://assets.calendly.com/assets/external/widget.css" />
     <script is:inline src="https://assets.calendly.com/assets/external/widget.js" async></script>
@@ -90,24 +90,17 @@ const schema = {
   import { gsap } from 'gsap';
 
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-  const animateEntry = () => {
-    const nextPage = document.querySelector<HTMLElement>('main');
-    let enterFromBelow = false;
-    try {
-      enterFromBelow = sessionStorage.getItem('rio-page-panel') === 'true';
-      sessionStorage.removeItem('rio-page-panel');
-    } catch {}
+  const animatePageEntry = () => {
+    const page = document.querySelector<HTMLElement>('main');
+    if (!page || reducedMotion.matches) return;
 
-    if (nextPage && enterFromBelow && !reducedMotion.matches) {
-      gsap.fromTo(nextPage,
-        { y: window.innerHeight, autoAlpha: 0 },
-        { y: 0, autoAlpha: 1, duration: 0.72, ease: 'power3.inOut', clearProps: 'transform,visibility', overwrite: 'auto' },
-      );
-    }
+    gsap.fromTo(page,
+      { scale: 0.975 },
+      { scale: 1, duration: 0.16, ease: 'back.out(1.35)', clearProps: 'transform', overwrite: 'auto' },
+    );
   };
 
-  animateEntry();
-  document.addEventListener('astro:after-swap', animateEntry);
+  document.addEventListener('astro:after-swap', animatePageEntry);
 
   let scrollProgress = document.querySelector<HTMLElement>('[data-scroll-progress]');
   let progressFrame = 0;

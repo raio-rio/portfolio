@@ -1,37 +1,36 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import { getProjectImages } from '../lib/project-images';
+import { getCollection } from 'astro:content';
+import ProjectCard from '../components/ProjectCard.astro';
+import { experience } from '../data/experience';
+import { stack } from '../data/stack';
 
-const philippinesTime = new Intl.DateTimeFormat('en-PH', {
-  timeZone: 'Asia/Manila',
-  hour: 'numeric',
-  minute: '2-digit',
-  hour12: true,
-}).format(new Date());
-const promorphImages = getProjectImages('promorph');
-const promorphCover = promorphImages[0] ?? '/images/projects/promorph/01-cover.png';
-const promorphAlternate = promorphImages[1];
+const projects = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
 ---
 
 <Layout title="Rio Espinosa — Full Stack Developer & AI Engineer" description="Rio Espinosa builds AI/ML models, SaaS products, full-stack web apps, and blockchain solutions.">
   <div id="smooth-wrapper">
     <main id="smooth-content" class="express-home" aria-label="Rio Espinosa portfolio">
-    <section class="express-hero">
-      <div class="express-intro">
-        <h1 data-home-headline aria-label="Hi! I’m Rio.">
-          <span class="headline-line"><span class="headline-line-content"><span class="headline-greeting">Hi! I’m </span><span class="headline-accent headline-pop">Rio</span></span></span>
-        </h1>
-        <p class="express-role">Full Stack Developer &amp; AI Engineer</p>
-        <p class="express-summary">Building products, automation, and full-stack systems that solve real problems.</p>
+    <section class="express-hero scroll-panel" id="home" data-scroll-section="home" data-scroll-panel>
+      <div class="scroll-panel-surface express-hero-surface" data-scroll-panel-surface>
+      <div class="hero-center" data-scroll-panel-inner>
+        <div class="hero-wordmark" aria-label="Rio Espinosa">
+          <h1>rio<span class="hero-wordmark-dot" aria-hidden="true">.</span></h1>
+        </div>
+        <p class="hero-tagline">Full Stack Developer &amp; AI Engineer</p>
+        <div class="hero-metrics" aria-label="Career highlights">
+          <div><span class="hero-metric-icon"><i class="ph-duotone ph-user" aria-hidden="true"></i></span><p><strong>5+</strong><span>Years building</span></p></div>
+          <div><span class="hero-metric-icon"><i class="ph-duotone ph-rocket-launch" aria-hidden="true"></i></span><p><strong>10+</strong><span>Projects done</span></p></div>
+          <div><span class="hero-metric-icon"><i class="ph-duotone ph-hand-coins" aria-hidden="true"></i></span><p><strong>$10,000+</strong><span>Generated/saved by my projects</span></p></div>
+        </div>
+        <nav class="hero-actions" aria-label="Contact and social links">
+          <a href="https://wa.me/639338259751?text=Hi%20Rio%2C%20found%20your%20portfolio%20and%20would%20love%20to%20chat!" target="_blank" rel="noreferrer" aria-label="Message Rio on WhatsApp" data-label="WhatsApp"><i class="ph-duotone ph-whatsapp-logo" aria-hidden="true"></i></a>
+          <a href="https://www.linkedin.com/in/rioespinosa02/" target="_blank" rel="noreferrer" aria-label="Visit Rio on LinkedIn" data-label="LinkedIn"><i class="ph-duotone ph-linkedin-logo" aria-hidden="true"></i></a>
+          <a href="https://www.instagram.com/_sprio/" target="_blank" rel="noreferrer" aria-label="Visit Rio on Instagram" data-label="Instagram"><i class="ph-duotone ph-instagram-logo" aria-hidden="true"></i></a>
+          <a href="https://github.com/raio-rio/" target="_blank" rel="noreferrer" aria-label="Visit Rio on GitHub" data-label="GitHub"><i class="ph-duotone ph-github-logo" aria-hidden="true"></i></a>
+        </nav>
+        <a class="hero-contact" data-contact-choice-open href="#contact-choice-dialog"><i class="ph-duotone ph-chats-circle" aria-hidden="true"></i><span>Let’s build something useful</span></a>
       </div>
-
-      <div class="express-stats" aria-label="Career highlights">
-        <div><span class="metric-icon"><i class="ph-duotone ph-user" aria-hidden="true"></i></span><p><strong>4+</strong><span>Years of experience</span></p></div>
-        <div><span class="metric-icon"><i class="ph-duotone ph-rocket-launch" aria-hidden="true"></i></span><p><strong>20+</strong><span>Features shipped</span></p></div>
-        <div><span class="metric-icon"><i class="ph-duotone ph-chart-line-up" aria-hidden="true"></i></span><p><strong>87.5%</strong><span>Time savings achieved</span></p></div>
-        <div><span class="metric-icon"><i class="ph-duotone ph-code" aria-hidden="true"></i></span><p><strong>6</strong><span>Systems reworked</span></p></div>
-      </div>
-      <a class="calendly-secondary calendly-hero-link" data-contact-choice-open href="#contact-choice-dialog"><i class="ph-duotone ph-chats-circle" aria-hidden="true"></i><span class="calendly-hero-prompt">Interested to know more?</span><span class="calendly-link-label">Book or Message</span></a>
       <dialog id="contact-choice-dialog" class="contact-email-dialog contact-choice-dialog" data-contact-choice-dialog>
         <div class="contact-email-dialog-panel">
           <button class="contact-email-dialog-close" type="button" data-contact-dialog-close aria-label="Close contact options">
@@ -77,7 +76,7 @@ const promorphAlternate = promorphImages[1];
               </button>
             </div>
             <p class="contact-dialog-status" data-contact-dialog-status role="alert" aria-live="assertive"></p>
-            <a class="contact-form-fallback" data-contact-fallback href="mailto:programmingrio@gmail.com" hidden>Email me directly</a>
+            <a class="contact-form-fallback" data-contact-fallback href="mailto:contact@rioespinosa.com" hidden>Email me directly</a>
 
             <label class="contact-form-honeypot" aria-hidden="true">
               <span>Company</span>
@@ -86,40 +85,69 @@ const promorphAlternate = promorphImages[1];
           </form>
         </div>
       </dialog>
-    </section>
-
-    <section class="home-section home-about" aria-labelledby="about-heading">
-      <div class="home-about-copy">
-        <h2 id="about-heading">Ideas into<br />products that <span>work.</span></h2>
-        <p>I build practical software, automation, and AI for real problems.</p>
       </div>
-      <a class="home-project-preview" href="/projects/" aria-label="View projects, including ProMorph: Classification Model in ICIAC Japan 2024">
-        <span class="home-project-preview-media">
-          <img src={promorphCover} alt="ProMorph: Classification Model in ICIAC Japan 2024 project preview" width="627" height="417" loading="lazy" />
-          {promorphAlternate && <img class="home-project-preview-alternate" src={promorphAlternate} alt="ProMorph: Classification Model in ICIAC Japan 2024 alternate project preview" width="627" height="417" loading="lazy" />}
-        </span>
-        <span class="home-project-preview-copy">
-          <span>Featured project</span>
-          <strong>ProMorph: Classification Model in ICIAC Japan 2024</strong>
-          <em>View projects <i class="ph-duotone ph-arrow-square-out" aria-hidden="true"></i></em>
-        </span>
-      </a>
+    </section>
+    <section class="portfolio-scroll-section scroll-panel" id="projects" data-scroll-section="projects" data-scroll-panel aria-labelledby="projects-title">
+      <div class="scroll-panel-surface" data-scroll-panel-surface>
+      <div class="project-grid-page portfolio-panel-inner" data-scroll-panel-inner>
+      <header class="project-grid-intro">
+        <h1 id="projects-title">Projects<span>.</span></h1>
+        <p>A concise selection of AI, product, and full-stack work.</p>
+      </header>
+      <div class="project-grid section" aria-label="All projects">
+        {projects.map((project) => (
+          <article class="project-grid-card">
+            <ProjectCard project={project} expanded />
+          </article>
+        ))}
+      </div>
+      </div>
+      </div>
     </section>
 
-    <section class="home-section home-cta" aria-labelledby="cta-heading">
-      <div class="home-cta-main">
-        <div class="home-cta-copy">
-          <h2 id="cta-heading">Let’s make<br />it <span>work.</span></h2>
-          <p>Open to new opportunities and exciting collaborations.</p>
-        </div>
-        <address class="home-contact-details">
-          <a href="mailto:programmingrio@gmail.com"><i class="ph-duotone ph-envelope-simple" aria-hidden="true"></i><span>Email</span><strong>programmingrio@gmail.com</strong></a>
-          <a href="https://www.linkedin.com/in/rioespinosa02/" target="_blank" rel="noreferrer"><i class="ph-duotone ph-linkedin-logo" aria-hidden="true"></i><span>LinkedIn</span><strong>Rio Espinosa <i class="ph-duotone ph-arrow-square-out" aria-hidden="true"></i></strong></a>
-          <a href="https://www.instagram.com/_sprio/" target="_blank" rel="noreferrer"><i class="ph-duotone ph-instagram-logo" aria-hidden="true"></i><span>Instagram</span><strong>@_sprio <i class="ph-duotone ph-arrow-square-out" aria-hidden="true"></i></strong></a>
-          <a href="https://wa.me/639338259751?text=Hi%20Rio%2C%20found%20your%20portfolio%20and%20would%20love%20to%20chat!" target="_blank" rel="noreferrer"><i class="ph-duotone ph-whatsapp-logo" aria-hidden="true"></i><span>WhatsApp</span><strong>Message me <i class="ph-duotone ph-arrow-square-out" aria-hidden="true"></i></strong></a>
-          <a data-calendly-link href="https://calendly.com/programmingrio"><i class="ph-duotone ph-calendar-check" aria-hidden="true"></i><span>Book a call</span><strong>Schedule time <i class="ph-duotone ph-arrow-square-out" aria-hidden="true"></i></strong></a>
-          <p><i class="ph-duotone ph-map-pin" aria-hidden="true"></i><span>Philippines</span><strong>Cainta · UTC+8 · <time id="philippines-time" aria-label="Current time in the Philippines">{philippinesTime}</time></strong></p>
-        </address>
+    <section class="portfolio-scroll-section scroll-panel" id="experience" data-scroll-section="experience" data-scroll-panel aria-labelledby="experience-title">
+      <div class="scroll-panel-surface" data-scroll-panel-surface>
+      <div class="project-grid-page experience-page portfolio-panel-inner" data-scroll-panel-inner>
+      <header class="project-grid-intro">
+        <h1 id="experience-title">Experience<span>.</span></h1>
+        <p>Product-minded engineering across software, data, and automation.</p>
+      </header>
+
+      <div class="experience-grid section" aria-label="Professional experience">
+        {experience.map((item) => (
+          <article class="experience-card">
+            <header class="experience-card-header">
+              <h2>{item.role}</h2>
+              <strong>{item.company}</strong>
+            </header>
+            <p class="experience-context">{item.period} · {item.location}</p>
+            <p class="experience-stack">{item.stack.join(' · ')}</p>
+            <ul>
+              {item.highlights.map((highlight) => <li>{highlight}</li>)}
+            </ul>
+          </article>
+        ))}
+      </div>
+      </div>
+      </div>
+    </section>
+
+    <section class="portfolio-scroll-section scroll-panel scroll-panel-final" id="stack" data-scroll-section="stack" data-scroll-panel aria-labelledby="stack-title">
+      <div class="scroll-panel-surface" data-scroll-panel-surface>
+      <div class="project-grid-page stack-grid-page portfolio-panel-inner" data-scroll-panel-inner>
+      <header class="project-grid-intro">
+        <h1 id="stack-title">Stack<span>.</span></h1>
+        <p>Languages, frameworks, platforms, and tools I use to take products from idea to production.</p>
+      </header>
+      <div class="project-grid stack-grid section" data-stack-grid aria-label="Complete technology stack">
+        {stack.map(({ category, icon, tools }) => (
+          <article class:list={['project-grid-card', 'stack-grid-card']}>
+            <h2><i class:list={['ph-duotone', icon]} aria-hidden="true"></i>{category}</h2>
+            <p class="stack-grid-preview">{tools.join(' · ')}</p>
+          </article>
+        ))}
+      </div>
+      </div>
       </div>
     </section>
     </main>
@@ -130,31 +158,85 @@ const promorphAlternate = promorphImages[1];
 <script>
   import { gsap } from 'gsap';
   import { ScrollTrigger } from 'gsap/ScrollTrigger';
-  import { ScrollSmoother } from 'gsap/ScrollSmoother';
 
-  gsap.registerPlugin(ScrollTrigger, ScrollSmoother);
+  gsap.registerPlugin(ScrollTrigger);
 
-  const timeFormatter = new Intl.DateTimeFormat('en-PH', {
-    timeZone: 'Asia/Manila',
-    hour: 'numeric',
-    minute: '2-digit',
-    hour12: true,
-  });
   let cleanupHome: (() => void) | undefined;
 
   const initializeHome = () => {
     cleanupHome?.();
     cleanupHome = undefined;
 
-    if (!document.querySelector('.express-home')) return;
+    const home = document.querySelector<HTMLElement>('.express-home');
+    if (!home) return;
+    home.classList.add('scroll-panels-ready');
 
-    const headlineLines = gsap.utils.toArray<HTMLElement>('.headline-line-content');
-    const headlineAccents = gsap.utils.toArray<HTMLElement>('.headline-pop');
-    const headlineGreeting = gsap.utils.toArray<HTMLElement>('.headline-greeting');
-    const homeIcons = gsap.utils.toArray<HTMLElement>('.express-stats i');
-    const aboutReveal = gsap.utils.toArray<HTMLElement>('.home-about-copy, .home-project-preview');
-    const contactReveal = gsap.utils.toArray<HTMLElement>('.home-cta-copy, .home-contact-details');
-    const alternateProjectPreview = document.querySelector<HTMLElement>('.home-project-preview-alternate');
+    const panelMedia = gsap.matchMedia();
+    panelMedia.add('(prefers-reduced-motion: no-preference)', () => {
+      const panels = gsap.utils.toArray<HTMLElement>('[data-scroll-panel]');
+      const panelTimelines: gsap.core.Timeline[] = [];
+
+      panels.slice(0, -1).forEach((panel, index) => {
+        const surface = panel.querySelector<HTMLElement>('[data-scroll-panel-surface]');
+        const inner = panel.querySelector<HTMLElement>('[data-scroll-panel-inner]');
+        if (!surface || !inner) return;
+
+        const overflow = Math.max(0, inner.scrollHeight - panel.clientHeight);
+        const transitionDistance = panel.clientHeight;
+        const totalDistance = overflow + transitionDistance;
+        panel.style.marginBottom = `${overflow}px`;
+
+        const timeline = gsap.timeline({
+          scrollTrigger: {
+            id: `portfolio-panel-${index}`,
+            trigger: panel,
+            start: 'top top',
+            end: `+=${totalDistance}`,
+            pin: true,
+            pinSpacing: false,
+            scrub: 0.65,
+            anticipatePin: 1,
+          },
+        });
+
+        if (overflow > 0) {
+          timeline.to(inner, {
+            y: -overflow,
+            duration: overflow / totalDistance,
+            ease: 'none',
+          });
+        }
+
+        timeline.to(surface, {
+          scale: 0.82,
+          opacity: 0.18,
+          borderRadius: 28,
+          duration: transitionDistance / totalDistance,
+          ease: 'none',
+        });
+        panelTimelines.push(timeline);
+      });
+
+      ScrollTrigger.refresh();
+      panels[0]?.setAttribute('data-scroll-target', '0');
+      panelTimelines.forEach((timeline, index) => {
+        const nextPanel = panels[index + 1];
+        const destination = timeline.scrollTrigger?.end;
+        if (nextPanel && typeof destination === 'number') nextPanel.dataset.scrollTarget = String(destination);
+      });
+
+      return () => {
+        panels.forEach((panel) => {
+          panel.style.removeProperty('margin-bottom');
+          panel.removeAttribute('data-scroll-target');
+          const surface = panel.querySelector<HTMLElement>('[data-scroll-panel-surface]');
+          const inner = panel.querySelector<HTMLElement>('[data-scroll-panel-inner]');
+          if (surface) gsap.set(surface, { clearProps: 'transform,opacity,borderRadius' });
+          if (inner) gsap.set(inner, { clearProps: 'transform' });
+        });
+      };
+    });
+
     const contactForm = document.querySelector<HTMLFormElement>('[data-contact-form]');
     const contactOpen = document.querySelector<HTMLAnchorElement>('[data-contact-choice-open]');
     const contactDialog = document.querySelector<HTMLDialogElement>('[data-contact-choice-dialog]');
@@ -168,18 +250,7 @@ const promorphAlternate = promorphImages[1];
     const contactDialogStatus = contactForm?.querySelector<HTMLElement>('[data-contact-dialog-status]');
     const contactFallback = contactForm?.querySelector<HTMLAnchorElement>('[data-contact-fallback]');
     const contactMessage = contactForm?.querySelector<HTMLTextAreaElement>('textarea[name="message"]');
-    const localTime = document.querySelector<HTMLTimeElement>('#philippines-time');
-    const media = gsap.matchMedia();
     let contactFormPending = false;
-
-    const updateLocalTime = () => {
-      if (!localTime) return;
-      const now = new Date();
-      localTime.textContent = timeFormatter.format(now);
-      localTime.dateTime = now.toISOString();
-    };
-    updateLocalTime();
-    const localTimeInterval = window.setInterval(updateLocalTime, 1_000);
 
     const clearContactFeedback = () => {
       if (contactDialogStatus) {
@@ -283,76 +354,9 @@ const promorphAlternate = promorphImages[1];
     contactDialog?.addEventListener('click', handleDialogBackdrop);
     contactForm?.addEventListener('submit', handleContactSubmit);
 
-    media.add('(prefers-reduced-motion: no-preference)', () => {
-      const headlineIntro = gsap.timeline()
-        .from(headlineLines, { autoAlpha: 0, yPercent: 112, duration: 0.72, ease: 'power4.out', stagger: 0.12, overwrite: 'auto' })
-        .from(headlineGreeting, { autoAlpha: 0, yPercent: 34, duration: 0.46, ease: 'power3.out', overwrite: 'auto' }, 0.12)
-        .from(headlineAccents, { autoAlpha: 0, yPercent: 28, scale: 0.8, duration: 0.42, ease: 'back.out(1.55)', transformOrigin: 'center bottom', overwrite: 'auto' }, 0.28);
-      const iconIntro = gsap.from(homeIcons, { autoAlpha: 0, scale: 0.55, rotation: -12, duration: 0.46, ease: 'back.out(1.7)', stagger: 0.055, delay: 0.78, overwrite: 'auto' });
-
-      return () => {
-        headlineIntro.kill();
-        iconIntro.kill();
-        gsap.set([...headlineLines, ...headlineGreeting, ...headlineAccents, ...homeIcons], { clearProps: 'opacity,visibility,transform' });
-      };
-    });
-
-    media.add('(prefers-reduced-motion: no-preference)', () => {
-      const aboutTween = gsap.from(aboutReveal, {
-        autoAlpha: 0,
-        y: 34,
-        duration: 0.62,
-        ease: 'power3.out',
-        stagger: 0.1,
-        overwrite: 'auto',
-        scrollTrigger: { trigger: '.home-about', start: 'top 78%', toggleActions: 'play none none reverse' },
-      });
-      const contactTween = gsap.from(contactReveal, {
-        autoAlpha: 0,
-        y: 34,
-        duration: 0.62,
-        ease: 'power3.out',
-        stagger: 0.1,
-        overwrite: 'auto',
-        scrollTrigger: { trigger: '.home-cta', start: 'top 78%', toggleActions: 'play none none reverse' },
-      });
-      const projectImageTween = alternateProjectPreview && gsap.to(alternateProjectPreview, {
-        autoAlpha: 1,
-        duration: 0.38,
-        ease: 'power2.out',
-        overwrite: 'auto',
-        scrollTrigger: { trigger: '.home-cta', start: 'top 78%', toggleActions: 'play none none reverse' },
-      });
-
-      return () => {
-        aboutTween.scrollTrigger?.kill();
-        contactTween.scrollTrigger?.kill();
-        projectImageTween?.scrollTrigger?.kill();
-        aboutTween.kill();
-        contactTween.kill();
-        projectImageTween?.kill();
-        gsap.set([...aboutReveal, ...contactReveal], { clearProps: 'opacity,visibility,transform' });
-        if (alternateProjectPreview) gsap.set(alternateProjectPreview, { clearProps: 'opacity,visibility' });
-      };
-    });
-
-    media.add('(min-width: 769px) and (prefers-reduced-motion: no-preference)', () => {
-      const smoother = ScrollSmoother.create({
-        wrapper: '#smooth-wrapper',
-        content: '#smooth-content',
-        smooth: 1.1,
-        effects: false,
-        normalizeScroll: true,
-        ignoreMobileResize: true,
-      });
-      return () => {
-        smoother.kill();
-      };
-    });
-
     const dispose = () => {
-      media.revert();
-      window.clearInterval(localTimeInterval);
+      panelMedia.revert();
+      home.classList.remove('scroll-panels-ready');
       contactOpen?.removeEventListener('click', handleContactOpen);
       contactMessageOpen?.removeEventListener('click', handleMessageOpen);
       contactCall?.removeEventListener('click', handleContactCall);
@@ -360,18 +364,14 @@ const promorphAlternate = promorphImages[1];
       contactDialogClose.forEach((button) => button.removeEventListener('click', handleDialogClose));
       contactDialog?.removeEventListener('click', handleDialogBackdrop);
       contactForm?.removeEventListener('submit', handleContactSubmit);
-      window.removeEventListener('portfolio:navigate', dispose);
     };
     cleanupHome = dispose;
-    window.addEventListener('portfolio:navigate', dispose, { once: true });
   };
 
   initializeHome();
   document.addEventListener('astro:page-load', initializeHome);
   window.addEventListener('portfolio:home-replay', () => {
-    const smoother = ScrollSmoother.get();
-    if (smoother) smoother.scrollTo(0, true);
-    else window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
     initializeHome();
   });
 </script>

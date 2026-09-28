@@ -1,0 +1,138 @@
+[PLANS]
+- 2026-09-27T13:34:16+08:00 [USER] Restyle homepage first section to follow sahen.site layout; preserve Rio identity and exclude reference animations/assets.
+- 2026-09-27T16:24:38Z [USER] Replace Archivo Expanded with a bolder font similar to the reference site and redesign the homepage metric highlights; visual direction is awaiting selection.
+
+[DECISIONS]
+- 2026-09-28T03:01:10Z [USER] Reorder both the homepage and primary navigation to Home → Projects → Experience → Stack.
+- 2026-09-28T02:57:41Z [USER] Keep the homepage and every scroll section horizontally centered instead of shifted to the right.
+- 2026-09-28T02:42:03Z [USER] Adapt GreenSock's `Slides Pinning - Overscroll Solution` behavior across the homepage sections.
+- 2026-09-28T02:29:09Z [USER] Reduce the whitespace between each homepage section divider and the Experience, Projects, and Stack titles.
+- 2026-09-28T02:25:18Z [USER] Keep the theme toggle vertically aligned with the navbar and turn the homepage into a continuous Home → Experience → Projects → Stack flow so visitors can browse by scrolling instead of changing routes.
+- 2026-09-28T02:16:32Z [USER] Set the homepage project count to `10+`, expand the revenue value to `$10,000+` with a different icon, and move the theme toggle directly to the bottom-right at constrained desktop widths.
+- 2026-09-28T02:08:36Z [USER] Remove Email and Book a call from the homepage quick-link row and restore blue default icon color.
+- 2026-09-28T01:56:13Z [USER] Use the muted chat-icon color for default quick-link icons and rename the homepage highlights to `Projects done` and `Generated/saved by my projects`.
+- 2026-09-28T01:49:37Z [USER] Replace the navbar local-time portrait hover with a 12-hour user-versus-Rio time comparison, explicit hour difference, yellow daytime suns, and deep-blue nighttime moons.
+- 2026-09-28T01:45:46Z [USER] Add WhatsApp to the homepage contact/social quick links.
+- 2026-09-28T01:42:31Z [USER] Hero quick links should be contact/social destinations rather than internal Projects or Experience links, with labels revealed on hover.
+- 2026-09-28T01:39:19Z [USER] Homepage quick links should display only their icons, and the `Let’s build something useful` call-to-action should be larger.
+- 2026-09-28T01:31:01Z [USER] Move the homepage blue punctuation accent from the role line to the `rio` wordmark.
+- 2026-09-28T01:25:06Z [USER] Homepage highlights now use `5+ Years building`, omit the time-savings metric, and present approximately `$10k` as revenue generated or saved.
+- 2026-09-28T01:13:49Z [USER] Match the local hero title typography and metric treatment to the live rioespinosa.com homepage while retaining lowercase `rio` content and the current composition.
+- 2026-09-27T13:34:16+08:00 [USER] Layout-only adaptation; no generated imagery.
+- 2026-09-27T13:34:16+08:00 [ASSUMPTION] Use oversized `RIO` wordmark, Rio-specific tagline/actions, static geometry, and social rail to reproduce composition without copying branding.
+- 2026-09-27T13:40:10+08:00 [USER] Remove effects from name, use solid blue, and replace arrow-only action icons with centered section-specific icons.
+- 2026-09-27T13:48:04+08:00 [USER] Remove hero aura/geometric decorations, replace vertical slide navigation with faster pop transition, and show current page with glass nav highlight.
+- 2026-09-27T13:50:34+08:00 [USER] Use GSAP skills to add continuous wiggle plus magnetic pointer pull to main `RIO` name section.
+- 2026-09-27T13:58:21+08:00 [USER] Make navbar glass indicator slide between selected/hovered links, shrink it within navbar height, and use darker tint.
+- 2026-09-27T14:00:46+08:00 [USER] Lighten navbar glass tint and enlarge indicator.
+- 2026-09-27T14:03:28+08:00 [USER] Keep the main-name GSAP wiggle stopped when the cursor is not over the name.
+- 2026-09-27T14:08:21+08:00 [USER] Scale the nav glass with hovered text, expand the name magnetic radius, simplify the role line, remove side social buttons, and replace the GitHub hero action with LinkedIn.
+- 2026-09-27T14:12:33+08:00 [USER] Replace nav glass with a sliding underline and remove name wiggle/rotation in favor of magnetic x/y movement only.
+- 2026-09-27T14:14:02+08:00 [USER] Replace the navbar name slot with live Philippine local time in 12-hour format and a day/night icon.
+- 2026-09-27T14:16:24+08:00 [USER] Make the navbar time icon white, remove the homepage greeting, use lowercase `rio`, and lowercase titles across sections.
+- 2026-09-27T14:18:57+08:00 [USER] Normalize `rio` letter spacing, add metrics beneath the role, and remove pill styling from hero links.
+- 2026-09-27T14:28:48+08:00 [USER] Speed up internal page switching and remove the homepage GSAP magnetic effect.
+- 2026-09-27T14:34:19+08:00 [USER] Keep a fast page-switch pop, restore uppercase `RIO`, remove nav underline, and lowercase only large page titles rather than subtitles.
+- 2026-09-27T14:39:04+08:00 [USER] Try Archivo Expanded for the large titles.
+- 2026-09-27T14:28:39Z [USER] Make the portfolio responsive across phone, tablet, and desktop widths.
+- 2026-09-27T16:18:19Z [USER] Prevent the dark/light mode control from overlapping the navbar while resizing.
+- 2026-09-27T16:21:19Z [USER] Keep the theme toggle's circular visibility background at every viewport size.
+- 2026-09-27T16:40:16Z [USER] Selected the recommended Geist 900 title treatment and soft metric-card redesign, superseding the pending choice in `[PLANS]`.
+- 2026-09-27T16:42:55Z [USER] Make the homepage wordmark lowercase and remove its blue color while retaining blue metric accents.
+
+[PROGRESS]
+- 2026-09-28T03:01:10Z [CODE] Moved the Projects panel before Experience in homepage markup and mirrored that order in the shared primary navigation; ScrollTrigger continues deriving targets from DOM order.
+- 2026-09-28T02:57:41Z [CODE] Removed the desktop-wide `body` zoom and its `/1.15` viewport-height compensations so ScrollTrigger pins and measures every section in the browser's actual viewport coordinate system.
+- 2026-09-28T02:42:03Z [CODE] Wrapped homepage sections in pinned viewport surfaces; GSAP ScrollTrigger now scrolls tall panel content internally, then scales/fades the outgoing surface as the next panel rises over it, with subtle underlay/shadow separation and a normal-flow reduced-motion fallback.
+- 2026-09-28T02:42:03Z [CODE] Reworked navbar anchor scrolling to use resolved post-refresh panel boundary positions so Home, Experience, Projects, and Stack land correctly through GSAP pin spacers.
+- 2026-09-28T02:29:09Z [CODE] Reduced homepage scroll-section top padding from 96–168px to 48–76px on desktop and from 88px to 44px on mobile while preserving the larger bottom spacing between sections.
+- 2026-09-28T02:25:18Z [CODE] Added the full experience, project, and stack content to anchored homepage sections; shared stack data through `src/data/stack.ts`; changed primary nav links to homepage anchors; and registered GSAP ScrollTrigger to update the active nav item as sections enter the viewport.
+- 2026-09-28T02:25:18Z [CODE] Centered the theme toggle on the navbar row at every breakpoint and reserved horizontal navbar space for it on tablet and mobile widths.
+- 2026-09-28T02:16:32Z [CODE] Updated the project and revenue metrics, replaced the dollar glyph with a hand-coins icon, and changed the 769–1100px theme-toggle breakpoint from a lowered top position to the bottom-right safe-area position.
+- 2026-09-28T02:08:36Z [CODE] Reduced homepage quick links to WhatsApp, LinkedIn, Instagram, and GitHub; restored accent-blue icon styling and removed the temporary tight mobile gap override.
+- 2026-09-28T01:56:13Z [CODE] Changed quick-link icons from accent blue to the theme-aware muted color while retaining blue hover/focus feedback; revised the 20+ and $10k metric labels.
+- 2026-09-28T01:49:37Z [CODE] Rebuilt the navbar hover card with live browser-local and Asia/Manila clocks, DST-aware offset wording, daylight/night icon states, 30-second refreshes, and a refined keyboard focus ring; retained the GSAP pop animation with a reduced-motion instant-state path.
+- 2026-09-28T01:45:46Z [CODE] Added a WhatsApp icon link using the live site's existing `wa.me` destination and prefilled message; tightened the mobile quick-link gap to keep all six links on one row.
+- 2026-09-28T01:42:31Z [CODE] Replaced internal quick links with verified Email, LinkedIn, Instagram, GitHub, and Calendly destinations; added animated custom labels for hover and keyboard focus while retaining accessible names.
+- 2026-09-28T01:39:19Z [CODE] Removed visible labels from the Projects, Experience, and LinkedIn hero links while preserving accessible names and tooltips; increased the contact call-to-action to 17px with a 19px chat icon.
+- 2026-09-28T01:35:36Z [CODE] Established a body block formatting context with `display: flow-root` and a viewport minimum height so first-child page margins cannot displace the document root during Astro swaps or theme view transitions.
+- 2026-09-28T01:31:01Z [CODE] Added an accent-colored period to the hero wordmark and removed the trailing period from `Full Stack Developer & AI Engineer`.
+- 2026-09-28T01:25:06Z [CODE] Reduced the hero highlights from four to three, replaced the systems icon/value with a dollar metric, changed the desktop grid to three columns, and centered the third metric across the mobile two-column grid.
+- 2026-09-28T01:13:49Z [CODE] Replaced Geist with variable Inter, set major display titles to weight 650 with reference tracking, and rebuilt hero metrics with reference icon circles, numbers, labels, desktop dividers, and a divider-free mobile 2x2 layout.
+- 2026-09-27T13:34:16+08:00 [TOOL] Direct HTTP fetch exposed sahen.site hero HTML/CSS: centered oversized layered wordmark, offset greeting, tagline, three actions, background geometry, floating social rail.
+- 2026-09-27T13:34:16+08:00 [CODE] Replaced homepage hero markup/styles and removed homepage GSAP/ScrollSmoother animation code while preserving contact dialog behavior.
+- 2026-09-27T13:34:16+08:00 [CODE] Added Dockerfile, .dockerignore, and repository container guidance because workspace instructions require container-first tooling.
+- 2026-09-27T13:40:10+08:00 [CODE] Removed duplicate wordmark layers/gradient; action icons now use folder, briefcase, and GitHub glyphs inside dedicated flex-centered circle wrappers.
+- 2026-09-27T13:48:04+08:00 [CODE] Removed hero glow and geometry markup/styles; navigation exit now fades/scales in 0.14s and destination pops in over 0.24s using GSAP transforms with reduced-motion bypass.
+- 2026-09-27T13:48:04+08:00 [CODE] Added server-rendered and post-swap `aria-current="page"` state with glass pill styling for Home, Experience, Projects, and Stack.
+- 2026-09-27T13:50:34+08:00 [CODE] Registered CustomEase and CustomWiggle; `RIO` runs an 8-oscillation 1.5s loop while `gsap.utils.mapRange` drives pointer-relative x/y magnetic pull and elastic reset using property-level overwrite.
+- 2026-09-27T13:58:21+08:00 [CODE] Replaced per-link glass backgrounds with one 24px-high absolute pill; GSAP animates x/scaleX to hover/focus targets and returns to `aria-current` selection on pointer/focus exit.
+- 2026-09-27T14:00:46+08:00 [CODE] Glass pill increased from 24px to 30px, horizontal inset reduced from 5px to 2px, and dark fill replaced with lighter translucent tint/shadow.
+- 2026-09-27T14:03:28+08:00 [CODE] Main-name wiggle now starts on direct wordmark pointer entry, pauses and resets on leave, and uses the stationary wrapper as its hover zone while animating the child heading.
+- 2026-09-27T14:08:21+08:00 [CODE] Nav glass now grows proportionally with the GSAP hover magnification; wordmark hit area extends 120px horizontally and 80px vertically; hero role/action/social content was simplified as requested.
+- 2026-09-27T14:12:33+08:00 [CODE] Nav state now uses a 2px accent underline that slides and scales with hovered text; CustomWiggle/CustomEase and all name rotation logic were removed, while magnetic movement uses `overwrite: true` and elastic reset.
+- 2026-09-27T14:14:02+08:00 [CODE] Navbar brand slot now shows live Asia/Manila time with `PHT`, tabular digits, and a sun from 06:00–17:59 or moon from 18:00–05:59; updates every 30 seconds.
+- 2026-09-27T14:16:24+08:00 [CODE] Removed hero greeting, changed wordmark text to `rio`, added site-wide lowercase rendering for h1–h6, and made the time icon white on the dark navbar with a dark-theme contrast override.
+- 2026-09-27T14:18:57+08:00 [CODE] Wordmark now uses normal letter spacing; added four existing career highlights in a responsive divider grid; hero actions are plain text-and-icon links without borders, backgrounds, or circular icon pills.
+- 2026-09-27T14:28:48+08:00 [CODE] Removed the 140ms GSAP exit delay, 240ms entry pop, sessionStorage transition flag, and manual router call so Astro handles internal links immediately; removed all homepage magnetic listeners/tweens and the expanded hover hit area.
+- 2026-09-27T14:34:19+08:00 [CODE] Added a scale-only 160ms post-swap GSAP pop with no exit wait; removed nav indicator markup/styles/logic; restored uppercase hero `RIO`; lowercase transformation now targets h1 only, with the hero h1 explicitly uppercase.
+- 2026-09-27T14:39:04+08:00 [CODE] Added Google Fonts Archivo at expanded width in weights 700/800, applied it only to h1 display titles, and relaxed title tracking so the wider forms remain visible; Inter remains the UI/body font.
+- 2026-09-27T14:28:39Z [CODE] Limited the 1.15 desktop zoom to viewports at least 1200px, restored true-height layouts below that breakpoint, tightened the mobile navigation, resized narrow display headings, and made cards/dialogs wrap and fit small screens.
+- 2026-09-27T16:18:19Z [CODE] Theme toggle now moves below the navbar from 769–1100px and to the bottom-right at 768px and below; it remains visible and gains a readable blurred circular surface at constrained widths.
+- 2026-09-27T16:21:19Z [CODE] Promoted the theme toggle border, circular radius, translucent surface, blur, and shadow to its base style for uniform rendering at all viewport widths.
+- 2026-09-27T16:40:16Z [CODE] Replaced Archivo Expanded with Geist 800/900, set major display titles to weight 900, and redesigned hero metrics as responsive blue-tinted cards with strong numbers, compact uppercase labels, and subtle hover lift.
+- 2026-09-27T16:42:55Z [CODE] Changed the hero wordmark content to lowercase `rio`, set its text transformation to lowercase, and changed its color from the accent to the theme-aware ink color.
+
+[DISCOVERIES]
+- 2026-09-28T02:57:41Z [TOOL] The desktop `body` zoom made ScrollTrigger cache oversized panel widths; after removing it and reloading, all four panels matched the 1317px document viewport, each inner wrapper had a 0px center delta, and horizontal overflow was 0px at rest and while scrolled.
+- 2026-09-28T02:42:03Z [TOOL] The referenced GreenSock CodePen pins each viewport panel without pin spacing, translates overflowing inner content first, then scales and fades the outgoing panel while the next section enters; pinned spacers require explicit resolved destinations for reliable navbar jumps.
+- 2026-09-28T01:45:46Z [TOOL] The public rioespinosa.com homepage exposes an existing WhatsApp quick link, allowing the local implementation to reuse the verified destination rather than guess contact data.
+- 2026-09-28T01:42:31Z [CODE] The repository contains verified destinations for Email, LinkedIn, Instagram, GitHub, and Calendly but no WhatsApp phone number or `wa.me` URL, so no WhatsApp link was fabricated.
+- 2026-09-28T01:35:36Z [TOOL] Browser measurements reproduced the gap: on `/experience/`, the first main element's 116px top margin collapsed through `body`, moving `body.getBoundingClientRect().top` to 116px; after the formatting-context fix, body stayed at 0px across route and theme changes while main retained its intended 116px offset.
+- 2026-09-28T01:13:49Z [TOOL] Live rioespinosa.com computed styles use Inter 650 with -0.055em tracking for the hero heading; metrics use 48px tinted icon circles, 22px/700 values, 12px labels, and desktop separators.
+- 2026-09-27T13:34:16+08:00 [CODE] Project uses Astro; homepage hero lives in src/pages/index.astro with shared styles in src/styles/global.css.
+- 2026-09-27T13:34:16+08:00 [TOOL] Docker executable unavailable on workstation; existing local dependencies used without installing host packages.
+- 2026-09-27T13:34:16+08:00 [TOOL] Desktop and mobile headless Chrome screenshots rendered new hero; mobile required resetting global `body` zoom to 1 below 768px.
+- 2026-09-27T13:50:34+08:00 [CODE] Magnetic/wiggle behavior is limited to desktop fine pointers and disabled for reduced motion; Astro navigation cleanup removes listeners and kills/reverts tweens.
+- 2026-09-27T14:39:04+08:00 [TOOL] Official Google Fonts CSS confirmed Archivo weight 700/800 with the `expanded` stretch descriptor.
+- 2026-09-27T14:28:39Z [TOOL] Browser audit found the Archivo `projects` heading clipped at 320px and global zoom affected tablet layout; after the CSS fix, all tested routes had no horizontal offenders at 320, 375, 768, 1024, and 1440px.
+- 2026-09-27T16:24:38Z [TOOL] Current sahen.site CSS declares `Geist Variable` for its primary typeface; Geist supports weights through 900, making Geist 900 the closest bolder match.
+
+[OUTCOMES]
+- 2026-09-28T03:01:10Z [TOOL] Live rendering confirmed Home → Projects → Experience → Stack in the nav and panel DOM with increasing ScrollTrigger targets, zero horizontal overflow, and no browser errors; npm check passed with 0 errors and 18 existing hints, npm build passed, and git diff --check passed with line-ending warnings only.
+- 2026-09-28T02:57:41Z [TOOL] Live desktop measurements confirmed centered Home, Experience, Projects, and Stack panels with no horizontal overflow or browser errors; npm check passed with 0 errors and 18 existing hints, npm build passed, and git diff --check passed with line-ending warnings only.
+- 2026-09-28T02:42:03Z [TOOL] Desktop and 320px live tests confirmed pinned transitions, readable long-section scrolling, accurate anchor destinations, automatic active-nav changes, responsive layouts, and zero browser console errors; npm check passed with 0 errors and 18 existing hints, npm build passed, and git diff --check passed with line-ending warnings only.
+- 2026-09-28T02:29:09Z [TOOL] Live desktop rendering confirmed the divider-to-title gap is roughly half its prior size; npm check passed with 0 errors and 18 existing hints, npm build passed, and git diff --check passed with line-ending warnings only.
+- 2026-09-28T02:25:18Z [TOOL] Desktop and 320px live tests confirmed aligned navbar/toggle placement, smooth anchor scrolling, and automatic Home/Experience/Projects/Stack active-state changes with no browser errors; npm check passed with 0 errors and 18 existing hints, npm build passed, and git diff --check passed with line-ending warnings only.
+- 2026-09-28T02:16:32Z [TOOL] Live ~1081px and 320px renders confirmed the new metric values/icon, direct bottom-right theme-toggle placement, and no overflow; npm check passed with 0 errors and 18 existing hints, npm build passed, and git diff --check passed with line-ending warnings only.
+- 2026-09-28T02:08:36Z [TOOL] Desktop and 320px live renders confirmed four centered blue quick links with no overflow; npm check passed with 0 errors and 18 existing hints, npm build passed, and git diff --check passed with line-ending warnings only.
+- 2026-09-28T01:56:13Z [TOOL] Desktop and 320px live renders confirmed muted quick-link icons and readable revised metric labels with no overflow; npm check passed with 0 errors and 18 existing hints, npm build passed, and git diff --check passed with line-ending warnings only.
+- 2026-09-28T01:49:37Z [TOOL] Live hover/focus rendering confirmed two 12-hour clocks, yellow daytime icons, and `Same time · 0-hour difference` for the current PHT browser; npm check passed with 0 errors and 18 existing hints, npm build passed, and git diff --check passed with line-ending warnings only.
+- 2026-09-28T01:45:46Z [TOOL] Desktop and 320px live renders confirmed the WhatsApp icon and six-link single-row layout with no overflow; npm check passed with 0 errors and 18 existing hints, npm build passed, and git diff --check passed with line-ending warnings only.
+- 2026-09-28T01:42:31Z [TOOL] Desktop hover/focus and 320px live renders confirmed visible quick-link labels, correct five-icon alignment, and no overflow; npm check passed with 0 errors and 18 existing hints, npm build passed, and git diff --check passed with line-ending warnings only.
+- 2026-09-28T01:39:19Z [TOOL] Desktop and 320px live renders confirmed centered icon-only quick links and a larger contact call-to-action with no overflow; npm check passed with 0 errors and 18 existing hints, npm build passed, and git diff --check passed with line-ending warnings only.
+- 2026-09-28T01:35:36Z [TOOL] Live navigation Home→Experience→Home and dark→light toggles kept the document root at top 0 with no added gap; npm check passed with 0 errors and 18 existing hints, npm build passed, and git diff --check passed with line-ending warnings only.
+- 2026-09-28T01:31:01Z [TOOL] Desktop and 320px live renders confirmed the blue `rio.` accent and punctuation-free role; npm check passed with 0 errors and 18 existing hints, npm build passed, and git diff --check passed with line-ending warnings only.
+- 2026-09-28T01:25:06Z [TOOL] Live 1100px and 320px renders confirmed a balanced three-metric layout with no visible overflow; npm check passed with 0 errors and 18 existing hints, npm build passed, and git diff --check passed with line-ending warnings only.
+- 2026-09-28T01:13:49Z [TOOL] Live 1100px and 320px renders confirmed Inter 650 title styling, reference metric structure, divider-free mobile grid, and no overflow; npm check/build and git diff --check passed.
+- 2026-09-27T13:34:16+08:00 [TOOL] `npm run check` passed with 0 errors (18 pre-existing Astro/Zod hints); `npm run build` passed; `git diff --check` passed.
+- 2026-09-27T13:34:16+08:00 [CODE] Homepage first section now uses requested sahen-inspired layout with responsive desktop/mobile treatment and original Rio content.
+- 2026-09-27T13:40:10+08:00 [TOOL] Updated desktop screenshot confirmed solid-blue wordmark and optically centered action icons; `npm run check`, `npm run build`, and `git diff --check` passed.
+- 2026-09-27T13:48:04+08:00 [TOOL] Homepage and Projects screenshots confirmed clean hero and correct glass highlight; `npm run check` and `npm run build` passed, removed-effect selector search returned no matches.
+- 2026-09-27T13:50:34+08:00 [TOOL] Headless browser screenshot after 900ms captured active name rotation with no runtime console errors; `npm run check`, `npm run build`, and `git diff --check` passed.
+- 2026-09-27T13:58:21+08:00 [TOOL] Projects screenshot confirmed smaller dark inset glass selection; `npm run check`, `npm run build`, and `git diff --check` passed.
+- 2026-09-27T14:00:46+08:00 [TOOL] `npm run check`, `npm run build`, and `git diff --check` passed after glass sizing/tint adjustment.
+- 2026-09-27T14:03:28+08:00 [TOOL] `npm run check` passed with 0 errors (18 pre-existing hints); `npm run build` and `git diff --check` passed after the hover-only wiggle change.
+- 2026-09-27T14:08:21+08:00 [TOOL] Desktop render confirmed role-only tagline, LinkedIn action, and removed social rail; `npm run check` passed with 0 errors (18 pre-existing hints), `npm run build` and `git diff --check` passed.
+- 2026-09-27T14:12:33+08:00 [TOOL] Desktop render confirmed the active-page underline and static unrotated wordmark; `npm run check` passed with 0 errors (18 pre-existing hints), `npm run build` and `git diff --check` passed.
+- 2026-09-27T14:14:02+08:00 [TOOL] Desktop render confirmed `2:14 PM PHT` with sun icon in the navbar; `npm run check` passed with 0 errors (18 pre-existing hints), `npm run build` and `git diff --check` passed.
+- 2026-09-27T14:16:24+08:00 [TOOL] Home and experience renders confirmed lowercase wordmark/headings, removed greeting, and white time icon; `npm run check` passed with 0 errors (18 pre-existing hints), `npm run build` and `git diff --check` passed.
+- 2026-09-27T14:18:57+08:00 [TOOL] Desktop and narrow renders confirmed normal wordmark spacing, responsive metrics, and unboxed text actions; `npm run check` passed with 0 errors (18 pre-existing hints), `npm run build` and `git diff --check` passed.
+- 2026-09-27T14:28:48+08:00 [TOOL] Live browser route check switched Home to Experience directly with visible content and no hidden/scaled state; `npm run check` passed with 0 errors (18 pre-existing hints), `npm run build` and `git diff --check` passed.
+- 2026-09-27T14:34:19+08:00 [TOOL] Home and experience renders confirmed uppercase `RIO`, no nav underline, lowercase large page title, and title-cased role subtitles; `npm run check` passed with 0 errors (18 pre-existing hints), `npm run build` and `git diff --check` passed.
+- 2026-09-27T14:39:04+08:00 [TOOL] Desktop home/experience and 500px experience renders confirmed Archivo Expanded fits without overflow; `npm run check` passed with 0 errors (18 pre-existing hints), `npm run build` and `git diff --check` passed.
+- 2026-09-27T14:28:39Z [TOOL] Live browser screenshots verified the home, projects, and project-modal layouts at phone, tablet, small-desktop, and wide-desktop sizes; `npm run check` passed with 0 errors (18 pre-existing hints) and `npm run build` passed. Docker remains unavailable.
+- 2026-09-27T16:18:19Z [TOOL] `npm run check` passed with 0 errors (18 pre-existing hints) and `npm run build` passed after the theme-toggle breakpoint fix; live viewport QA was unavailable because the existing in-app browser preview stopped synchronizing.
+- 2026-09-27T16:21:19Z [TOOL] `npm run check` passed with 0 errors (18 pre-existing hints), `npm run build` passed, and `git diff --check` passed after making the theme-toggle surface global.
+- 2026-09-27T16:40:16Z [TOOL] Live 1100px and 320px renders confirmed Geist 900, aligned 4-column/2-column metric cards, fitting page titles, and no horizontal overflow; `npm run check` passed with 0 errors (18 pre-existing hints), `npm run build` and `git diff --check` passed.
+- 2026-09-27T16:42:55Z [TOOL] Live render confirmed lowercase black `rio` with no horizontal overflow; `npm run check` passed with 0 errors (18 pre-existing hints), `npm run build` and `git diff --check` passed.
