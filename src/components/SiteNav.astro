@@ -26,10 +26,10 @@ const currentPath = normalizePath(Astro.url.pathname);
       </span>
     </a>
     <div class="site-nav-links" data-dock>
-      <a data-dock-item data-section-link="home" href="/#home" aria-current={currentPath === '/' ? 'location' : undefined}>Home</a>
-      <a data-dock-item data-section-link="projects" href="/#projects" aria-current={currentPath === '/projects' ? 'page' : undefined}>Projects</a>
-      <a data-dock-item data-section-link="experience" href="/#experience" aria-current={currentPath === '/experience' ? 'page' : undefined}>Experience</a>
-      <a data-dock-item data-section-link="stack" href="/#stack" aria-current={currentPath === '/stack' ? 'page' : undefined}>Stack</a>
+      <a data-dock-item data-section-link="home" href="/#home" aria-label="Home" aria-current={currentPath === '/' ? 'location' : undefined}><i class="site-nav-mobile-icon ph-duotone ph-house" aria-hidden="true"></i><span>Home</span></a>
+      <a data-dock-item data-section-link="projects" href="/#projects" aria-label="Projects" aria-current={currentPath === '/projects' ? 'page' : undefined}><i class="site-nav-mobile-icon ph-duotone ph-folder-open" aria-hidden="true"></i><span>Projects</span></a>
+      <a data-dock-item data-section-link="experience" href="/#experience" aria-label="Experience" aria-current={currentPath === '/experience' ? 'page' : undefined}><i class="site-nav-mobile-icon ph-duotone ph-briefcase" aria-hidden="true"></i><span>Experience</span></a>
+      <a data-dock-item data-section-link="stack" href="/#stack" aria-label="Stack" aria-current={currentPath === '/stack' ? 'page' : undefined}><i class="site-nav-mobile-icon ph-duotone ph-stack" aria-hidden="true"></i><span>Stack</span></a>
       <a data-dock-item href="https://www.programmingrio.top/resume.pdf" target="_blank" rel="noreferrer">Resume <i class="ph-duotone ph-arrow-square-out" aria-hidden="true"></i></a>
     </div>
     <div class="site-nav-contact">
@@ -65,10 +65,11 @@ const currentPath = normalizePath(Astro.url.pathname);
   let navIsVisible = true;
 
   const setNavigationVisibility = (visible: boolean, immediate = false) => {
-    if (!siteNav || navIsVisible === visible) return;
+    if (!siteNav || (navIsVisible === visible && !immediate)) return;
     navIsVisible = visible;
+    const hiddenOffset = window.matchMedia('(max-width: 680px)').matches ? '140%' : '-140%';
     gsap.to(siteNav, {
-      '--nav-hide-y': visible ? '0%' : '-140%',
+      '--nav-hide-y': visible ? '0%' : hiddenOffset,
       autoAlpha: visible ? 1 : 0,
       pointerEvents: visible ? 'auto' : 'none',
       duration: immediate ? 0 : 0.28,
@@ -96,6 +97,7 @@ const currentPath = normalizePath(Astro.url.pathname);
       onLeaveBack: () => setNavigationVisibility(true),
       onRefresh: (self) => {
         if (self.scroll() <= 20) setNavigationVisibility(true, true);
+        else setNavigationVisibility(navIsVisible, true);
       },
     });
   };

@@ -1,8 +1,22 @@
 [PLANS]
+- 2026-09-28T15:59:00+08:00 [USER] Give the homepage `rio.` wordmark seamless 3D depth and pointer/touch-controlled rotation.
 - 2026-09-27T13:34:16+08:00 [USER] Restyle homepage first section to follow sahen.site layout; preserve Rio identity and exclude reference animations/assets.
 - 2026-09-27T16:24:38Z [USER] Replace Archivo Expanded with a bolder font similar to the reference site and redesign the homepage metric highlights; visual direction is awaiting selection.
 
 [DECISIONS]
+- 2026-09-28T16:20:00+08:00 [USER] Disable Ztext layer fading and ensure the wordmark interaction works on mobile.
+- 2026-09-28T16:20:00+08:00 [CODE] Retain Ztext's built-in touch listener and add coarse-pointer `touch-action: pan-y` so horizontal wordmark gestures remain available without blocking vertical page scrolling.
+- 2026-09-28T16:18:00+08:00 [USER] Increase the Ztext wordmark extrusion depth.
+- 2026-09-28T16:18:00+08:00 [ASSUMPTION] Increase depth from `.12em` to `.18em` for a clearly stronger but still contained effect.
+- 2026-09-28T16:15:00+08:00 [USER] Enable Ztext layer fading for the homepage wordmark.
+- 2026-09-28T16:13:00+08:00 [USER] Reduce the Ztext wordmark pointer rotation limit from 60° to 45°.
+- 2026-09-28T16:11:27+08:00 [USER] Increase the Ztext wordmark pointer rotation limit from 22° to 60°.
+- 2026-09-28T16:09:08+08:00 [USER] Replace the custom GSAP wordmark rotation/depth treatment with Bennett Feely's Ztext library.
+- 2026-09-28T16:09:08+08:00 [CODE] Vendor Ztext's official MIT browser build because its npm package entry targets `gulpfile.js`; use 12 layers, `.12em` bidirectional depth, 700px perspective, 22° pointer rotation, and disable pointer motion for reduced-motion users.
+- 2026-09-28T16:02:34+08:00 [USER] Supersede X/Y tilt and Z-position lift: keep `rio.` anchored and map pointer movement to rotation around the X and Z axes only.
+- 2026-09-28T15:59:00+08:00 [CODE] Use restrained layered depth, pointer-position tilt capped at ±12°/±9°, and an elastic neutral reset; disable interactive motion when reduced motion is requested.
+- 2026-09-28T07:31:24Z [USER] Move the icon navbar to the bottom on mobile only; keep tablet and desktop navigation at the top.
+- 2026-09-28T07:26:16Z [USER] Replace mobile navbar labels with section icons in a single horizontal bar.
 - 2026-09-28T07:12:31Z [USER] Limit homepage Projects and Experience to featured previews with links to the complete dedicated pages, reducing the amount of scrolling required.
 - 2026-09-28T07:07:38Z [USER] Change the homepage project metric to `13+` and the generated/saved metric to `$8,000+`.
 - 2026-09-28T07:05:03Z [USER] Add a hide-on-scroll navbar animation.
@@ -52,6 +66,16 @@
 - 2026-09-27T16:42:55Z [USER] Make the homepage wordmark lowercase and remove its blue color while retaining blue metric accents.
 
 [PROGRESS]
+- 2026-09-28T16:20:00+08:00 [CODE] Changed Ztext `fade` back to `false` and added mobile touch gesture styling plus selection suppression to the interactive wordmark.
+- 2026-09-28T16:18:00+08:00 [CODE] Increased the homepage Ztext depth from `.12em` to `.18em` while retaining 12 layers, fading, 45° rotation, and 700px perspective.
+- 2026-09-28T16:15:00+08:00 [CODE] Changed the homepage Ztext `fade` option from `false` to `true` so deeper duplicate layers progressively fade.
+- 2026-09-28T16:13:00+08:00 [CODE] Set the homepage Ztext `eventRotation` option to `45deg`.
+- 2026-09-28T16:11:27+08:00 [CODE] Set the homepage Ztext `eventRotation` option to `60deg` without changing its layer depth, perspective, smoothing, or reduced-motion behavior.
+- 2026-09-28T16:09:08+08:00 [CODE] Removed the custom GSAP wordmark controller and painted shadow extrusion; Ztext now generates accessible layered depth and pointer rotation, with theme-aware layer colors, responsive sizing, and a short transform transition.
+- 2026-09-28T16:02:34+08:00 [CODE] Replaced wordmark Y-axis rotation and forward Z translation with centered X-axis tilt and Z-axis spin; retained `quickTo`, elastic reset, cleanup, and reduced-motion behavior.
+- 2026-09-28T15:59:00+08:00 [CODE] Added transform-only GSAP `quickTo` 3D wordmark rotation with mouse/touch pointer input, spring reset, Astro lifecycle cleanup, theme-aware depth shadows, and responsive/reduced-motion styling.
+- 2026-09-28T07:31:24Z [CODE] At <=680px, moved the icon dock 12px above the bottom safe area, reduced unused hero top space, reserved 104px of hero bottom padding, and made hide-on-scroll exit downward. ScrollTrigger refresh now reapplies the correct breakpoint-specific hide direction after resizing.
+- 2026-09-28T07:26:16Z [CODE] Added accessible Home, Projects, Experience, and Stack icons to the shared navbar; at <=680px the labels hide and the four icons form one horizontal pill with a circular active-section state, while tablet/desktop retain text labels. Reduced mobile hero top padding to preserve the 24px navbar gap.
 - 2026-09-28T07:12:31Z [CODE] Homepage Projects now renders the first four featured entries with a `See all projects` link; Experience renders the two most recent roles with a `See all experience` link. Full `/projects/` and `/experience/` pages remain unchanged. Reworked navbar hide translation through a CSS custom property so desktop-to-mobile resizing cannot retain the desktop centering transform.
 - 2026-09-28T07:07:38Z [CODE] Updated the homepage highlights to `13+ Projects` and `$8,000+ Generated/saved by my projects`.
 - 2026-09-28T07:05:03Z [CODE] Added a standalone GSAP ScrollTrigger that slides/fades the navbar out on downward scrolling, restores it on upward scrolling or near the page top, keeps it visible after anchor selections, and leaves it static for reduced-motion users.
@@ -106,6 +130,7 @@
 - 2026-09-27T16:42:55Z [CODE] Changed the hero wordmark content to lowercase `rio`, set its text transformation to lowercase, and changed its color from the accent to the theme-aware ink color.
 
 [DISCOVERIES]
+- 2026-09-28T16:09:08+08:00 [TOOL] Ztext 1.0.1 declares `gulpfile.js` as its npm `main`, while the documented integration uses the standalone `js/ztext.min.js` browser build; vendoring that build avoids an invalid application import.
 - 2026-09-28T07:12:31Z [TOOL] Mobile viewport testing exposed that animating the navbar's transform directly could retain desktop `translateX(-50%)` after a live resize; separating the hide offset into `--nav-hide-y` preserves each breakpoint's own horizontal positioning.
 - 2026-09-28T03:14:10Z [CODE] Native smooth scrolling and the global `html { scroll-behavior: smooth; }` rule were interpolating long navbar jumps while multiple scrubbed/pinned ScrollTriggers updated, producing competing intermediate transforms before Projects or Experience settled.
 - 2026-09-28T02:57:41Z [TOOL] The desktop `body` zoom made ScrollTrigger cache oversized panel widths; after removing it and reloading, all four panels matched the 1317px document viewport, each inner wrapper had a 0px center delta, and horizontal overflow was 0px at rest and while scrolled.
@@ -123,6 +148,15 @@
 - 2026-09-27T16:24:38Z [TOOL] Current sahen.site CSS declares `Geist Variable` for its primary typeface; Geist supports weights through 900, making Geist 900 the closest bolder match.
 
 [OUTCOMES]
+- 2026-09-28T16:21:00+08:00 [TOOL] `astro check`, production build, and `git diff --check` passed. At a 390px viewport, pointer-drag QA changed the Ztext `matrix3d`, all 12 layers remained opacity 1, the wordmark stayed within bounds with zero overflow, and no console warnings/errors occurred.
+- 2026-09-28T16:17:30+08:00 [TOOL] `astro check` and `git diff --check` passed. Live corner-pointer QA confirmed the `.18em` depth spans about 28px across the layered Z-axis at the current desktop size, with zero horizontal overflow and no console warnings/errors.
+- 2026-09-28T16:16:30+08:00 [TOOL] `astro check` and `git diff --check` passed. Live DOM QA confirmed Ztext layer opacity now descends progressively from 0.458 on the first extrusion layer to 0.042 on the deepest layer, with no console warnings/errors.
+- 2026-09-28T16:12:00+08:00 [TOOL] `astro check` passed with 0 errors and 19 existing hints; production build and `git diff --check` passed. Live corner-pointer QA confirmed the 60° Ztext range produces a strong layered rotation with zero horizontal overflow and no console warnings/errors.
+- 2026-09-28T16:09:08+08:00 [TOOL] `astro check` passed with 0 errors and 19 existing hints; production build and `git diff --check` passed. Browser QA confirmed 12 Ztext layers (11 accessibility-hidden duplicates), pointer-driven `matrix3d` rotation, 390px fit, clean Home route re-entry without nested layers, and no console warnings/errors.
+- 2026-09-28T16:02:35+08:00 [TOOL] `astro check` passed with 0 errors and 19 existing hints; production build and `git diff --check` passed. Browser drag QA confirmed a centered X/Z `matrix3d` with zero translation components, exact neutral reset, and no console warnings/errors.
+- 2026-09-28T15:59:00+08:00 [TOOL] `astro check` completed with 0 errors and only 19 pre-existing hints; production build and `git diff --check` passed. Browser QA confirmed active `matrix3d` rotation, neutral reset, 390px viewport fit, and no console warnings/errors.
+- 2026-09-28T07:31:24Z [TOOL] Live 375px checks confirmed the dock sits at bottom with 12px clearance, exits below the viewport on downward scroll, returns on upward scroll, and causes no overflow; desktop remains top-aligned with labels and no browser errors. `npm run check` passed with 0 errors and 19 existing/deprecation hints, `npm run build` passed, and `git diff --check` passed with line-ending warnings only.
+- 2026-09-28T07:26:16Z [TOOL] Live 320px/375px and desktop checks confirmed 19px mobile icons, hidden mobile labels with retained accessible names, desktop-only text labels, a 24px hero gap, zero overflow, and no browser errors; `npm run check` passed with 0 errors and 19 existing/deprecation hints, `npm run build` passed, and `git diff --check` passed with line-ending warnings only.
 - 2026-09-28T07:12:31Z [TOOL] Live desktop/mobile DOM checks confirmed four featured projects, two featured roles, both full-list links, centered responsive navbar behavior, zero horizontal overflow, and no browser errors; `npm run check` passed with 0 errors and 19 existing/deprecation hints, `npm run build` passed, and `git diff --check` passed with line-ending warnings only.
 - 2026-09-28T07:07:38Z [TOOL] Live DOM verification confirmed `5+`, `13+`, and `$8,000+`; `npm run check` passed with 0 errors and 19 existing/deprecation hints, and `npm run build` passed.
 - 2026-09-28T07:05:03Z [TOOL] Live desktop and 375px tests confirmed the navbar hides fully on downward scroll and returns on upward scroll with zero overflow and no browser errors; `npm run check` passed with 0 errors and 19 existing/deprecation hints, `npm run build` passed, and `git diff --check` passed with line-ending warnings only.

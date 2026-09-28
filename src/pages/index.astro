@@ -18,7 +18,7 @@ const featuredExperience = experience.slice(0, 2);
       <div class="hero-center" data-scroll-panel-inner>
         <div class="hero-wordmark" aria-label="Rio Espinosa">
           <p class="hero-kicker">hi! it’s</p>
-          <h1>rio<span class="hero-wordmark-dot" aria-hidden="true">.</span></h1>
+          <h1 class="hero-ztext">rio<span class="hero-wordmark-dot" aria-hidden="true">.</span></h1>
         </div>
         <p class="hero-tagline">a Full Stack Developer/AI Enthusiast</p>
         <div class="hero-metrics" aria-label="Career highlights">
@@ -160,6 +160,8 @@ const featuredExperience = experience.slice(0, 2);
 
 </Layout>
 
+<script is:inline src="/vendor/ztext.min.js" data-astro-rerun></script>
+
 <script>
   import { gsap } from 'gsap';
   import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -175,6 +177,23 @@ const featuredExperience = experience.slice(0, 2);
     const home = document.querySelector<HTMLElement>('.express-home');
     if (!home) return;
     home.classList.add('scroll-panels-ready');
+
+    const wordmarkTitle = home.querySelector<HTMLElement>('.hero-ztext');
+    const Ztextify = (window as Window & {
+      Ztextify?: new (selector: string, options: Record<string, string | number | boolean>) => unknown;
+    }).Ztextify;
+
+    if (wordmarkTitle && Ztextify && !wordmarkTitle.querySelector('.z-text')) {
+      new Ztextify('.hero-ztext', {
+        depth: '.18em',
+        direction: 'both',
+        event: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'none' : 'pointer',
+        eventRotation: '45deg',
+        fade: false,
+        layers: 12,
+        perspective: '700px',
+      });
+    }
 
     const panelMedia = gsap.matchMedia();
     panelMedia.add('(prefers-reduced-motion: no-preference)', () => {
