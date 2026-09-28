@@ -1,5 +1,6 @@
 ---
 title: InstaTime
+type: Personal
 tagline: A Chromium extension that reveals exact local dates and times on Instagram posts, comments, and stories.
 stack: [JavaScript, Chrome Extension API, HTML, CSS, Bootstrap]
 order: 14

@@ -1,5 +1,6 @@
 ---
 title: Mint Monitor
+type: Work
 tagline: A Discord-based mint tracker that monitors contract activity, decodes mint calls, and reports setup details in real time.
 stack: [Python, Nextcord, Web3.py, Etherscan API]
 order: 9

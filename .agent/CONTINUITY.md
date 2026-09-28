@@ -3,6 +3,10 @@
 - 2026-09-27T16:24:38Z [USER] Replace Archivo Expanded with a bolder font similar to the reference site and redesign the homepage metric highlights; visual direction is awaiting selection.
 
 [DECISIONS]
+- 2026-09-28T04:55:57Z [USER] Set the homepage role text to `a Full Stack Developer/AI Enthusiast`.
+- 2026-09-28T04:48:09Z [USER] Render Personal/Work project types as plain words rather than pills and prefix the homepage role with `a`.
+- 2026-09-28T04:46:00Z [USER] Label X Analytics Dashboard, Vista Salon Suite, Contract Scanner, Twitter/X Monitor, Mint Monitor, Profit Calculator, and Crypto Wallet Manager as Work; label every other project Personal.
+- 2026-09-28T04:44:23Z [USER] Add `hi! it’s` above the wordmark, revise the Projects/Experience/Stack descriptions, and change the homepage project metric to `14+ Projects`.
 - 2026-09-28T03:14:10Z [USER] Navbar selections from Home must reach Projects and Experience without the pinned panels spasming or glitching during the jump.
 - 2026-09-28T03:01:10Z [USER] Reorder both the homepage and primary navigation to Home → Projects → Experience → Stack.
 - 2026-09-28T02:57:41Z [USER] Keep the homepage and every scroll section horizontally centered instead of shifted to the right.
@@ -42,6 +46,10 @@
 - 2026-09-27T16:42:55Z [USER] Make the homepage wordmark lowercase and remove its blue color while retaining blue metric accents.
 
 [PROGRESS]
+- 2026-09-28T04:55:57Z [CODE] Replaced the homepage hero role with `a Full Stack Developer/AI Enthusiast`.
+- 2026-09-28T04:48:09Z [CODE] Removed project-type borders, backgrounds, radius, and padding while retaining subtle Work accent color; changed the hero role to `a Full Stack Developer & AI Engineer`.
+- 2026-09-28T04:46:00Z [CODE] Added a required Personal/Work enum to project content, classified all 14 project entries, and rendered a compact type badge immediately before every project title through the shared ProjectCard component.
+- 2026-09-28T04:44:23Z [CODE] Added a responsive left-aligned hero kicker directly above `rio`, updated the three section descriptions, and changed the project metric value/label from `10+ Projects done` to `14+ Projects`.
 - 2026-09-28T03:14:10Z [CODE] Replaced native smooth section jumps with an immediate registered ScrollToPlugin position update, synchronized ScrollTrigger afterward, stopped the Astro router click from also handling the anchor, and removed the conflicting global CSS smooth-scroll rule.
 - 2026-09-28T03:01:10Z [CODE] Moved the Projects panel before Experience in homepage markup and mirrored that order in the shared primary navigation; ScrollTrigger continues deriving targets from DOM order.
 - 2026-09-28T02:57:41Z [CODE] Removed the desktop-wide `body` zoom and its `/1.15` viewport-height compensations so ScrollTrigger pins and measures every section in the browser's actual viewport coordinate system.
@@ -102,6 +110,10 @@
 - 2026-09-27T16:24:38Z [TOOL] Current sahen.site CSS declares `Geist Variable` for its primary typeface; Geist supports weights through 900, making Geist 900 the closest bolder match.
 
 [OUTCOMES]
+- 2026-09-28T04:55:57Z [TOOL] npm check passed with 0 errors and 19 existing/deprecation hints, npm build passed, and git diff --check passed with line-ending warnings only after the role copy update.
+- 2026-09-28T04:48:09Z [TOOL] Live computed styles confirmed project types are borderless, transparent, unpadded text and the revised role is rendered with no overflow or browser errors; npm check passed with 0 errors and 19 existing/deprecation hints, npm build passed, and git diff --check passed with line-ending warnings only.
+- 2026-09-28T04:46:00Z [TOOL] Live DOM verification confirmed seven Work and seven Personal badges, all before their titles, with the exact requested Work set, no horizontal overflow, and no browser errors; npm check passed with 0 errors and 19 existing/deprecation hints, npm build passed, and git diff --check passed with line-ending warnings only.
+- 2026-09-28T04:44:23Z [TOOL] Live geometry confirmed the greeting aligns with the wordmark's left edge with zero horizontal overflow and no browser errors; npm check passed with 0 errors and 18 existing hints, npm build passed, and git diff --check passed with line-ending warnings only.
 - 2026-09-28T03:14:10Z [TOOL] Runtime inspection confirmed auto root scroll behavior, valid ordered panel targets, zero horizontal overflow, and no browser errors; npm check passed with 0 errors and 18 existing hints, npm build passed, and git diff --check passed with line-ending warnings only.
 - 2026-09-28T03:01:10Z [TOOL] Live rendering confirmed Home → Projects → Experience → Stack in the nav and panel DOM with increasing ScrollTrigger targets, zero horizontal overflow, and no browser errors; npm check passed with 0 errors and 18 existing hints, npm build passed, and git diff --check passed with line-ending warnings only.
 - 2026-09-28T02:57:41Z [TOOL] Live desktop measurements confirmed centered Home, Experience, Projects, and Stack panels with no horizontal overflow or browser errors; npm check passed with 0 errors and 18 existing hints, npm build passed, and git diff --check passed with line-ending warnings only.

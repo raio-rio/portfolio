@@ -1,5 +1,6 @@
 ---
 title: X Analytics Dashboard
+type: Work
 tagline: A creator intelligence dashboard that brings affiliate payouts, niche competitor tracking, AI-led improvements, and content opportunities into one workflow.
 stack: [Python, Next.js, Express, Node.js, JavaScript, OpenAI, Grok, OpenClaw, OpenRouter, AI]
 order: 1

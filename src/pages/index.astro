@@ -15,12 +15,13 @@ const projects = (await getCollection('projects')).sort((a, b) => a.data.order -
       <div class="scroll-panel-surface express-hero-surface" data-scroll-panel-surface>
       <div class="hero-center" data-scroll-panel-inner>
         <div class="hero-wordmark" aria-label="Rio Espinosa">
+          <p class="hero-kicker">hi! it’s</p>
           <h1>rio<span class="hero-wordmark-dot" aria-hidden="true">.</span></h1>
         </div>
-        <p class="hero-tagline">Full Stack Developer &amp; AI Engineer</p>
+        <p class="hero-tagline">a Full Stack Developer/AI Enthusiast</p>
         <div class="hero-metrics" aria-label="Career highlights">
           <div><span class="hero-metric-icon"><i class="ph-duotone ph-user" aria-hidden="true"></i></span><p><strong>5+</strong><span>Years building</span></p></div>
-          <div><span class="hero-metric-icon"><i class="ph-duotone ph-rocket-launch" aria-hidden="true"></i></span><p><strong>10+</strong><span>Projects done</span></p></div>
+          <div><span class="hero-metric-icon"><i class="ph-duotone ph-rocket-launch" aria-hidden="true"></i></span><p><strong>14+</strong><span>Projects</span></p></div>
           <div><span class="hero-metric-icon"><i class="ph-duotone ph-hand-coins" aria-hidden="true"></i></span><p><strong>$10,000+</strong><span>Generated/saved by my projects</span></p></div>
         </div>
         <nav class="hero-actions" aria-label="Contact and social links">
@@ -92,7 +93,7 @@ const projects = (await getCollection('projects')).sort((a, b) => a.data.order -
       <div class="project-grid-page portfolio-panel-inner" data-scroll-panel-inner>
       <header class="project-grid-intro">
         <h1 id="projects-title">Projects<span>.</span></h1>
-        <p>A concise selection of AI, product, and full-stack work.</p>
+        <p>A mix of personal/client projects that I’m able to share.</p>
       </header>
       <div class="project-grid section" aria-label="All projects">
         {projects.map((project) => (
@@ -110,7 +111,7 @@ const projects = (await getCollection('projects')).sort((a, b) => a.data.order -
       <div class="project-grid-page experience-page portfolio-panel-inner" data-scroll-panel-inner>
       <header class="project-grid-intro">
         <h1 id="experience-title">Experience<span>.</span></h1>
-        <p>Product-minded engineering across software, data, and automation.</p>
+        <p>Some of my work experience with my development work.</p>
       </header>
 
       <div class="experience-grid section" aria-label="Professional experience">
@@ -137,7 +138,7 @@ const projects = (await getCollection('projects')).sort((a, b) => a.data.order -
       <div class="project-grid-page stack-grid-page portfolio-panel-inner" data-scroll-panel-inner>
       <header class="project-grid-intro">
         <h1 id="stack-title">Stack<span>.</span></h1>
-        <p>Languages, frameworks, platforms, and tools I use to take products from idea to production.</p>
+        <p>The tools I use to take my projects to the next level.</p>
       </header>
       <div class="project-grid stack-grid section" data-stack-grid aria-label="Complete technology stack">
         {stack.map(({ category, icon, tools }) => (
