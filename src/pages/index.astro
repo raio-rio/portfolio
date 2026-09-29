@@ -94,7 +94,7 @@ const featuredExperience = experience.slice(0, 2);
       <div class="scroll-panel-surface" data-scroll-panel-surface>
       <div class="project-grid-page portfolio-panel-inner" data-scroll-panel-inner>
       <header class="project-grid-intro">
-        <h1 id="projects-title">Projects<span>.</span></h1>
+        <h1 id="projects-title" class="section-ztext">Projects<span>.</span></h1>
         <p>A mix of personal/client projects that I’m able to share.</p>
       </header>
       <div class="project-grid section" aria-label="Featured projects">
@@ -113,7 +113,7 @@ const featuredExperience = experience.slice(0, 2);
       <div class="scroll-panel-surface" data-scroll-panel-surface>
       <div class="project-grid-page experience-page portfolio-panel-inner" data-scroll-panel-inner>
       <header class="project-grid-intro">
-        <h1 id="experience-title">Experience<span>.</span></h1>
+        <h1 id="experience-title" class="section-ztext">Experience<span>.</span></h1>
         <p>Some of my work experience with my development work.</p>
       </header>
 
@@ -141,7 +141,7 @@ const featuredExperience = experience.slice(0, 2);
       <div class="scroll-panel-surface" data-scroll-panel-surface>
       <div class="project-grid-page stack-grid-page portfolio-panel-inner" data-scroll-panel-inner>
       <header class="project-grid-intro">
-        <h1 id="stack-title">Stack<span>.</span></h1>
+        <h1 id="stack-title" class="section-ztext">Stack<span>.</span></h1>
         <p>The tools I use to take my projects to the next level.</p>
       </header>
       <div class="project-grid stack-grid section" data-stack-grid aria-label="Complete technology stack">
@@ -160,8 +160,6 @@ const featuredExperience = experience.slice(0, 2);
 
 </Layout>
 
-<script is:inline src="/vendor/ztext.min.js" data-astro-rerun></script>
-
 <script>
   import { gsap } from 'gsap';
   import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -177,23 +175,6 @@ const featuredExperience = experience.slice(0, 2);
     const home = document.querySelector<HTMLElement>('.express-home');
     if (!home) return;
     home.classList.add('scroll-panels-ready');
-
-    const wordmarkTitle = home.querySelector<HTMLElement>('.hero-ztext');
-    const Ztextify = (window as Window & {
-      Ztextify?: new (selector: string, options: Record<string, string | number | boolean>) => unknown;
-    }).Ztextify;
-
-    if (wordmarkTitle && Ztextify && !wordmarkTitle.querySelector('.z-text')) {
-      new Ztextify('.hero-ztext', {
-        depth: '.18em',
-        direction: 'both',
-        event: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'none' : 'pointer',
-        eventRotation: '45deg',
-        fade: false,
-        layers: 12,
-        perspective: '700px',
-      });
-    }
 
     const panelMedia = gsap.matchMedia();
     panelMedia.add('(prefers-reduced-motion: no-preference)', () => {
