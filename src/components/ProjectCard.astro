@@ -32,6 +32,7 @@ const modalId = `project-modal-${project.id}`;
       <span class:list={['project-type', `project-type-${project.data.type.toLowerCase()}`]}>{project.data.type}</span>
       <h2><strong>{project.data.title}</strong><span class="project-arrow" aria-hidden="true">→</span></h2>
       <p class="project-tagline">{project.data.tagline}</p>
+      {project.data.impact && <p class="project-impact"><i class="ph-duotone ph-trend-up" aria-hidden="true"></i>{project.data.impact}</p>}
       {(expanded || showStack) && project.data.stack.length > 0 && <p class="project-stack">Built with {project.data.stack.join(' · ')}</p>}
     </div>
   </button>
@@ -51,6 +52,7 @@ const modalId = `project-modal-${project.id}`;
       <div class="project-modal-copy">
         <h2 id={`${modalId}-title`}>{project.data.title}</h2>
         <p class="project-modal-description">{detail}</p>
+        {project.data.impact && <p class="project-modal-impact"><i class="ph-duotone ph-trend-up" aria-hidden="true"></i>{project.data.impact}</p>}
         {project.data.stack.length > 0 && (
           <ul class="project-modal-stack" aria-label={`${project.data.title} technology stack`}>
             {project.data.stack.map((tool) => <li>{tool}</li>)}

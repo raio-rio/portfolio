@@ -6,7 +6,11 @@ import { experience } from '../data/experience';
 import { stack } from '../data/stack';
 
 const projects = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
-const featuredProjects = projects.slice(0, 4);
+const promorph = projects.find((project) => project.id === 'promorph');
+const featuredProjects = [
+  ...(promorph ? [promorph] : []),
+  ...projects.filter((project) => project.id !== 'promorph').slice(0, 2),
+];
 const featuredExperience = experience.slice(0, 2);
 ---
 
@@ -58,6 +62,7 @@ const featuredExperience = experience.slice(0, 2);
                 <strong>LinkedIn</strong>
               </a>
             </div>
+            <p class="contact-dialog-sla"><i class="ph-duotone ph-clock" aria-hidden="true"></i>Typically replies within 12 hours</p>
           </div>
 
           <form class="home-contact-form contact-dialog-form" data-contact-form hidden>
@@ -97,7 +102,7 @@ const featuredExperience = experience.slice(0, 2);
         <h1 id="projects-title" class="section-ztext">Projects<span>.</span></h1>
         <p>A mix of personal/client projects that I’m able to share.</p>
       </header>
-      <div class="project-grid section" aria-label="Featured projects">
+      <div class="project-grid project-grid-single section" aria-label="Featured projects">
         {featuredProjects.map((project) => (
           <article class="project-grid-card">
             <ProjectCard project={project} expanded />

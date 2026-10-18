@@ -3,6 +3,7 @@ title: Crypto Wallet Manager
 type: Work
 tagline: A keyboard-driven terminal utility for managing Solana and Ethereum wallet workflows from one interface.
 stack: [Python, Web3.py, Solana.py, CLI]
+impact: Solana and Ethereum wallets driven from one terminal
 order: 13
 ---
 

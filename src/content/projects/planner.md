@@ -3,6 +3,7 @@ title: My Planner
 type: Work
 tagline: A responsive web and desktop app for planning daily tasks and habits, tracking progress, and getting AI-powered reviews and help.
 stack: []
+impact: 1 company · 10 employees · 20+ habits with AI reviews
 order: 3
 ---
 

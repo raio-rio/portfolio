@@ -3,6 +3,7 @@ title: Jobber
 type: Personal
 tagline: Opportunity-intelligence MVP - evidence ledger for job search, not a generic AI matcher
 stack: [Next.js 16.4, React 19.3, TypeScript 5.7, Tailwind CSS 4.3, FastAPI, Pydantic, SQLAlchemy, Supabase Postgres, Treg API, TypeSafe Jev, Docker Compose]
+impact: 4 job sources · 7-signal scoring · 0–100 ranked ledger
 order: 0
 ---
 
