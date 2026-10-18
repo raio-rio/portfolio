@@ -3,7 +3,7 @@ title: My Planner
 type: Work
 tagline: A responsive web and desktop app for planning daily tasks and habits, tracking progress, and getting AI-powered reviews and help.
 stack: []
-order: 2
+order: 3
 ---
 
 ## Overview
