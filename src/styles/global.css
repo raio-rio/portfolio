@@ -272,7 +272,7 @@ li + li { margin-top: 3px; }
   .hero-ztext { touch-action: pan-y; user-select: none; -webkit-user-select: none; }
   .section-ztext { touch-action: pan-y; user-select: none; -webkit-user-select: none; }
 }
-.hero-tagline { z-index: 4; margin: 34px 0 0; color: var(--muted); font-size: clamp(19px, 2vw, 25px); letter-spacing: -.03em; line-height: 1.45; }
+.hero-tagline { z-index: 4; margin: 34px 0 0; color: var(--muted); font-size: clamp(16px, 1.6vw, 21px); font-weight: 650; letter-spacing: -.025em; line-height: 1.4; }
 .hero-orbit { position: relative; display: grid; width: 100%; place-items: center; padding: clamp(72px, 8vw, 112px) clamp(8px, 4vw, 64px) clamp(64px, 7vw, 96px); }
 .hero-orbit::before { content: ""; position: absolute; z-index: -1; top: 50%; left: 50%; width: min(880px, 110%); aspect-ratio: 8 / 5; transform: translate(-50%, -54%); background: radial-gradient(closest-side, rgb(59 91 219 / .1), transparent 72%); pointer-events: none; }
 html.theme-dark .hero-orbit::before { background: radial-gradient(closest-side, rgb(59 91 219 / .18), transparent 72%); }
