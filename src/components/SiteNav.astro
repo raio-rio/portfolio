@@ -27,10 +27,10 @@ const currentPath = normalizePath(Astro.url.pathname);
     </a>
     <div class="site-nav-links" data-dock>
       <a data-dock-item data-section-link="home" href="/#home" aria-label="Home" aria-current={currentPath === '/' ? 'location' : undefined}><i class="site-nav-mobile-icon ph-duotone ph-house" aria-hidden="true"></i><span>Home</span></a>
+      <a data-dock-item data-section-link="blog" href="/#blog" aria-label="Blog" aria-current={currentPath === '/blog' || currentPath.startsWith('/blog/') ? 'page' : undefined}><i class="site-nav-mobile-icon ph-duotone ph-newspaper" aria-hidden="true"></i><span>Blog</span></a>
       <a data-dock-item data-section-link="projects" href="/#projects" aria-label="Projects" aria-current={currentPath === '/projects' ? 'page' : undefined}><i class="site-nav-mobile-icon ph-duotone ph-folder-open" aria-hidden="true"></i><span>Projects</span></a>
       <a data-dock-item data-section-link="experience" href="/#experience" aria-label="Experience" aria-current={currentPath === '/experience' ? 'page' : undefined}><i class="site-nav-mobile-icon ph-duotone ph-briefcase" aria-hidden="true"></i><span>Experience</span></a>
       <a data-dock-item data-section-link="stack" href="/#stack" aria-label="Stack" aria-current={currentPath === '/stack' ? 'page' : undefined}><i class="site-nav-mobile-icon ph-duotone ph-stack" aria-hidden="true"></i><span>Stack</span></a>
-      <a data-dock-item data-section-link="blog" href="/blog/" aria-label="Blog" aria-current={currentPath === '/blog' || currentPath.startsWith('/blog/') ? 'page' : undefined}><i class="site-nav-mobile-icon ph-duotone ph-newspaper" aria-hidden="true"></i><span>Blog</span></a>
       <a data-dock-item href="/ESPINOSA_RESUME.pdf" target="_blank" rel="noreferrer">Resume <i class="ph-duotone ph-arrow-square-out" aria-hidden="true"></i></a>
     </div>
     <div class="site-nav-contact">
@@ -352,16 +352,16 @@ const currentPath = normalizePath(Astro.url.pathname);
       event.preventDefault();
       event.stopPropagation();
       window.history.pushState({}, '', link.hash);
-      const storedTarget = Number.parseFloat(section.dataset.scrollTarget ?? '');
-      const sectionStart = Number.isFinite(storedTarget) ? storedTarget : window.scrollY + section.getBoundingClientRect().top;
-      const targetTop = link.hash === '#home' ? 0 : sectionStart + 1;
+      const sectionStart = window.scrollY + section.getBoundingClientRect().top;
+      const targetTop = link.hash === '#home' ? 0 : Math.max(0, sectionStart - 84);
+      const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       gsap.killTweensOf(window);
-      gsap.set(window, { scrollTo: { y: targetTop, autoKill: false } });
+      if (reducedMotion) {
+        gsap.set(window, { scrollTo: { y: targetTop } });
+      } else {
+        gsap.to(window, { scrollTo: { y: targetTop, autoKill: false }, duration: 0.7, ease: 'power2.inOut' });
+      }
       ScrollTrigger.update();
-      ScrollTrigger.getAll().forEach((trigger) => {
-        if (!trigger.vars.id?.startsWith('portfolio-panel-')) return;
-        trigger.animation?.progress(trigger.progress, true);
-      });
       setCurrentSection(link.dataset.sectionLink ?? link.hash.slice(1));
       setNavigationVisibility(true);
     });

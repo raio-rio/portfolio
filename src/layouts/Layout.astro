@@ -164,14 +164,15 @@ const schema = {
     document.querySelectorAll<HTMLElement>('.section-ztext').forEach((el, i) => {
       if (el.querySelector('.z-text')) return;
       if (!el.id) el.id = `section-ztext-${i}-${Math.random().toString(36).slice(2, 7)}`;
+      const isSubtitle = el.classList.contains('home-section-title');
       new Ztextify(`#${CSS.escape(el.id)}.section-ztext`, {
-        depth: '.1em',
+        depth: isSubtitle ? '.14em' : '.1em',
         direction: 'both',
         event: reduced ? 'none' : 'pointer',
-        eventRotation: '30deg',
+        eventRotation: isSubtitle ? '24deg' : '30deg',
         fade: false,
-        layers: 8,
-        perspective: '600px',
+        layers: isSubtitle ? 6 : 8,
+        perspective: isSubtitle ? '520px' : '600px',
       });
     });
   };

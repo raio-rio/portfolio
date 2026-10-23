@@ -9,26 +9,34 @@ const projects = (await getCollection('projects')).sort((a, b) => a.data.order -
 const promorph = projects.find((project) => project.id === 'promorph');
 const featuredProjects = [
   ...(promorph ? [promorph] : []),
-  ...projects.filter((project) => project.id !== 'promorph').slice(0, 2),
+  ...projects.filter((project) => project.id !== 'promorph').slice(0, 3),
 ];
-const featuredExperience = experience.slice(0, 2);
+const postDateFormatter = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+const recentPosts = (await getCollection('blog'))
+  .sort((a, b) => b.data.date.localeCompare(a.data.date))
+  .slice(0, 3)
+  .map((post) => ({ ...post, displayDate: postDateFormatter.format(new Date(`${post.data.date}T12:00:00Z`)) }));
 ---
 
 <Layout title="Rio Espinosa — Full Stack Developer & AI Engineer" description="Rio Espinosa builds AI/ML models, SaaS products, full-stack web apps, and blockchain solutions.">
   <div id="smooth-wrapper">
     <main id="smooth-content" class="express-home" aria-label="Rio Espinosa portfolio">
-    <section class="express-hero scroll-panel" id="home" data-scroll-section="home" data-scroll-panel>
-      <div class="scroll-panel-surface express-hero-surface" data-scroll-panel-surface>
-      <div class="hero-center" data-scroll-panel-inner>
-        <div class="hero-wordmark" aria-label="Rio Espinosa">
-          <p class="hero-kicker">hi! it’s</p>
-          <h1 class="hero-ztext">rio<span class="hero-wordmark-dot" aria-hidden="true">.</span></h1>
-        </div>
-        <p class="hero-tagline">a Full Stack Developer/AI Enthusiast</p>
-        <div class="hero-metrics" aria-label="Career highlights">
-          <div><span class="hero-metric-icon"><i class="ph-duotone ph-user" aria-hidden="true"></i></span><p><strong>5+</strong><span>Years building</span></p></div>
-          <div><span class="hero-metric-icon"><i class="ph-duotone ph-rocket-launch" aria-hidden="true"></i></span><p><strong>13+</strong><span>Projects</span></p></div>
-          <div><span class="hero-metric-icon"><i class="ph-duotone ph-hand-coins" aria-hidden="true"></i></span><p><strong>$8,000+</strong><span>Generated/saved by my projects</span></p></div>
+    <section class="express-hero" id="home" data-scroll-section="home">
+      <div class="express-hero-surface">
+      <div class="hero-center">
+        <div class="hero-orbit">
+          <div class="hero-core">
+            <div class="hero-wordmark" aria-label="Rio Espinosa">
+              <p class="hero-kicker">hi! it’s</p>
+              <h1 class="hero-ztext">rio<span class="hero-wordmark-dot" aria-hidden="true">.</span></h1>
+            </div>
+            <p class="hero-tagline">a Full Stack Developer/AI Enthusiast</p>
+          </div>
+          <div class="hero-metrics" aria-label="Career highlights">
+            <div class="hero-metric hero-metric-1"><span class="hero-metric-icon"><i class="ph-duotone ph-user" aria-hidden="true"></i></span><p><strong>5+</strong><span>Years building</span></p></div>
+            <div class="hero-metric hero-metric-2"><span class="hero-metric-icon"><i class="ph-duotone ph-rocket-launch" aria-hidden="true"></i></span><p><strong>13+</strong><span>Projects</span></p></div>
+            <div class="hero-metric hero-metric-3"><span class="hero-metric-icon"><i class="ph-duotone ph-hand-coins" aria-hidden="true"></i></span><p><strong>$8,000+</strong><span>Generated/saved by my projects</span></p></div>
+          </div>
         </div>
         <nav class="hero-actions" aria-label="Contact and social links">
           <a href="https://wa.me/639338259751?text=Hi%20Rio%2C%20found%20your%20portfolio%20and%20would%20love%20to%20chat!" target="_blank" rel="noreferrer" aria-label="Message Rio on WhatsApp" data-label="WhatsApp"><i class="ph-duotone ph-whatsapp-logo" aria-hidden="true"></i></a>
@@ -95,82 +103,80 @@ const featuredExperience = experience.slice(0, 2);
       </dialog>
       </div>
     </section>
-    <section class="portfolio-scroll-section scroll-panel" id="projects" data-scroll-section="projects" data-scroll-panel aria-labelledby="projects-title">
-      <div class="scroll-panel-surface" data-scroll-panel-surface>
-      <div class="project-grid-page portfolio-panel-inner" data-scroll-panel-inner>
-      <header class="project-grid-intro">
-        <h1 id="projects-title" class="section-ztext">Projects<span>.</span></h1>
-        <p>A mix of personal/client projects that I’m able to share.</p>
-      </header>
-      <div class="project-grid project-grid-single section" aria-label="Featured projects">
-        {featuredProjects.map((project) => (
-          <article class="project-grid-card">
-            <ProjectCard project={project} expanded />
-          </article>
-        ))}
-      </div>
-      <a class="section-see-all" href="/projects/">See all projects <i class="ph-duotone ph-arrow-right" aria-hidden="true"></i></a>
-      </div>
-      </div>
-    </section>
 
-    <section class="portfolio-scroll-section scroll-panel" id="experience" data-scroll-section="experience" data-scroll-panel aria-labelledby="experience-title">
-      <div class="scroll-panel-surface" data-scroll-panel-surface>
-      <div class="project-grid-page experience-page portfolio-panel-inner" data-scroll-panel-inner>
-      <header class="project-grid-intro">
-        <h1 id="experience-title" class="section-ztext">Experience<span>.</span></h1>
-        <p>Some of my work experience with my development work.</p>
-      </header>
+    <div class="home-flow">
+      <section class="home-section" id="blog" data-scroll-section="blog" aria-labelledby="blog-title">
+        <header class="home-section-head">
+          <h2 id="blog-title" class="section-ztext home-section-title"><a class="home-section-title-link" href="/blog/">Blog<span aria-hidden="true">.</span><i class="ph-duotone ph-arrow-up-right" aria-hidden="true"></i></a></h2>
+          <p class="home-section-lead">Notes on builds, technology, and AI.</p>
+        </header>
+        <div class="home-blog-list home-section-body" aria-label="Recent posts">
+          {recentPosts.map((post) => (
+            <article class="project-grid-card home-blog-card">
+              <a class="home-blog-link" href={`/blog/${post.id}/`}>
+                <span class="home-blog-title">{post.data.title}<i class="ph-duotone ph-arrow-up-right" aria-hidden="true"></i></span>
+                <span class="home-blog-meta"><time datetime={post.data.date}>{post.displayDate}</time> · {post.data.readingTime}</span>
+                <span class="home-blog-description">{post.data.description}</span>
+              </a>
+            </article>
+          ))}
+        </div>
+      </section>
 
-      <div class="experience-grid section" aria-label="Featured professional experience">
-        {featuredExperience.map((item) => (
-          <article class="experience-card">
-            <header class="experience-card-header">
-              <h2>{item.role}</h2>
-              <strong>{item.company}</strong>
-            </header>
-            <p class="experience-context">{item.period} · {item.location}</p>
-            <p class="experience-stack">{item.stack.join(' · ')}</p>
-            <ul>
-              {item.highlights.map((highlight) => <li>{highlight}</li>)}
-            </ul>
-          </article>
-        ))}
-      </div>
-      <a class="section-see-all" href="/experience/">See all experience <i class="ph-duotone ph-arrow-right" aria-hidden="true"></i></a>
-      </div>
-      </div>
-    </section>
+      <section class="home-section" id="projects" data-scroll-section="projects" aria-labelledby="projects-title">
+        <header class="home-section-head">
+          <h2 id="projects-title" class="section-ztext home-section-title"><a class="home-section-title-link" href="/projects/">Projects<span aria-hidden="true">.</span><i class="ph-duotone ph-arrow-up-right" aria-hidden="true"></i></a></h2>
+          <p class="home-section-lead">A mix of personal/client projects that I’m able to share.</p>
+        </header>
+        <div class="project-grid home-section-body" aria-label="Featured projects">
+          {featuredProjects.map((project) => (
+            <article class="project-grid-card">
+              <ProjectCard project={project} expanded />
+            </article>
+          ))}
+        </div>
+      </section>
 
-    <section class="portfolio-scroll-section scroll-panel scroll-panel-final" id="stack" data-scroll-section="stack" data-scroll-panel aria-labelledby="stack-title">
-      <div class="scroll-panel-surface" data-scroll-panel-surface>
-      <div class="project-grid-page stack-grid-page portfolio-panel-inner" data-scroll-panel-inner>
-      <header class="project-grid-intro">
-        <h1 id="stack-title" class="section-ztext">Stack<span>.</span></h1>
-        <p>The tools I use to take my projects to the next level.</p>
-      </header>
-      <div class="project-grid stack-grid section" data-stack-grid aria-label="Complete technology stack">
-        {stack.map(({ category, icon, tools }) => (
-          <article class:list={['project-grid-card', 'stack-grid-card']}>
-            <h2><i class:list={['ph-duotone', icon]} aria-hidden="true"></i>{category}</h2>
-            <p class="stack-grid-preview">{tools.join(' · ')}</p>
-          </article>
-        ))}
-      </div>
-      </div>
-      </div>
-    </section>
+      <section class="home-section" id="experience" data-scroll-section="experience" aria-labelledby="experience-title">
+        <header class="home-section-head">
+          <h2 id="experience-title" class="section-ztext home-section-title"><a class="home-section-title-link" href="/experience/">Experience<span aria-hidden="true">.</span><i class="ph-duotone ph-arrow-up-right" aria-hidden="true"></i></a></h2>
+          <p class="home-section-lead">Some of my work experience with my development work.</p>
+        </header>
+        <ul class="experience-compact home-section-body" aria-label="Professional experience">
+          {experience.map((item) => (
+            <li class="experience-row">
+              <span class="experience-row-year">{item.year}</span>
+              <span class="experience-row-main">
+                <strong>{item.role}</strong>
+                <span class="experience-row-company">{item.company}</span>
+              </span>
+              <span class="experience-row-brief">{item.highlights[0]}</span>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <section class="home-section" id="stack" data-scroll-section="stack" aria-labelledby="stack-title">
+        <header class="home-section-head">
+          <h2 id="stack-title" class="section-ztext home-section-title"><a class="home-section-title-link" href="/stack/">Stack<span aria-hidden="true">.</span><i class="ph-duotone ph-arrow-up-right" aria-hidden="true"></i></a></h2>
+          <p class="home-section-lead">The tools I use to take my projects to the next level.</p>
+        </header>
+        <div class="project-grid stack-grid home-section-body" data-stack-grid aria-label="Complete technology stack">
+          {stack.map(({ category, icon, tools }) => (
+            <article class:list={['project-grid-card', 'stack-grid-card']}>
+              <h2><i class:list={['ph-duotone', icon]} aria-hidden="true"></i>{category}</h2>
+              <p class="stack-grid-preview">{tools.join(' · ')}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+    </div>
     </main>
   </div>
 
 </Layout>
 
 <script>
-  import { gsap } from 'gsap';
-  import { ScrollTrigger } from 'gsap/ScrollTrigger';
-
-  gsap.registerPlugin(ScrollTrigger);
-
   let cleanupHome: (() => void) | undefined;
 
   const initializeHome = () => {
@@ -179,79 +185,6 @@ const featuredExperience = experience.slice(0, 2);
 
     const home = document.querySelector<HTMLElement>('.express-home');
     if (!home) return;
-    home.classList.add('scroll-panels-ready');
-
-    const panelMedia = gsap.matchMedia();
-    panelMedia.add('(prefers-reduced-motion: no-preference)', () => {
-      const panels = gsap.utils.toArray<HTMLElement>('[data-scroll-panel]');
-      const panelTimelines: gsap.core.Timeline[] = [];
-
-      panels.slice(0, -1).forEach((panel, index) => {
-        const surface = panel.querySelector<HTMLElement>('[data-scroll-panel-surface]');
-        const inner = panel.querySelector<HTMLElement>('[data-scroll-panel-inner]');
-        if (!surface || !inner) return;
-
-        const overflow = Math.max(0, inner.scrollHeight - panel.clientHeight);
-        const transitionDistance = panel.clientHeight;
-        const totalDistance = overflow + transitionDistance;
-        panel.style.marginBottom = `${overflow}px`;
-
-        const timeline = gsap.timeline({
-          scrollTrigger: {
-            id: `portfolio-panel-${index}`,
-            trigger: panel,
-            start: 'top top',
-            end: `+=${totalDistance}`,
-            pin: true,
-            pinSpacing: false,
-            scrub: 0.65,
-            anticipatePin: 1,
-          },
-        });
-
-        if (overflow > 0) {
-          timeline.to(inner, {
-            y: -overflow,
-            duration: overflow / totalDistance,
-            ease: 'none',
-          });
-        }
-
-        timeline.to(surface, {
-          scale: 0.82,
-          opacity: 0.18,
-          borderRadius: 28,
-          duration: transitionDistance / totalDistance,
-          ease: 'none',
-        });
-        panelTimelines.push(timeline);
-      });
-
-      const updatePanelTargets = () => {
-        panels[0]?.setAttribute('data-scroll-target', '0');
-        panelTimelines.forEach((timeline, index) => {
-          const nextPanel = panels[index + 1];
-          const destination = timeline.scrollTrigger?.end;
-          if (nextPanel && typeof destination === 'number') nextPanel.dataset.scrollTarget = String(destination);
-        });
-      };
-
-      ScrollTrigger.addEventListener('refresh', updatePanelTargets);
-      ScrollTrigger.refresh();
-      updatePanelTargets();
-
-      return () => {
-        ScrollTrigger.removeEventListener('refresh', updatePanelTargets);
-        panels.forEach((panel) => {
-          panel.style.removeProperty('margin-bottom');
-          panel.removeAttribute('data-scroll-target');
-          const surface = panel.querySelector<HTMLElement>('[data-scroll-panel-surface]');
-          const inner = panel.querySelector<HTMLElement>('[data-scroll-panel-inner]');
-          if (surface) gsap.set(surface, { clearProps: 'transform,opacity,borderRadius' });
-          if (inner) gsap.set(inner, { clearProps: 'transform' });
-        });
-      };
-    });
 
     const contactForm = document.querySelector<HTMLFormElement>('[data-contact-form]');
     const contactOpen = document.querySelector<HTMLAnchorElement>('[data-contact-choice-open]');
@@ -371,8 +304,6 @@ const featuredExperience = experience.slice(0, 2);
     contactForm?.addEventListener('submit', handleContactSubmit);
 
     const dispose = () => {
-      panelMedia.revert();
-      home.classList.remove('scroll-panels-ready');
       contactOpen?.removeEventListener('click', handleContactOpen);
       contactMessageOpen?.removeEventListener('click', handleMessageOpen);
       contactCall?.removeEventListener('click', handleContactCall);
