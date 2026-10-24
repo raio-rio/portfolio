@@ -5,5 +5,4 @@ export const stack = [
   { category: 'AI & Machine Learning', icon: 'ph-brain', tools: ['OpenAI', 'Jupyter', 'PyTorch', 'TensorFlow', 'LangChain', 'Hugging Face', 'Anthropic', 'Transformers', 'LlamaIndex', 'Mistral', 'Claude Code', 'Codex', 'AutoGPT'] },
   { category: 'Security & Identity', icon: 'ph-shield-check', tools: ['AWS IAM', 'Azure AD', 'Auth0'] },
   { category: 'CMS & No-Code', icon: 'ph-squares-four', tools: ['WordPress', 'Webflow', 'n8n', 'Bubble', 'Microsoft Power Platform'] },
-  { category: 'Developer Tools', icon: 'ph-wrench', tools: ['Git', 'GitHub', 'VS Code', 'Slack', 'GitLab', 'Discord', 'Teams', 'JetBrains', 'Trello', 'IntelliJ', 'PyCharm'] },
 ] as const;

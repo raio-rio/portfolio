@@ -6,9 +6,13 @@ interface Props {
   project: CollectionEntry<'projects'>;
   expanded?: boolean;
   showStack?: boolean;
+  showTagline?: boolean;
+  showType?: boolean;
+  hideStack?: boolean;
+  stackChips?: boolean;
 }
 
-const { project, expanded = false, showStack = false } = Astro.props;
+const { project, expanded = false, showStack = false, showTagline = true, showType = true, hideStack = false, stackChips = false } = Astro.props;
 const images = getProjectImages(project.id);
 const detail = (project.body ?? '').replace(/^\s*## Overview\s*/m, '').trim() || project.data.tagline;
 const modalId = `project-modal-${project.id}`;
@@ -29,36 +33,70 @@ const modalId = `project-modal-${project.id}`;
 
   <button class:list={['project-card', { 'project-card-expanded': expanded }]} type="button" data-project-modal-trigger aria-controls={modalId} aria-haspopup="dialog" aria-label={`View ${project.data.title} details`}>
     <div class="project-card-copy">
-      <span class:list={['project-type', `project-type-${project.data.type.toLowerCase()}`]}>{project.data.type}</span>
+      {showType && <span class:list={['project-type', `project-type-${project.data.type.toLowerCase()}`]}>{project.data.type}</span>}
       <h2><strong>{project.data.title}</strong><span class="project-arrow" aria-hidden="true">→</span></h2>
-      <p class="project-tagline">{project.data.tagline}</p>
+      {showTagline && <p class="project-tagline">{project.data.tagline}</p>}
       {project.data.impact && <p class="project-impact"><i class="ph-duotone ph-trend-up" aria-hidden="true"></i>{project.data.impact}</p>}
-      {(expanded || showStack) && project.data.stack.length > 0 && <p class="project-stack">Built with {project.data.stack.join(' · ')}</p>}
+      {(expanded || showStack) && !hideStack && project.data.stack.length > 0 && (
+        stackChips ? (
+          <ul class="project-stack-chips" aria-label={`${project.data.title} technology stack`}>
+            {project.data.stack.slice(0, 6).map((tool) => <li>{tool}</li>)}
+            {project.data.stack.length > 6 && <li class="project-stack-more">+{project.data.stack.length - 6}</li>}
+          </ul>
+        ) : (
+          <p class="project-stack">Built with {project.data.stack.join(' · ')}</p>
+        )
+      )}
     </div>
   </button>
 
-  <dialog class="project-modal" id={modalId} aria-labelledby={`${modalId}-title`} data-project-modal>
-    <article class="project-modal-content">
+  <dialog class="project-modal split-modal" id={modalId} aria-labelledby={`${modalId}-title`} data-project-modal>
+    <article class="project-modal-content split-modal-content">
       <button class="project-modal-close" type="button" data-modal-close aria-label={`Close ${project.data.title} details`}>×</button>
       {images.length > 0 && (
-        <div class="project-modal-gallery-frame" data-gallery-frame>
-          <div class="project-gallery project-modal-gallery" data-gallery="static">
-            <div class="project-gallery-track" data-gallery-track>
-              {images.map((image, index) => <img src={image} alt={`${project.data.title} enlarged preview${images.length > 1 ? ` ${index + 1}` : ''}`} loading="lazy" decoding="async" />)}
-            </div>
+        <div class="split-media" data-split-gallery>
+          <div class="split-main">
+            <img data-split-main src={images[0]} alt={`${project.data.title} preview 1 of ${images.length}`} decoding="async" />
+            {images.length > 1 && (
+              <>
+                <button class="split-arrow split-arrow-prev" type="button" data-split-prev aria-label="Previous image"><i class="ph-duotone ph-caret-left" aria-hidden="true"></i></button>
+                <button class="split-arrow split-arrow-next" type="button" data-split-next aria-label="Next image"><i class="ph-duotone ph-caret-right" aria-hidden="true"></i></button>
+              </>
+            )}
           </div>
+          {images.length > 1 && (
+            <div class="split-thumb-row">
+              <div class="split-thumbs">
+                {images.map((image, index) => (
+                  <button class="split-thumb" type="button" data-split-thumb aria-current={index === 0 ? 'true' : 'false'} aria-label={`View image ${index + 1} of ${images.length}`}>
+                    <img src={image} alt="" loading="lazy" decoding="async" />
+                  </button>
+                ))}
+              </div>
+              <p class="split-count"><span data-split-count>1</span> / {images.length}</p>
+            </div>
+          )}
         </div>
       )}
-      <div class="project-modal-copy">
+      <div class="split-body">
+        <span class="split-badge">{project.data.type}</span>
         <h2 id={`${modalId}-title`}>{project.data.title}</h2>
+        <p class="split-lede">{project.data.tagline}</p>
         <p class="project-modal-description">{detail}</p>
         {project.data.impact && <p class="project-modal-impact"><i class="ph-duotone ph-trend-up" aria-hidden="true"></i>{project.data.impact}</p>}
         {project.data.stack.length > 0 && (
-          <ul class="project-modal-stack" aria-label={`${project.data.title} technology stack`}>
-            {project.data.stack.map((tool) => <li>{tool}</li>)}
-          </ul>
+          <>
+            <p class="split-label">Tech stack</p>
+            <ul class="project-stack-chips" aria-label={`${project.data.title} technology stack`}>
+              {project.data.stack.map((tool) => <li>{tool}</li>)}
+            </ul>
+          </>
         )}
-        {project.data.url && <a class="project-modal-link" href={project.data.url} target="_blank" rel="noreferrer">{project.data.urlLabel ?? 'View project'} <i class="ph-duotone ph-arrow-square-out" aria-hidden="true"></i></a>}
+        {project.data.url && (
+          <div class="split-actions">
+            <a class="split-primary" href={project.data.url} target="_blank" rel="noreferrer">{project.data.urlLabel ?? 'View project'} <i class="ph-duotone ph-arrow-square-out" aria-hidden="true"></i></a>
+          </div>
+        )}
       </div>
     </article>
   </dialog>
@@ -66,14 +104,48 @@ const modalId = `project-modal-${project.id}`;
 
 <script>
   document.querySelectorAll<HTMLButtonElement>('[data-project-modal-trigger]').forEach((trigger) => {
+    if (trigger.hasAttribute('data-modal-wired')) return;
+    trigger.setAttribute('data-modal-wired', '');
     const modal = document.getElementById(trigger.getAttribute('aria-controls') ?? '') as HTMLDialogElement | null;
     trigger.addEventListener('click', () => modal?.showModal());
   });
 
   document.querySelectorAll<HTMLDialogElement>('[data-project-modal]').forEach((modal) => {
+    if (modal.hasAttribute('data-modal-wired')) return;
+    modal.setAttribute('data-modal-wired', '');
     modal.querySelector<HTMLButtonElement>('[data-modal-close]')?.addEventListener('click', () => modal.close());
     modal.addEventListener('click', (event) => {
       if (event.target === modal) modal.close();
+    });
+  });
+
+  document.querySelectorAll<HTMLElement>('[data-split-gallery]').forEach((gallery) => {
+    if (gallery.hasAttribute('data-split-wired')) return;
+    gallery.setAttribute('data-split-wired', '');
+    const main = gallery.querySelector<HTMLImageElement>('[data-split-main]');
+    const thumbs = Array.from(gallery.querySelectorAll<HTMLButtonElement>('[data-split-thumb]'));
+    const count = gallery.querySelector<HTMLElement>('[data-split-count]');
+    if (!(main instanceof HTMLImageElement) || thumbs.length < 2) return;
+
+    const show = (index: number) => {
+      const current = ((index % thumbs.length) + thumbs.length) % thumbs.length;
+      gallery.setAttribute('data-split-index', String(current));
+      const image = thumbs[current].querySelector('img');
+      if (image instanceof HTMLImageElement && image.src) {
+        main.src = image.src;
+        main.alt = image.alt || main.alt;
+      }
+      thumbs.forEach((thumb, thumbIndex) => thumb.setAttribute('aria-current', String(thumbIndex === current)));
+      if (count) count.textContent = String(current + 1);
+    };
+
+    gallery.setAttribute('data-split-index', '0');
+    thumbs.forEach((thumb, index) => thumb.addEventListener('click', () => show(index)));
+    gallery.querySelector<HTMLButtonElement>('[data-split-prev]')?.addEventListener('click', () => {
+      show(Number.parseInt(gallery.getAttribute('data-split-index') ?? '0', 10) - 1);
+    });
+    gallery.querySelector<HTMLButtonElement>('[data-split-next]')?.addEventListener('click', () => {
+      show(Number.parseInt(gallery.getAttribute('data-split-index') ?? '0', 10) + 1);
     });
   });
 </script>

@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="880" height="440" viewBox="0 0 880 440">
+<rect width="880" height="440" rx="16" fill="#f1f5f9"/>
+<rect x="40" y="30" width="380" height="380" rx="12" fill="#fff" stroke="#e2e8f0"/>
+<rect x="460" y="30" width="380" height="380" rx="12" fill="#fff" stroke="#e2e8f0"/>
+<text x="230" y="80" font-family="sans-serif" font-size="16" font-weight="bold" fill="#0f172a" text-anchor="middle">Fingerprint defaults</text>
+<text x="650" y="80" font-family="sans-serif" font-size="16" font-weight="bold" fill="#0f172a" text-anchor="middle">Runtimes</text>
+<text x="440" y="420" font-family="sans-serif" font-size="13" fill="#64748b" text-anchor="middle">PLACEHOLDER — Settings. Replace with assets/shot-settings.png</text>
+</svg>

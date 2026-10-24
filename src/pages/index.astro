@@ -3,6 +3,7 @@ import Layout from '../layouts/Layout.astro';
 import { getCollection } from 'astro:content';
 import ProjectCard from '../components/ProjectCard.astro';
 import { experience } from '../data/experience';
+import { awards } from '../data/awards';
 import { stack } from '../data/stack';
 
 const projects = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
@@ -12,6 +13,7 @@ const featuredProjects = [
   ...projects.filter((project) => project.id !== 'promorph').slice(0, 3),
 ];
 const postDateFormatter = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+const research = projects.find((project) => project.id === 'promorph');
 const recentPosts = (await getCollection('blog'))
   .sort((a, b) => b.data.date.localeCompare(a.data.date))
   .slice(0, 3)
@@ -123,42 +125,119 @@ const recentPosts = (await getCollection('blog'))
         </div>
       </section>
 
-      <section class="home-section" id="projects" data-scroll-section="projects" aria-labelledby="projects-title">
+      <section class="home-section home-section-projects" id="projects" data-scroll-section="projects" aria-labelledby="projects-title">
         <header class="home-section-head">
           <h2 id="projects-title" class="section-ztext home-section-title"><a class="home-section-title-link" href="/projects/">Projects<span aria-hidden="true">.</span><i class="ph-duotone ph-arrow-up-right" aria-hidden="true"></i></a></h2>
           <p class="home-section-lead">A mix of personal/client projects that I’m able to share.</p>
         </header>
-        <div class="project-grid home-section-body" aria-label="Featured projects">
+        <div class="project-strip-viewport" data-strip-viewport>
+          <div class="project-strip" data-project-strip role="region" aria-label="Featured projects">
           {featuredProjects.map((project) => (
-            <article class="project-grid-card">
-              <ProjectCard project={project} expanded />
+            <article class="project-strip-card">
+              <ProjectCard project={project} expanded showTagline={false} showType={false} hideStack />
             </article>
           ))}
+          </div>
+        </div>
+        <div class="project-strip-controls">
+          <p class="project-strip-count" aria-hidden="true"><span data-strip-index>01</span> / {String(featuredProjects.length).padStart(2, '0')}</p>
         </div>
       </section>
 
       <section class="home-section" id="experience" data-scroll-section="experience" aria-labelledby="experience-title">
         <header class="home-section-head">
-          <h2 id="experience-title" class="section-ztext home-section-title"><a class="home-section-title-link" href="/experience/">Experience<span aria-hidden="true">.</span><i class="ph-duotone ph-arrow-up-right" aria-hidden="true"></i></a></h2>
+          <h2 id="experience-title" class="section-ztext home-section-title">Experience<span aria-hidden="true">.</span></h2>
           <p class="home-section-lead">Some of my work experience with my development work.</p>
         </header>
-        <ul class="experience-compact home-section-body" aria-label="Professional experience">
-          {experience.map((item) => (
-            <li class="experience-row">
-              <span class="experience-row-year">{item.year}</span>
-              <span class="experience-row-main">
-                <strong>{item.role}</strong>
-                <span class="experience-row-company">{item.company}</span>
-              </span>
-              <span class="experience-row-brief">{item.highlights[0]}</span>
-            </li>
-          ))}
-        </ul>
+        <div class="exp-bento home-section-body">
+          <section class="exp-tile exp-roles" aria-labelledby="work-title">
+            <header class="panel-head">
+              <h2 id="work-title">Where I’ve Worked</h2>
+            </header>
+
+            <ol class="bento-roles">
+              {experience.map((item, index) => (
+                <li class="bento-role">
+                  <button class="work-trigger" type="button" data-exp-modal-trigger aria-controls={`exp-modal-${index}`} aria-haspopup="dialog" aria-label={`View details for ${item.role} at ${item.company}`}>
+                    <span class="work-trigger-copy">
+                      <span class="work-role">{item.role}</span>
+                      <span class="work-company">{item.company}</span>
+                    </span>
+                    <span class="bento-side">
+                      <span class="work-year">{item.year}</span>
+                      <span class="work-open" aria-hidden="true"><i class="ph-duotone ph-arrow-up-right"></i></span>
+                    </span>
+                  </button>
+                  <dialog class="project-modal split-modal" id={`exp-modal-${index}`} data-exp-modal aria-labelledby={`exp-modal-${index}-title`}>
+                    <article class="project-modal-content split-modal-content">
+                      <button class="project-modal-close" type="button" data-exp-modal-close aria-label={`Close ${item.role} details`}>×</button>
+                      <div class="split-media split-summary">
+                        <p class="eyebrow">{item.period} · {item.location}</p>
+                        <h2 id={`exp-modal-${index}-title`}>{item.role}</h2>
+                        <p class="work-company">{item.company}</p>
+                      </div>
+                      <div class="split-body">
+                        {item.stack.length > 0 && (
+                          <>
+                            <p class="split-label">Tech stack</p>
+                            <ul class="project-stack-chips" aria-label={`${item.role} technology stack`}>
+                              {item.stack.map((tool) => <li>{tool}</li>)}
+                            </ul>
+                          </>
+                        )}
+                        <p class="split-label">Highlights</p>
+                        <ul class="exp-modal-highlights">
+                          {item.highlights.map((highlight) => <li>{highlight}</li>)}
+                        </ul>
+                      </div>
+                    </article>
+                  </dialog>
+                </li>
+              ))}
+            </ol>
+          </section>
+
+          <section class="exp-tile" aria-labelledby="awards-title">
+            <header class="panel-head">
+              <h2 id="awards-title">Awards</h2>
+            </header>
+
+            <ul class="award-list">
+              {awards.map((award) => (
+                <li class="award-item">
+                  <div class="award-body">
+                    <strong>{award.title}</strong>
+                    <span class="award-name">{award.name}</span>
+                    <span class="award-meta">{award.meta}</span>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </section>
+
+          {research && (
+            <section class="exp-tile" aria-labelledby="research-title">
+              <header class="panel-head">
+                <h2 id="research-title">Research</h2>
+              </header>
+
+              <div class="research-item">
+                <h3>{research.data.title}</h3>
+                <p>{research.data.tagline}</p>
+                {research.data.url && (
+                  <a class="research-link" href={research.data.url} target="_blank" rel="noreferrer">
+                    View paper <i class="ph-duotone ph-arrow-right" aria-hidden="true"></i>
+                  </a>
+                )}
+              </div>
+            </section>
+          )}
+        </div>
       </section>
 
       <section class="home-section" id="stack" data-scroll-section="stack" aria-labelledby="stack-title">
         <header class="home-section-head">
-          <h2 id="stack-title" class="section-ztext home-section-title"><a class="home-section-title-link" href="/stack/">Stack<span aria-hidden="true">.</span><i class="ph-duotone ph-arrow-up-right" aria-hidden="true"></i></a></h2>
+          <h2 id="stack-title" class="section-ztext home-section-title">Stack<span aria-hidden="true">.</span></h2>
           <p class="home-section-lead">The tools I use to take my projects to the next level.</p>
         </header>
         <div class="project-grid stack-grid home-section-body" data-stack-grid aria-label="Complete technology stack">
@@ -303,7 +382,36 @@ const recentPosts = (await getCollection('blog'))
     contactDialog?.addEventListener('click', handleDialogBackdrop);
     contactForm?.addEventListener('submit', handleContactSubmit);
 
+    const expTriggers = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-exp-modal-trigger]'));
+    const expModals = Array.from(document.querySelectorAll<HTMLDialogElement>('[data-exp-modal]'));
+
+    const handleExpTrigger = (event: Event) => {
+      const trigger = event.currentTarget;
+      if (!(trigger instanceof HTMLButtonElement)) return;
+      const modal = document.getElementById(trigger.getAttribute('aria-controls') ?? '');
+      if (modal instanceof HTMLDialogElement) modal.showModal();
+    };
+    const handleExpModalClose = (event: Event) => {
+      const button = event.currentTarget;
+      if (!(button instanceof HTMLButtonElement)) return;
+      button.closest('dialog')?.close();
+    };
+    const handleExpModalBackdrop = (event: MouseEvent) => {
+      if (event.target instanceof HTMLDialogElement) event.target.close();
+    };
+
+    expTriggers.forEach((trigger) => trigger.addEventListener('click', handleExpTrigger));
+    expModals.forEach((modal) => {
+      modal.querySelectorAll<HTMLButtonElement>('[data-exp-modal-close]').forEach((button) => button.addEventListener('click', handleExpModalClose));
+      modal.addEventListener('click', handleExpModalBackdrop);
+    });
+
     const dispose = () => {
+      expTriggers.forEach((trigger) => trigger.removeEventListener('click', handleExpTrigger));
+      expModals.forEach((modal) => {
+        modal.querySelectorAll<HTMLButtonElement>('[data-exp-modal-close]').forEach((button) => button.removeEventListener('click', handleExpModalClose));
+        modal.removeEventListener('click', handleExpModalBackdrop);
+      });
       contactOpen?.removeEventListener('click', handleContactOpen);
       contactMessageOpen?.removeEventListener('click', handleMessageOpen);
       contactCall?.removeEventListener('click', handleContactCall);
@@ -321,4 +429,129 @@ const recentPosts = (await getCollection('blog'))
     window.scrollTo({ top: 0, behavior: 'smooth' });
     initializeHome();
   });
+</script>
+
+<script is:inline>
+  (() => {
+    const viewportSelector = '[data-strip-viewport]';
+    const trackSelector = '[data-project-strip]';
+    const reduced = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const state = { index: 0, dragging: false, moved: false, vertical: false, startX: 0, startY: 0, base: 0 };
+
+    const getViewport = () => document.querySelector(viewportSelector);
+    const getTrack = (viewport) => (viewport ? viewport.querySelector(trackSelector) : null);
+    const getCards = (track) => (track ? Array.from(track.querySelectorAll('.project-strip-card')) : []);
+    const getStep = (track) => {
+      const cards = getCards(track);
+      if (!track || !cards.length) return 0;
+      const gap = Number.parseFloat(getComputedStyle(track).columnGap || '0') || 0;
+      return cards[0].getBoundingClientRect().width + gap;
+    };
+
+    const paint = () => {
+      const viewport = getViewport();
+      const track = getTrack(viewport);
+      const cards = getCards(track);
+      if (!viewport || !track || !cards.length) return;
+      state.index = Math.max(0, Math.min(cards.length - 1, state.index));
+      const counter = viewport.parentElement?.querySelector('[data-strip-index]') ?? document.querySelector('[data-strip-index]');
+      if (counter) counter.textContent = String(state.index + 1).padStart(2, '0');
+    };
+
+    const render = (animate) => {
+      const viewport = getViewport();
+      const track = getTrack(viewport);
+      const cards = getCards(track);
+      if (!viewport || !track || !cards.length) return;
+      state.index = Math.max(0, Math.min(cards.length - 1, state.index));
+      track.classList.toggle('is-animating', animate && !reduced());
+      track.style.transform = `translateX(${-(state.index * getStep(track))}px)`;
+      paint();
+    };
+
+    document.addEventListener('pointerdown', (event) => {
+      const viewport = event.target instanceof Element ? event.target.closest(viewportSelector) : null;
+      if (!viewport || event.button !== 0) return;
+      const track = getTrack(viewport);
+      if (!track) return;
+      state.dragging = true;
+      state.moved = false;
+      state.vertical = false;
+      state.startX = event.clientX;
+      state.startY = event.clientY;
+      state.base = state.index * getStep(track);
+      track.classList.remove('is-animating');
+    });
+
+    document.addEventListener('pointermove', (event) => {
+      if (!state.dragging || state.vertical) return;
+      const viewport = getViewport();
+      const track = getTrack(viewport);
+      if (!viewport || !track) return;
+      const dx = event.clientX - state.startX;
+      const dy = event.clientY - state.startY;
+      if (!state.moved) {
+        if (Math.abs(dy) > Math.abs(dx) && Math.abs(dy) > 8) {
+          state.vertical = true;
+          state.dragging = false;
+          return;
+        }
+        if (Math.abs(dx) <= 6) return;
+        state.moved = true;
+        viewport.classList.add('is-dragging');
+      }
+      event.preventDefault();
+      const cards = getCards(track);
+      const max = (cards.length - 1) * getStep(track);
+      const offset = Math.max(-60, Math.min(max + 60, state.base - dx));
+      track.style.transform = `translateX(${-offset}px)`;
+    }, { passive: false });
+
+    const endDrag = () => {
+      if (!state.dragging && !state.moved) return;
+      const wasMoved = state.moved;
+      state.dragging = false;
+      state.vertical = false;
+      const viewport = getViewport();
+      const track = getTrack(viewport);
+      if (viewport) viewport.classList.remove('is-dragging');
+      if (!track || !wasMoved) {
+        state.moved = false;
+        return;
+      }
+      const step = getStep(track);
+      const cards = getCards(track);
+      const matrix = new DOMMatrixReadOnly(getComputedStyle(track).transform);
+      const offset = -matrix.m41;
+      state.index = step > 0 ? Math.max(0, Math.min(cards.length - 1, Math.round(offset / step))) : 0;
+      render(true);
+      window.setTimeout(() => {
+        state.moved = false;
+      }, 0);
+    };
+    document.addEventListener('pointerup', endDrag);
+    document.addEventListener('pointercancel', endDrag);
+
+    document.addEventListener('click', (event) => {
+      if (!state.moved) return;
+      state.moved = false;
+      event.preventDefault();
+      event.stopPropagation();
+    }, true);
+
+    document.addEventListener('dragstart', (event) => {
+      const target = event.target instanceof Element ? event.target.closest(viewportSelector) : null;
+      if (target) event.preventDefault();
+    });
+
+    const refresh = () => render(false);
+    window.addEventListener('resize', refresh);
+    window.addEventListener('load', refresh);
+    document.addEventListener('astro:page-load', refresh);
+    document.addEventListener('astro:after-swap', refresh);
+    if (document.readyState !== 'complete') {
+      window.setTimeout(refresh, 300);
+    }
+    refresh();
+  })();
 </script>
