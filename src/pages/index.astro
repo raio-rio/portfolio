@@ -166,7 +166,7 @@ const recentPosts = (await getCollection('blog'))
                   <dialog class="project-modal split-modal" id={`exp-modal-${index}`} data-exp-modal aria-labelledby={`exp-modal-${index}-title`}>
                     <article class="project-modal-content split-modal-content">
                       <button class="project-modal-close" type="button" data-exp-modal-close aria-label={`Close ${item.role} details`}>×</button>
-                      <div class="split-media split-summary">
+                      <div class="split-summary">
                         <p class="eyebrow">{item.period} · {item.location}</p>
                         <h2 id={`exp-modal-${index}-title`}>{item.role}</h2>
                         <p class="work-company">{item.company}</p>
@@ -193,10 +193,8 @@ const recentPosts = (await getCollection('blog'))
               </div>
             </article>
           ))}
-          </div>
-
           {research && (
-            <article class="exp-tile">
+            <article class="exp-tile exp-span">
               <div class="research-item">
                 <h3>{research.data.title}</h3>
                 <p class="research-abstract">{research.data.tagline}</p>
@@ -208,6 +206,7 @@ const recentPosts = (await getCollection('blog'))
               </div>
             </article>
           )}
+          </div>
         </div>
       </section>
 

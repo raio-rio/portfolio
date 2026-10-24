@@ -11,10 +11,4 @@ export const awards = [
     meta: 'UST · 2024',
     icon: 'ph-graduation-cap',
   },
-  {
-    title: 'Participation Award',
-    name: 'ProMorph',
-    meta: 'ICIAC · Japan · 2024',
-    icon: 'ph-award',
-  },
 ] as const;
