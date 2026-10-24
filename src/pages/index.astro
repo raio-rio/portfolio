@@ -8,9 +8,9 @@ import { stack } from '../data/stack';
 
 const projects = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
 const promorph = projects.find((project) => project.id === 'promorph');
-const featuredProjects = [
+const fanProjects = [
   ...(promorph ? [promorph] : []),
-  ...projects.filter((project) => project.id !== 'promorph').slice(0, 3),
+  ...projects.filter((project) => project.id !== 'promorph').slice(0, 2),
 ];
 const postDateFormatter = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 const research = projects.find((project) => project.id === 'promorph');
@@ -109,7 +109,7 @@ const recentPosts = (await getCollection('blog'))
     <div class="home-flow">
       <section class="home-section" id="blog" data-scroll-section="blog" aria-labelledby="blog-title">
         <header class="home-section-head">
-          <h2 id="blog-title" class="section-ztext home-section-title"><a class="home-section-title-link" href="/blog/">Blog<span aria-hidden="true">.</span><i class="ph-duotone ph-arrow-up-right" aria-hidden="true"></i></a></h2>
+          <h2 id="blog-title" class="section-ztext home-section-title"><a class="home-section-title-link" href="/blog/">Blog<i class="ph-duotone ph-arrow-up-right" aria-hidden="true"></i></a></h2>
           <p class="home-section-lead">Notes on builds, technology, and AI.</p>
         </header>
         <div class="home-blog-list home-section-body" aria-label="Recent posts">
@@ -127,30 +127,25 @@ const recentPosts = (await getCollection('blog'))
 
       <section class="home-section home-section-projects" id="projects" data-scroll-section="projects" aria-labelledby="projects-title">
         <header class="home-section-head">
-          <h2 id="projects-title" class="section-ztext home-section-title"><a class="home-section-title-link" href="/projects/">Projects<span aria-hidden="true">.</span><i class="ph-duotone ph-arrow-up-right" aria-hidden="true"></i></a></h2>
+          <h2 id="projects-title" class="section-ztext home-section-title"><a class="home-section-title-link" href="/projects/">Projects<i class="ph-duotone ph-arrow-up-right" aria-hidden="true"></i></a></h2>
           <p class="home-section-lead">A mix of personal/client projects that I’m able to share.</p>
         </header>
-        <div class="project-strip-viewport" data-strip-viewport>
-          <div class="project-strip" data-project-strip role="region" aria-label="Featured projects">
-          {featuredProjects.map((project) => (
-            <article class="project-strip-card">
+        <div class="project-fan" data-project-fan role="region" aria-label="Featured projects">
+          {fanProjects.map((project, index) => (
+            <article class="fan-card" data-fan-card data-fan-pos={index === 0 ? 'front' : index === 1 ? 'right' : 'left'}>
               <ProjectCard project={project} expanded showTagline={false} showType={false} hideStack />
             </article>
           ))}
-          </div>
-        </div>
-        <div class="project-strip-controls">
-          <p class="project-strip-count" aria-hidden="true"><span data-strip-index>01</span> / {String(featuredProjects.length).padStart(2, '0')}</p>
         </div>
       </section>
 
       <section class="home-section" id="experience" data-scroll-section="experience" aria-labelledby="experience-title">
         <header class="home-section-head">
-          <h2 id="experience-title" class="section-ztext home-section-title">Experience<span aria-hidden="true">.</span></h2>
+          <h2 id="experience-title" class="section-ztext home-section-title">Experience</h2>
           <p class="home-section-lead">Some of my work experience with my development work.</p>
         </header>
         <div class="exp-bento home-section-body">
-          <section class="exp-tile exp-roles" aria-labelledby="work-title">
+          <section class="exp-tile" aria-labelledby="work-title">
             <header class="panel-head">
               <h2 id="work-title">Where I’ve Worked</h2>
             </header>
@@ -177,14 +172,6 @@ const recentPosts = (await getCollection('blog'))
                         <p class="work-company">{item.company}</p>
                       </div>
                       <div class="split-body">
-                        {item.stack.length > 0 && (
-                          <>
-                            <p class="split-label">Tech stack</p>
-                            <ul class="project-stack-chips" aria-label={`${item.role} technology stack`}>
-                              {item.stack.map((tool) => <li>{tool}</li>)}
-                            </ul>
-                          </>
-                        )}
                         <p class="split-label">Highlights</p>
                         <ul class="exp-modal-highlights">
                           {item.highlights.map((highlight) => <li>{highlight}</li>)}
@@ -196,48 +183,37 @@ const recentPosts = (await getCollection('blog'))
               ))}
             </ol>
           </section>
-
-          <section class="exp-tile" aria-labelledby="awards-title">
-            <header class="panel-head">
-              <h2 id="awards-title">Awards</h2>
-            </header>
-
-            <ul class="award-list">
-              {awards.map((award) => (
-                <li class="award-item">
-                  <div class="award-body">
-                    <strong>{award.title}</strong>
-                    <span class="award-name">{award.name}</span>
-                    <span class="award-meta">{award.meta}</span>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          </section>
+          <div class="exp-side-grid">
+          {awards.map((award) => (
+            <article class="exp-tile">
+              <div class="award-body">
+                <h3 class="award-title">{award.title}</h3>
+                <span class="award-name">{award.name}</span>
+                <span class="award-meta">{award.meta}</span>
+              </div>
+            </article>
+          ))}
+          </div>
 
           {research && (
-            <section class="exp-tile" aria-labelledby="research-title">
-              <header class="panel-head">
-                <h2 id="research-title">Research</h2>
-              </header>
-
+            <article class="exp-tile">
               <div class="research-item">
                 <h3>{research.data.title}</h3>
-                <p>{research.data.tagline}</p>
+                <p class="research-abstract">{research.data.tagline}</p>
                 {research.data.url && (
                   <a class="research-link" href={research.data.url} target="_blank" rel="noreferrer">
                     View paper <i class="ph-duotone ph-arrow-right" aria-hidden="true"></i>
                   </a>
                 )}
               </div>
-            </section>
+            </article>
           )}
         </div>
       </section>
 
       <section class="home-section" id="stack" data-scroll-section="stack" aria-labelledby="stack-title">
         <header class="home-section-head">
-          <h2 id="stack-title" class="section-ztext home-section-title">Stack<span aria-hidden="true">.</span></h2>
+          <h2 id="stack-title" class="section-ztext home-section-title">Stack</h2>
           <p class="home-section-lead">The tools I use to take my projects to the next level.</p>
         </header>
         <div class="project-grid stack-grid home-section-body" data-stack-grid aria-label="Complete technology stack">
@@ -433,125 +409,40 @@ const recentPosts = (await getCollection('blog'))
 
 <script is:inline>
   (() => {
-    const viewportSelector = '[data-strip-viewport]';
-    const trackSelector = '[data-project-strip]';
-    const reduced = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const state = { index: 0, dragging: false, moved: false, vertical: false, startX: 0, startY: 0, base: 0 };
+    const fanSelector = '[data-project-fan]';
+    const cardSelector = '[data-fan-card]';
+    let front = 0;
 
-    const getViewport = () => document.querySelector(viewportSelector);
-    const getTrack = (viewport) => (viewport ? viewport.querySelector(trackSelector) : null);
-    const getCards = (track) => (track ? Array.from(track.querySelectorAll('.project-strip-card')) : []);
-    const getStep = (track) => {
-      const cards = getCards(track);
-      if (!track || !cards.length) return 0;
-      const gap = Number.parseFloat(getComputedStyle(track).columnGap || '0') || 0;
-      return cards[0].getBoundingClientRect().width + gap;
+    const getFan = () => document.querySelector(fanSelector);
+    const getCards = (fan) => (fan ? Array.from(fan.querySelectorAll(cardSelector)) : []);
+    const posOf = (index, count) => {
+      const offset = (((index - front) % count) + count) % count;
+      if (offset === 0) return 'front';
+      return offset <= Math.floor(count / 2) ? 'right' : 'left';
     };
 
     const paint = () => {
-      const viewport = getViewport();
-      const track = getTrack(viewport);
-      const cards = getCards(track);
-      if (!viewport || !track || !cards.length) return;
-      state.index = Math.max(0, Math.min(cards.length - 1, state.index));
-      const counter = viewport.parentElement?.querySelector('[data-strip-index]') ?? document.querySelector('[data-strip-index]');
-      if (counter) counter.textContent = String(state.index + 1).padStart(2, '0');
+      const fan = getFan();
+      const cards = getCards(fan);
+      if (!fan || !cards.length) return;
+      front = ((front % cards.length) + cards.length) % cards.length;
+      cards.forEach((card, index) => card.setAttribute('data-fan-pos', posOf(index, cards.length)));
     };
-
-    const render = (animate) => {
-      const viewport = getViewport();
-      const track = getTrack(viewport);
-      const cards = getCards(track);
-      if (!viewport || !track || !cards.length) return;
-      state.index = Math.max(0, Math.min(cards.length - 1, state.index));
-      track.classList.toggle('is-animating', animate && !reduced());
-      track.style.transform = `translateX(${-(state.index * getStep(track))}px)`;
-      paint();
-    };
-
-    document.addEventListener('pointerdown', (event) => {
-      const viewport = event.target instanceof Element ? event.target.closest(viewportSelector) : null;
-      if (!viewport || event.button !== 0) return;
-      const track = getTrack(viewport);
-      if (!track) return;
-      state.dragging = true;
-      state.moved = false;
-      state.vertical = false;
-      state.startX = event.clientX;
-      state.startY = event.clientY;
-      state.base = state.index * getStep(track);
-      track.classList.remove('is-animating');
-    });
-
-    document.addEventListener('pointermove', (event) => {
-      if (!state.dragging || state.vertical) return;
-      const viewport = getViewport();
-      const track = getTrack(viewport);
-      if (!viewport || !track) return;
-      const dx = event.clientX - state.startX;
-      const dy = event.clientY - state.startY;
-      if (!state.moved) {
-        if (Math.abs(dy) > Math.abs(dx) && Math.abs(dy) > 8) {
-          state.vertical = true;
-          state.dragging = false;
-          return;
-        }
-        if (Math.abs(dx) <= 6) return;
-        state.moved = true;
-        viewport.classList.add('is-dragging');
-      }
-      event.preventDefault();
-      const cards = getCards(track);
-      const max = (cards.length - 1) * getStep(track);
-      const offset = Math.max(-60, Math.min(max + 60, state.base - dx));
-      track.style.transform = `translateX(${-offset}px)`;
-    }, { passive: false });
-
-    const endDrag = () => {
-      if (!state.dragging && !state.moved) return;
-      const wasMoved = state.moved;
-      state.dragging = false;
-      state.vertical = false;
-      const viewport = getViewport();
-      const track = getTrack(viewport);
-      if (viewport) viewport.classList.remove('is-dragging');
-      if (!track || !wasMoved) {
-        state.moved = false;
-        return;
-      }
-      const step = getStep(track);
-      const cards = getCards(track);
-      const matrix = new DOMMatrixReadOnly(getComputedStyle(track).transform);
-      const offset = -matrix.m41;
-      state.index = step > 0 ? Math.max(0, Math.min(cards.length - 1, Math.round(offset / step))) : 0;
-      render(true);
-      window.setTimeout(() => {
-        state.moved = false;
-      }, 0);
-    };
-    document.addEventListener('pointerup', endDrag);
-    document.addEventListener('pointercancel', endDrag);
 
     document.addEventListener('click', (event) => {
-      if (!state.moved) return;
-      state.moved = false;
+      const target = event.target instanceof Element ? event.target : null;
+      if (!target) return;
+      const card = target.closest(cardSelector);
+      if (!card) return;
+      const cards = getCards(getFan());
+      const index = cards.indexOf(card);
+      if (index === -1 || index === front) return;
       event.preventDefault();
       event.stopPropagation();
+      front = index;
+      paint();
     }, true);
 
-    document.addEventListener('dragstart', (event) => {
-      const target = event.target instanceof Element ? event.target.closest(viewportSelector) : null;
-      if (target) event.preventDefault();
-    });
-
-    const refresh = () => render(false);
-    window.addEventListener('resize', refresh);
-    window.addEventListener('load', refresh);
-    document.addEventListener('astro:page-load', refresh);
-    document.addEventListener('astro:after-swap', refresh);
-    if (document.readyState !== 'complete') {
-      window.setTimeout(refresh, 300);
-    }
-    refresh();
+    paint();
   })();
 </script>
