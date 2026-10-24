@@ -1,0 +1,23 @@
+{
+  "name": "Rio Espinosa",
+  "short_name": "Rio",
+  "description": "Rio Espinosa — Full Stack Developer & AI Engineer",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#edf0f6",
+  "theme_color": "#ffffff",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/images/pic.jpg",
+      "sizes": "any",
+      "type": "image/jpeg",
+      "purpose": "any"
+    }
+  ]
+}

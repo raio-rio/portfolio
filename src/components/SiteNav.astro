@@ -68,7 +68,7 @@ const currentPath = normalizePath(Astro.url.pathname);
   const setNavigationVisibility = (visible: boolean, immediate = false) => {
     if (!siteNav || (navIsVisible === visible && !immediate)) return;
     navIsVisible = visible;
-    const hiddenOffset = window.matchMedia('(max-width: 680px)').matches ? '140%' : '-140%';
+    const hiddenOffset = '-140%';
     gsap.to(siteNav, {
       '--nav-hide-y': visible ? '0%' : hiddenOffset,
       autoAlpha: visible ? 1 : 0,

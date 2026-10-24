@@ -11,10 +11,13 @@ interface Props {
   type?: 'website' | 'article';
   image?: string;
   imageAlt?: string;
+  publishedDate?: string;
   structuredData?: Record<string, unknown>;
 }
 
-const { title, description, path = '/', type = 'website', image: imagePath = '/images/headshot.png', imageAlt = 'Rio Espinosa, Full Stack Developer & AI Engineer', structuredData } = Astro.props;
+const { title, description, path = '/', type = 'website', image: imagePath = '/images/pic.jpg', imageAlt = 'Rio Espinosa, Full Stack Developer & AI Engineer', publishedDate, structuredData } = Astro.props;
+const analyticsSrc = import.meta.env.PUBLIC_ANALYTICS_SRC as string | undefined;
+const analyticsWebsiteId = import.meta.env.PUBLIC_ANALYTICS_WEBSITE_ID as string | undefined;
 const site = Astro.site ?? new URL('https://programmingrio.top');
 const canonical = new URL(path, site);
 const image = new URL(imagePath, site);
@@ -24,7 +27,7 @@ const person = {
   jobTitle: 'Full Stack Developer & AI Engineer',
   url: site.href,
   email: 'contact@rioespinosa.com',
-  image: new URL('/images/headshot.png', site).href,
+  image: new URL('/images/pic.jpg', site).href,
   address: { '@type': 'PostalAddress', addressLocality: 'Cainta', addressCountry: 'PH' },
   sameAs: ['https://github.com/raio-rio/', 'https://www.linkedin.com/in/rioespinosa02/', 'https://www.instagram.com/_sprio/'],
   knowsAbout: ['Artificial intelligence', 'Machine learning', 'SaaS', 'Full-stack development', 'Blockchain'],
@@ -54,6 +57,8 @@ const schema = {
     <link rel="canonical" href={canonical} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" href="/images/pic.jpg" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <link rel="alternate" type="application/rss+xml" title="Rio Espinosa — Blog" href={new URL('/rss.xml', site)} />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400..900&display=swap" rel="stylesheet" />
@@ -61,6 +66,7 @@ const schema = {
     <link rel="stylesheet" href="https://assets.calendly.com/assets/external/widget.css" />
     <script is:inline src="https://assets.calendly.com/assets/external/widget.js" async></script>
     <meta property="og:type" content={type} />
+    <meta property="og:locale" content="en_US" />
     <meta property="og:site_name" content="Rio Espinosa" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
@@ -72,12 +78,14 @@ const schema = {
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={image} />
     <meta name="twitter:image:alt" content={imageAlt} />
+    {type === 'article' && publishedDate && <meta property="article:published_time" content={publishedDate} />}
     <script is:inline>
       try {
         if (localStorage.getItem('rio-theme') === 'dark') document.documentElement.classList.add('theme-dark');
       } catch {}
     </script>
     <script type="application/ld+json" set:html={JSON.stringify(schema)}></script>
+    {analyticsSrc && <script is:inline defer src={analyticsSrc} data-website-id={analyticsWebsiteId}></script>}
     <title>{title}</title>
     <ClientRouter fallback="swap" />
   </head>
