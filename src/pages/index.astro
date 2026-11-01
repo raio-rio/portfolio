@@ -8,9 +8,11 @@ import { stack } from '../data/stack';
 
 const projects = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
 const promorph = projects.find((project) => project.id === 'promorph');
+const guise = projects.find((project) => project.id === 'guise');
 const fanProjects = [
   ...(promorph ? [promorph] : []),
-  ...projects.filter((project) => project.id !== 'promorph').slice(0, 2),
+  ...(guise ? [guise] : []),
+  ...projects.filter((project) => project.id !== 'promorph' && project.id !== 'guise').slice(0, 1),
 ];
 const postDateFormatter = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 const research = projects.find((project) => project.id === 'promorph');
