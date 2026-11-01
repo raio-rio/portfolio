@@ -8,7 +8,7 @@ const projects = (await getCollection('projects')).sort((a, b) => a.data.order -
 
 <Layout title="Projects — Rio Espinosa" description="Selected software, AI, and full-stack projects by Rio Espinosa." path="/projects/">
   <main class="project-grid-page subpage">
-    <a class="back-link" href="/#projects">← Back home</a>
+    <a class="back-link" href="/#projects" data-go-back>← Back</a>
     <header class="project-grid-intro">
       <h1 class="section-ztext">Projects</h1>
       <p>A concise selection of AI, product, and full-stack work.</p>

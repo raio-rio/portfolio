@@ -13,12 +13,12 @@ const fanProjects = [
   ...(promorph ? [promorph] : []),
   ...projects.filter((project) => project.id !== 'promorph').slice(0, 2),
 ];
-const postDateFormatter = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 const research = projects.find((project) => project.id === 'promorph');
 const recentPosts = (await getCollection('blog'))
   .sort((a, b) => b.data.date.localeCompare(a.data.date))
-  .slice(0, 3)
-  .map((post) => ({ ...post, displayDate: postDateFormatter.format(new Date(`${post.data.date}T12:00:00Z`)) }));
+  .slice(0, 3);
+const featurePost = recentPosts.find((post) => post.id === 'dashboard-from-a-drawer-phone') ?? recentPosts[0];
+const sidePosts = featurePost ? recentPosts.filter((post) => post.id !== featurePost.id).slice(0, 2) : [];
 ---
 
 <Layout title="Rio Espinosa — Full Stack Developer & AI Engineer" description="Rio Espinosa builds AI/ML models, SaaS products, full-stack web apps, and blockchain solutions.">
@@ -34,20 +34,14 @@ const recentPosts = (await getCollection('blog'))
               <h1 class="hero-ztext"><span class="rio-letters">rio</span><span class="hero-wordmark-dot" aria-hidden="true">.</span></h1>
             </div>
             <p class="hero-tagline">a Full Stack Developer/AI Enthusiast</p>
-          </div>
-          <div class="hero-burst" aria-label="Career highlights">
-            <div class="hero-burst-pill hero-burst-1"><span class="hero-burst-icon"><i class="ph-bold ph-user" aria-hidden="true"></i></span><p><strong>5+</strong><span>Years building</span></p></div>
-            <div class="hero-burst-pill hero-burst-2"><span class="hero-burst-icon"><i class="ph-bold ph-rocket-launch" aria-hidden="true"></i></span><p><strong>13+</strong><span>Projects</span></p></div>
-            <div class="hero-burst-pill hero-burst-3"><span class="hero-burst-icon"><i class="ph-bold ph-hand-coins" aria-hidden="true"></i></span><p><strong>$8,000+</strong><span>Generated / saved</span></p></div>
+            <nav class="hero-actions" aria-label="Social links">
+              <a href="https://wa.me/639338259751?text=Hi%20Rio%2C%20found%20your%20portfolio%20and%20would%20love%20to%20chat!" target="_blank" rel="noreferrer" aria-label="Message Rio on WhatsApp" data-label="WhatsApp"><i class="ph-bold ph-whatsapp-logo" aria-hidden="true"></i></a>
+              <a href="https://www.linkedin.com/in/rioespinosa02/" target="_blank" rel="noreferrer" aria-label="Visit Rio on LinkedIn" data-label="LinkedIn"><i class="ph-bold ph-linkedin-logo" aria-hidden="true"></i></a>
+              <a href="https://www.instagram.com/_sprio/" target="_blank" rel="noreferrer" aria-label="Visit Rio on Instagram" data-label="Instagram"><i class="ph-bold ph-instagram-logo" aria-hidden="true"></i></a>
+              <a href="https://github.com/raio-rio/" target="_blank" rel="noreferrer" aria-label="Visit Rio on GitHub" data-label="GitHub"><i class="ph-bold ph-github-logo" aria-hidden="true"></i></a>
+            </nav>
           </div>
         </div>
-        <nav class="hero-actions" aria-label="Contact and social links">
-          <a href="https://wa.me/639338259751?text=Hi%20Rio%2C%20found%20your%20portfolio%20and%20would%20love%20to%20chat!" target="_blank" rel="noreferrer" aria-label="Message Rio on WhatsApp" data-label="WhatsApp"><i class="ph-bold ph-whatsapp-logo" aria-hidden="true"></i></a>
-          <a href="https://www.linkedin.com/in/rioespinosa02/" target="_blank" rel="noreferrer" aria-label="Visit Rio on LinkedIn" data-label="LinkedIn"><i class="ph-bold ph-linkedin-logo" aria-hidden="true"></i></a>
-          <a href="https://www.instagram.com/_sprio/" target="_blank" rel="noreferrer" aria-label="Visit Rio on Instagram" data-label="Instagram"><i class="ph-bold ph-instagram-logo" aria-hidden="true"></i></a>
-          <a href="https://github.com/raio-rio/" target="_blank" rel="noreferrer" aria-label="Visit Rio on GitHub" data-label="GitHub"><i class="ph-bold ph-github-logo" aria-hidden="true"></i></a>
-        </nav>
-        <a class="hero-contact" data-contact-choice-open href="#contact-choice-dialog"><i class="ph-bold ph-chats-circle" aria-hidden="true"></i><span>Let’s build something useful</span></a>
       </div>
       <dialog id="contact-choice-dialog" class="contact-email-dialog contact-choice-dialog" data-contact-choice-dialog>
         <div class="contact-email-dialog-panel">
@@ -56,8 +50,6 @@ const recentPosts = (await getCollection('blog'))
           </button>
 
           <div class="contact-dialog-step" data-contact-choice-step>
-            <i class="contact-email-dialog-icon ph-bold ph-chats-circle" aria-hidden="true"></i>
-            <p class="contact-email-dialog-kicker">Let’s talk</p>
             <h3>How would you like to connect?</h3>
             <div class="contact-choice-options">
               <a data-contact-call data-calendly-link href="https://calendly.com/programmingrio">
@@ -108,28 +100,9 @@ const recentPosts = (await getCollection('blog'))
     </section>
 
     <div class="home-flow">
-      <section class="home-section" id="blog" data-scroll-section="blog" aria-labelledby="blog-title">
-        <header class="home-section-head">
-          <h2 id="blog-title" class="section-ztext home-section-title"><a class="home-section-title-link" href="/blog/">Blog<i class="ph-bold ph-arrow-up-right" aria-hidden="true"></i></a></h2>
-          <p class="home-section-lead">Notes on builds, technology, and AI.</p>
-        </header>
-        <div class="home-blog-list home-section-body" aria-label="Recent posts">
-          {recentPosts.map((post) => (
-            <article class="project-grid-card home-blog-card">
-              <a class="home-blog-link" href={`/blog/${post.id}/`}>
-                <span class="home-blog-title">{post.data.title}<i class="ph-bold ph-arrow-up-right" aria-hidden="true"></i></span>
-                <span class="home-blog-meta"><time datetime={post.data.date}>{post.displayDate}</time> · {post.data.readingTime}</span>
-                <span class="home-blog-description">{post.data.description}</span>
-              </a>
-            </article>
-          ))}
-        </div>
-      </section>
-
       <section class="home-section home-section-projects" id="projects" data-scroll-section="projects" aria-labelledby="projects-title">
         <header class="home-section-head">
           <h2 id="projects-title" class="section-ztext home-section-title"><a class="home-section-title-link" href="/projects/">Projects<i class="ph-bold ph-arrow-up-right" aria-hidden="true"></i></a></h2>
-          <p class="home-section-lead">A mix of personal/client projects that I’m able to share.</p>
         </header>
         <div class="project-fan" data-project-fan role="region" aria-label="Featured projects">
           {fanProjects.map((project, index) => (
@@ -138,12 +111,30 @@ const recentPosts = (await getCollection('blog'))
             </article>
           ))}
         </div>
+        <div class="hero-posts" aria-label="Latest posts">
+          {featurePost && (
+            <a class="hero-post hero-post-feature" href={`/blog/${featurePost.id}/`}>
+              <img src="/images/blog/dashboard-from-a-drawer-phone/06-docked.jpg" alt="Hand holding a phone showing the LAN dashboard with month cost, usage gauges, to-do list and per-model spend, on a wooden desk beside a keyboard" loading="lazy" decoding="async" />
+              <span>{featurePost.data.title}</span>
+              <i class="ph-bold ph-arrow-up-right" aria-hidden="true"></i>
+            </a>
+          )}
+          {sidePosts.map((post) => (
+            <a class="hero-post" href={`/blog/${post.id}/`}>
+              <span>{post.data.title}</span>
+              <i class="ph-bold ph-arrow-up-right" aria-hidden="true"></i>
+            </a>
+          ))}
+          <a class="hero-post" href="/blog/">
+            <span>All posts</span>
+            <i class="ph-bold ph-arrow-right" aria-hidden="true"></i>
+          </a>
+        </div>
       </section>
 
       <section class="home-section" id="experience" data-scroll-section="experience" aria-labelledby="experience-title">
         <header class="home-section-head">
           <h2 id="experience-title" class="section-ztext home-section-title">Experience</h2>
-          <p class="home-section-lead">Some of my work experience with my development work.</p>
         </header>
         <div class="exp-bento home-section-body">
           <section class="exp-tile" aria-labelledby="work-title">
@@ -214,7 +205,6 @@ const recentPosts = (await getCollection('blog'))
       <section class="home-section" id="stack" data-scroll-section="stack" aria-labelledby="stack-title">
         <header class="home-section-head">
           <h2 id="stack-title" class="section-ztext home-section-title">Stack</h2>
-          <p class="home-section-lead">The tools I use to take my projects to the next level.</p>
         </header>
         <div class="project-grid stack-grid home-section-body" data-stack-grid aria-label="Complete technology stack">
           {stack.map(({ category, icon, tools }) => (
@@ -371,6 +361,18 @@ const recentPosts = (await getCollection('blog'))
     contactDialog?.addEventListener('click', handleDialogBackdrop);
     contactForm?.addEventListener('submit', handleContactSubmit);
 
+    const heroWordmark = home.querySelector<HTMLElement>('.hero-wordmark');
+    const handleHeroClick = (event: MouseEvent) => {
+      if (!(event.target instanceof Element)) return;
+      if (event.target.closest('a, button, dialog')) return;
+      if (window.getSelection()?.toString()) return;
+      if (!contactDialog || contactDialog.open) return;
+      event.preventDefault();
+      showContactStep('choice');
+      contactDialog.showModal();
+    };
+    heroWordmark?.addEventListener('click', handleHeroClick);
+
     const expTriggers = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-exp-modal-trigger]'));
     const expModals = Array.from(document.querySelectorAll<HTMLDialogElement>('[data-exp-modal]'));
 
@@ -395,28 +397,7 @@ const recentPosts = (await getCollection('blog'))
       modal.addEventListener('click', handleExpModalBackdrop);
     });
 
-    const orbit = home.querySelector<HTMLElement>('.hero-orbit');
-    const wordmark = home.querySelector<HTMLElement>('.hero-wordmark');
-    let burstOn = false;
-    const setBurst = (on: boolean) => {
-      if (burstOn === on || !orbit) return;
-      burstOn = on;
-      orbit.classList.toggle('burst-out', on);
-    };
-    const handleBurstMove = (event: PointerEvent) => {
-      if (!wordmark || event.pointerType !== 'mouse') return;
-      const rect = wordmark.getBoundingClientRect();
-      const dx = event.clientX - (rect.left + rect.width / 2);
-      const dy = event.clientY - (rect.top + rect.height / 2);
-      setBurst(Math.hypot(dx, dy) < 300);
-    };
-    const handleBurstToggle = () => setBurst(!burstOn);
-    document.addEventListener('pointermove', handleBurstMove, { passive: true });
-    wordmark?.addEventListener('click', handleBurstToggle);
-
     const dispose = () => {
-      document.removeEventListener('pointermove', handleBurstMove);
-      wordmark?.removeEventListener('click', handleBurstToggle);
       expTriggers.forEach((trigger) => trigger.removeEventListener('click', handleExpTrigger));
       expModals.forEach((modal) => {
         modal.querySelectorAll<HTMLButtonElement>('[data-exp-modal-close]').forEach((button) => button.removeEventListener('click', handleExpModalClose));
@@ -429,6 +410,7 @@ const recentPosts = (await getCollection('blog'))
       contactDialogClose.forEach((button) => button.removeEventListener('click', handleDialogClose));
       contactDialog?.removeEventListener('click', handleDialogBackdrop);
       contactForm?.removeEventListener('submit', handleContactSubmit);
+      heroWordmark?.removeEventListener('click', handleHeroClick);
     };
     cleanupHome = dispose;
   };

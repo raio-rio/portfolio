@@ -149,6 +149,7 @@ const schema = {
     else window.open(trigger.href, '_blank', 'noopener,noreferrer');
   });
 
+  // 3D is hero-only: the rio wordmark. All other titles render flat.
   const initZtext = () => {
     const Ztextify = (window as Window & {
       Ztextify?: new (selector: string, options: Record<string, string | number | boolean>) => unknown;
@@ -169,26 +170,65 @@ const schema = {
         perspective: '700px',
       });
     });
-
-    document.querySelectorAll<HTMLElement>('.section-ztext').forEach((el, i) => {
-      if (el.querySelector('.z-text')) return;
-      if (!el.id) el.id = `section-ztext-${i}-${Math.random().toString(36).slice(2, 7)}`;
-      const isSubtitle = el.classList.contains('home-section-title');
-      new Ztextify(`#${CSS.escape(el.id)}.section-ztext`, {
-        depth: isSubtitle ? '.14em' : '.1em',
-        direction: 'both',
-        event: reduced ? 'none' : 'pointer',
-        eventRotation: isSubtitle ? '24deg' : '30deg',
-        fade: false,
-        layers: isSubtitle ? 6 : 8,
-        perspective: isSubtitle ? '520px' : '600px',
-      });
-    });
   };
 
   document.addEventListener('astro:page-load', initZtext);
   document.addEventListener('astro:after-swap', initZtext);
   initZtext();
+
+  // History-aware back links: go where the visitor came from when they
+  // navigated within this site, otherwise follow the link's fallback href.
+  const readNavStack = (): string[] => {
+    try {
+      const stack = JSON.parse(sessionStorage.getItem('nav-stack') ?? '[]');
+      return Array.isArray(stack) ? stack.filter((entry): entry is string => typeof entry === 'string') : [];
+    } catch {
+      return [];
+    }
+  };
+  const recordNavStack = () => {
+    try {
+      const here = window.location.pathname + window.location.search;
+      const stack = readNavStack();
+      if (stack[stack.length - 1] !== here) {
+        sessionStorage.setItem('nav-stack', JSON.stringify([...stack, here].slice(-20)));
+      }
+    } catch {
+      // Storage unavailable; back links fall back to their hrefs.
+    }
+  };
+
+  document.addEventListener('astro:page-load', recordNavStack);
+  recordNavStack();
+
+  document.addEventListener('click', (event) => {
+    if (!(event.target instanceof Element)) return;
+    const link = event.target.closest<HTMLAnchorElement>('[data-go-back]');
+    if (!link) return;
+    if (readNavStack().length >= 2) {
+      event.preventDefault();
+      window.history.back();
+    }
+  });
+
+  document.addEventListener('click', async (event) => {
+    if (!(event.target instanceof Element)) return;
+    const copyButton = event.target.closest<HTMLButtonElement>('[data-copy-email]');
+    if (!copyButton) return;
+    const email = 'contact@rioespinosa.com';
+    try {
+      await navigator.clipboard.writeText(email);
+      const label = copyButton.querySelector('span');
+      if (label) {
+        label.textContent = 'Copied!';
+        window.setTimeout(() => {
+          label.textContent = 'Copy email';
+        }, 1500);
+      }
+    } catch {
+      window.location.href = `mailto:${email}`;
+    }
+  });
     </script>
   </body>
 </html>

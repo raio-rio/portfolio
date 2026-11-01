@@ -4,7 +4,7 @@ type: Work
 tagline: A creator intelligence dashboard that brings affiliate payouts, niche competitor tracking, AI-led improvements, and content opportunities into one workflow.
 stack: [Python, Next.js, Express, Node.js, JavaScript, OpenAI, Grok, OpenClaw, OpenRouter, AI]
 impact: 5 X accounts served · 100+ posts generated · +25% presence vs competitors
-order: 2
+order: 0.5
 ---
 
 ## Overview
