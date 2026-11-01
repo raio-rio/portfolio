@@ -6,17 +6,17 @@ const currentPath = normalizePath(Astro.url.pathname);
 <header class="site-nav" transition:persist="site-nav">
   <nav aria-label="Primary navigation">
     <a class="site-nav-brand" href="/" aria-label="Rio Espinosa home" aria-describedby="site-nav-time-comparison">
-      <span class="site-nav-time"><i class="ph-duotone ph-sun" data-ph-time-icon aria-hidden="true"></i><time data-ph-time>--:-- PHT</time></span>
+      <span class="site-nav-time"><i class="ph-bold ph-sun" data-ph-time-icon aria-hidden="true"></i><time data-ph-time>--:-- PHT</time></span>
       <span class="site-nav-time-popout" id="site-nav-time-comparison">
         <span class="site-nav-time-row">
-          <i class="site-nav-weather-icon ph-duotone ph-sun" data-local-time-icon aria-hidden="true"></i>
+          <i class="site-nav-weather-icon ph-bold ph-sun" data-local-time-icon aria-hidden="true"></i>
           <span class="site-nav-time-copy">
             <span class="site-nav-time-label">Your local time</span>
             <time class="site-nav-time-value" data-local-time>--:--</time>
           </span>
         </span>
         <span class="site-nav-time-row">
-          <i class="site-nav-weather-icon ph-duotone ph-sun" data-rio-time-icon aria-hidden="true"></i>
+          <i class="site-nav-weather-icon ph-bold ph-sun" data-rio-time-icon aria-hidden="true"></i>
           <span class="site-nav-time-copy">
             <span class="site-nav-time-label">Rio · PHT</span>
             <time class="site-nav-time-value" data-rio-time>--:--</time>
@@ -26,19 +26,19 @@ const currentPath = normalizePath(Astro.url.pathname);
       </span>
     </a>
     <div class="site-nav-links" data-dock>
-      <a data-dock-item data-section-link="home" href="/#home" aria-label="Home" aria-current={currentPath === '/' ? 'location' : undefined}><i class="site-nav-mobile-icon ph-duotone ph-house" aria-hidden="true"></i><span>Home</span></a>
-      <a data-dock-item data-section-link="blog" href="/#blog" aria-label="Blog" aria-current={currentPath === '/blog' || currentPath.startsWith('/blog/') ? 'page' : undefined}><i class="site-nav-mobile-icon ph-duotone ph-newspaper" aria-hidden="true"></i><span>Blog</span></a>
-      <a data-dock-item data-section-link="projects" href="/#projects" aria-label="Projects" aria-current={currentPath === '/projects' ? 'page' : undefined}><i class="site-nav-mobile-icon ph-duotone ph-folder-open" aria-hidden="true"></i><span>Projects</span></a>
-      <a data-dock-item data-section-link="experience" href="/#experience" aria-label="Experience" aria-current={currentPath === '/experience' ? 'page' : undefined}><i class="site-nav-mobile-icon ph-duotone ph-briefcase" aria-hidden="true"></i><span>Experience</span></a>
-      <a data-dock-item data-section-link="stack" href="/#stack" aria-label="Stack" aria-current={currentPath === '/stack' ? 'page' : undefined}><i class="site-nav-mobile-icon ph-duotone ph-stack" aria-hidden="true"></i><span>Stack</span></a>
-      <a data-dock-item href="/ESPINOSA_RESUME.pdf" target="_blank" rel="noreferrer">Resume <i class="ph-duotone ph-arrow-square-out" aria-hidden="true"></i></a>
+      <a data-dock-item data-section-link="home" href="/#home" aria-label="Home" aria-current={currentPath === '/' ? 'location' : undefined}><i class="site-nav-mobile-icon ph-bold ph-house" aria-hidden="true"></i><span>Home</span></a>
+      <a data-dock-item data-section-link="blog" href="/#blog" aria-label="Blog" aria-current={currentPath === '/blog' || currentPath.startsWith('/blog/') ? 'page' : undefined}><i class="site-nav-mobile-icon ph-bold ph-newspaper" aria-hidden="true"></i><span>Blog</span></a>
+      <a data-dock-item data-section-link="projects" href="/#projects" aria-label="Projects" aria-current={currentPath === '/projects' ? 'page' : undefined}><i class="site-nav-mobile-icon ph-bold ph-folder-open" aria-hidden="true"></i><span>Projects</span></a>
+      <a data-dock-item data-section-link="experience" href="/#experience" aria-label="Experience" aria-current={currentPath === '/experience' ? 'page' : undefined}><i class="site-nav-mobile-icon ph-bold ph-briefcase" aria-hidden="true"></i><span>Experience</span></a>
+      <a data-dock-item data-section-link="stack" href="/#stack" aria-label="Stack" aria-current={currentPath === '/stack' ? 'page' : undefined}><i class="site-nav-mobile-icon ph-bold ph-stack" aria-hidden="true"></i><span>Stack</span></a>
+      <a data-dock-item href="/ESPINOSA_RESUME.pdf" target="_blank" rel="noreferrer">Resume <i class="ph-bold ph-arrow-square-out" aria-hidden="true"></i></a>
     </div>
     <div class="site-nav-contact">
       <button class="site-nav-action" type="button" aria-expanded="false">contact@rioespinosa.com</button>
       <div class="site-nav-contact-popout" aria-label="Email actions">
         <div class="site-nav-contact-panel">
-          <button type="button" data-copy-email><i class="ph-duotone ph-copy" aria-hidden="true"></i><span>Copy email</span></button>
-          <a href="mailto:contact@rioespinosa.com"><i class="ph-duotone ph-envelope-simple" aria-hidden="true"></i><span>Email me</span></a>
+          <button type="button" data-copy-email><i class="ph-bold ph-copy" aria-hidden="true"></i><span>Copy email</span></button>
+          <a href="mailto:contact@rioespinosa.com"><i class="ph-bold ph-envelope-simple" aria-hidden="true"></i><span>Email me</span></a>
         </div>
       </div>
     </div>

@@ -5,14 +5,13 @@ import ProjectCard from '../components/ProjectCard.astro';
 import { experience } from '../data/experience';
 import { awards } from '../data/awards';
 import { stack } from '../data/stack';
+import { stackIcon } from '../lib/stack-icons';
 
 const projects = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
 const promorph = projects.find((project) => project.id === 'promorph');
-const guise = projects.find((project) => project.id === 'guise');
 const fanProjects = [
   ...(promorph ? [promorph] : []),
-  ...(guise ? [guise] : []),
-  ...projects.filter((project) => project.id !== 'promorph' && project.id !== 'guise').slice(0, 1),
+  ...projects.filter((project) => project.id !== 'promorph').slice(0, 2),
 ];
 const postDateFormatter = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 const research = projects.find((project) => project.id === 'promorph');
@@ -32,49 +31,49 @@ const recentPosts = (await getCollection('blog'))
           <div class="hero-core">
             <div class="hero-wordmark" aria-label="Rio Espinosa">
               <p class="hero-kicker">hi! it’s</p>
-              <h1 class="hero-ztext">rio<span class="hero-wordmark-dot" aria-hidden="true">.</span></h1>
+              <h1 class="hero-ztext"><span class="rio-letters">rio</span><span class="hero-wordmark-dot" aria-hidden="true">.</span></h1>
             </div>
             <p class="hero-tagline">a Full Stack Developer/AI Enthusiast</p>
           </div>
-          <div class="hero-metrics" aria-label="Career highlights">
-            <div class="hero-metric hero-metric-1"><span class="hero-metric-icon"><i class="ph-duotone ph-user" aria-hidden="true"></i></span><p><strong>5+</strong><span>Years building</span></p></div>
-            <div class="hero-metric hero-metric-2"><span class="hero-metric-icon"><i class="ph-duotone ph-rocket-launch" aria-hidden="true"></i></span><p><strong>13+</strong><span>Projects</span></p></div>
-            <div class="hero-metric hero-metric-3"><span class="hero-metric-icon"><i class="ph-duotone ph-hand-coins" aria-hidden="true"></i></span><p><strong>$8,000+</strong><span>Generated/saved by my projects</span></p></div>
+          <div class="hero-burst" aria-label="Career highlights">
+            <div class="hero-burst-pill hero-burst-1"><span class="hero-burst-icon"><i class="ph-bold ph-user" aria-hidden="true"></i></span><p><strong>5+</strong><span>Years building</span></p></div>
+            <div class="hero-burst-pill hero-burst-2"><span class="hero-burst-icon"><i class="ph-bold ph-rocket-launch" aria-hidden="true"></i></span><p><strong>13+</strong><span>Projects</span></p></div>
+            <div class="hero-burst-pill hero-burst-3"><span class="hero-burst-icon"><i class="ph-bold ph-hand-coins" aria-hidden="true"></i></span><p><strong>$8,000+</strong><span>Generated / saved</span></p></div>
           </div>
         </div>
         <nav class="hero-actions" aria-label="Contact and social links">
-          <a href="https://wa.me/639338259751?text=Hi%20Rio%2C%20found%20your%20portfolio%20and%20would%20love%20to%20chat!" target="_blank" rel="noreferrer" aria-label="Message Rio on WhatsApp" data-label="WhatsApp"><i class="ph-duotone ph-whatsapp-logo" aria-hidden="true"></i></a>
-          <a href="https://www.linkedin.com/in/rioespinosa02/" target="_blank" rel="noreferrer" aria-label="Visit Rio on LinkedIn" data-label="LinkedIn"><i class="ph-duotone ph-linkedin-logo" aria-hidden="true"></i></a>
-          <a href="https://www.instagram.com/_sprio/" target="_blank" rel="noreferrer" aria-label="Visit Rio on Instagram" data-label="Instagram"><i class="ph-duotone ph-instagram-logo" aria-hidden="true"></i></a>
-          <a href="https://github.com/raio-rio/" target="_blank" rel="noreferrer" aria-label="Visit Rio on GitHub" data-label="GitHub"><i class="ph-duotone ph-github-logo" aria-hidden="true"></i></a>
+          <a href="https://wa.me/639338259751?text=Hi%20Rio%2C%20found%20your%20portfolio%20and%20would%20love%20to%20chat!" target="_blank" rel="noreferrer" aria-label="Message Rio on WhatsApp" data-label="WhatsApp"><i class="ph-bold ph-whatsapp-logo" aria-hidden="true"></i></a>
+          <a href="https://www.linkedin.com/in/rioespinosa02/" target="_blank" rel="noreferrer" aria-label="Visit Rio on LinkedIn" data-label="LinkedIn"><i class="ph-bold ph-linkedin-logo" aria-hidden="true"></i></a>
+          <a href="https://www.instagram.com/_sprio/" target="_blank" rel="noreferrer" aria-label="Visit Rio on Instagram" data-label="Instagram"><i class="ph-bold ph-instagram-logo" aria-hidden="true"></i></a>
+          <a href="https://github.com/raio-rio/" target="_blank" rel="noreferrer" aria-label="Visit Rio on GitHub" data-label="GitHub"><i class="ph-bold ph-github-logo" aria-hidden="true"></i></a>
         </nav>
-        <a class="hero-contact" data-contact-choice-open href="#contact-choice-dialog"><i class="ph-duotone ph-chats-circle" aria-hidden="true"></i><span>Let’s build something useful</span></a>
+        <a class="hero-contact" data-contact-choice-open href="#contact-choice-dialog"><i class="ph-bold ph-chats-circle" aria-hidden="true"></i><span>Let’s build something useful</span></a>
       </div>
       <dialog id="contact-choice-dialog" class="contact-email-dialog contact-choice-dialog" data-contact-choice-dialog>
         <div class="contact-email-dialog-panel">
           <button class="contact-email-dialog-close" type="button" data-contact-dialog-close aria-label="Close contact options">
-            <i class="ph-duotone ph-x" aria-hidden="true"></i>
+            <i class="ph-bold ph-x" aria-hidden="true"></i>
           </button>
 
           <div class="contact-dialog-step" data-contact-choice-step>
-            <i class="contact-email-dialog-icon ph-duotone ph-chats-circle" aria-hidden="true"></i>
+            <i class="contact-email-dialog-icon ph-bold ph-chats-circle" aria-hidden="true"></i>
             <p class="contact-email-dialog-kicker">Let’s talk</p>
             <h3>How would you like to connect?</h3>
             <div class="contact-choice-options">
               <a data-contact-call data-calendly-link href="https://calendly.com/programmingrio">
-                <i class="ph-duotone ph-calendar-check" aria-hidden="true"></i>
+                <i class="ph-bold ph-calendar-check" aria-hidden="true"></i>
                 <strong>Book a call</strong>
               </a>
               <button type="button" data-contact-message-open>
-                <i class="ph-duotone ph-paper-plane-tilt" aria-hidden="true"></i>
+                <i class="ph-bold ph-paper-plane-tilt" aria-hidden="true"></i>
                 <strong>Send a message</strong>
               </button>
               <a class="contact-choice-linkedin" href="https://www.linkedin.com/in/rioespinosa02/" target="_blank" rel="noreferrer">
-                <i class="ph-duotone ph-linkedin-logo" aria-hidden="true"></i>
+                <i class="ph-bold ph-linkedin-logo" aria-hidden="true"></i>
                 <strong>LinkedIn</strong>
               </a>
             </div>
-            <p class="contact-dialog-sla"><i class="ph-duotone ph-clock" aria-hidden="true"></i>Typically replies within 12 hours</p>
+            <p class="contact-dialog-sla"><i class="ph-bold ph-clock" aria-hidden="true"></i>Typically replies within 12 hours</p>
           </div>
 
           <form class="home-contact-form contact-dialog-form" data-contact-form hidden>
@@ -91,8 +90,8 @@ const recentPosts = (await getCollection('blog'))
                 </label>
               </div>
               <button class="contact-form-trigger contact-form-submit" type="submit" data-contact-submit>
-                <i class="ph-duotone ph-paper-plane-tilt" aria-hidden="true"></i>
-                <strong data-contact-submit-label>Submit <i class="ph-duotone ph-arrow-right" aria-hidden="true"></i></strong>
+                <i class="ph-bold ph-paper-plane-tilt" aria-hidden="true"></i>
+                <strong data-contact-submit-label>Submit <i class="ph-bold ph-arrow-right" aria-hidden="true"></i></strong>
               </button>
             </div>
             <p class="contact-dialog-status" data-contact-dialog-status role="alert" aria-live="assertive"></p>
@@ -111,14 +110,14 @@ const recentPosts = (await getCollection('blog'))
     <div class="home-flow">
       <section class="home-section" id="blog" data-scroll-section="blog" aria-labelledby="blog-title">
         <header class="home-section-head">
-          <h2 id="blog-title" class="section-ztext home-section-title"><a class="home-section-title-link" href="/blog/">Blog<i class="ph-duotone ph-arrow-up-right" aria-hidden="true"></i></a></h2>
+          <h2 id="blog-title" class="section-ztext home-section-title"><a class="home-section-title-link" href="/blog/">Blog<i class="ph-bold ph-arrow-up-right" aria-hidden="true"></i></a></h2>
           <p class="home-section-lead">Notes on builds, technology, and AI.</p>
         </header>
         <div class="home-blog-list home-section-body" aria-label="Recent posts">
           {recentPosts.map((post) => (
             <article class="project-grid-card home-blog-card">
               <a class="home-blog-link" href={`/blog/${post.id}/`}>
-                <span class="home-blog-title">{post.data.title}<i class="ph-duotone ph-arrow-up-right" aria-hidden="true"></i></span>
+                <span class="home-blog-title">{post.data.title}<i class="ph-bold ph-arrow-up-right" aria-hidden="true"></i></span>
                 <span class="home-blog-meta"><time datetime={post.data.date}>{post.displayDate}</time> · {post.data.readingTime}</span>
                 <span class="home-blog-description">{post.data.description}</span>
               </a>
@@ -129,7 +128,7 @@ const recentPosts = (await getCollection('blog'))
 
       <section class="home-section home-section-projects" id="projects" data-scroll-section="projects" aria-labelledby="projects-title">
         <header class="home-section-head">
-          <h2 id="projects-title" class="section-ztext home-section-title"><a class="home-section-title-link" href="/projects/">Projects<i class="ph-duotone ph-arrow-up-right" aria-hidden="true"></i></a></h2>
+          <h2 id="projects-title" class="section-ztext home-section-title"><a class="home-section-title-link" href="/projects/">Projects<i class="ph-bold ph-arrow-up-right" aria-hidden="true"></i></a></h2>
           <p class="home-section-lead">A mix of personal/client projects that I’m able to share.</p>
         </header>
         <div class="project-fan" data-project-fan role="region" aria-label="Featured projects">
@@ -162,7 +161,7 @@ const recentPosts = (await getCollection('blog'))
                     </span>
                     <span class="bento-side">
                       <span class="work-year">{item.year}</span>
-                      <span class="work-open" aria-hidden="true"><i class="ph-duotone ph-arrow-up-right"></i></span>
+                      <span class="work-open" aria-hidden="true"><i class="ph-bold ph-arrow-up-right"></i></span>
                     </span>
                   </button>
                   <dialog class="project-modal split-modal" id={`exp-modal-${index}`} data-exp-modal aria-labelledby={`exp-modal-${index}-title`}>
@@ -202,7 +201,7 @@ const recentPosts = (await getCollection('blog'))
                 <p class="research-abstract">{research.data.tagline}</p>
                 {research.data.url && (
                   <a class="research-link" href={research.data.url} target="_blank" rel="noreferrer">
-                    View paper <i class="ph-duotone ph-arrow-right" aria-hidden="true"></i>
+                    View paper <i class="ph-bold ph-arrow-right" aria-hidden="true"></i>
                   </a>
                 )}
               </div>
@@ -220,8 +219,21 @@ const recentPosts = (await getCollection('blog'))
         <div class="project-grid stack-grid home-section-body" data-stack-grid aria-label="Complete technology stack">
           {stack.map(({ category, icon, tools }) => (
             <article class:list={['project-grid-card', 'stack-grid-card']}>
-              <h2><i class:list={['ph-duotone', icon]} aria-hidden="true"></i>{category}</h2>
-              <p class="stack-grid-preview">{tools.join(' · ')}</p>
+              <h2><i class:list={['ph-bold', icon]} aria-hidden="true"></i>{category}</h2>
+              <ul class="stack-icons" aria-label={`${category} tools`}>
+                {tools.map((tool) => {
+                  const glyph = stackIcon(tool);
+                  return (
+                    <li>
+                      {glyph ? (
+                        <span class="stack-icon" role="img" aria-label={tool} data-label={tool}><i class={glyph} aria-hidden="true"></i></span>
+                      ) : (
+                        <span class="stack-text">{tool}</span>
+                      )}
+                    </li>
+                  );
+                })}
+              </ul>
             </article>
           ))}
         </div>
@@ -348,7 +360,7 @@ const recentPosts = (await getCollection('blog'))
         contactFormPending = false;
         contactSubmit.disabled = false;
         contactSubmit.removeAttribute('aria-busy');
-        if (contactSubmitLabel) contactSubmitLabel.innerHTML = 'Submit <i class="ph-duotone ph-arrow-right" aria-hidden="true"></i>';
+        if (contactSubmitLabel) contactSubmitLabel.innerHTML = 'Submit <i class="ph-bold ph-arrow-right" aria-hidden="true"></i>';
       }
     };
     contactOpen?.addEventListener('click', handleContactOpen);
@@ -383,7 +395,28 @@ const recentPosts = (await getCollection('blog'))
       modal.addEventListener('click', handleExpModalBackdrop);
     });
 
+    const orbit = home.querySelector<HTMLElement>('.hero-orbit');
+    const wordmark = home.querySelector<HTMLElement>('.hero-wordmark');
+    let burstOn = false;
+    const setBurst = (on: boolean) => {
+      if (burstOn === on || !orbit) return;
+      burstOn = on;
+      orbit.classList.toggle('burst-out', on);
+    };
+    const handleBurstMove = (event: PointerEvent) => {
+      if (!wordmark || event.pointerType !== 'mouse') return;
+      const rect = wordmark.getBoundingClientRect();
+      const dx = event.clientX - (rect.left + rect.width / 2);
+      const dy = event.clientY - (rect.top + rect.height / 2);
+      setBurst(Math.hypot(dx, dy) < 300);
+    };
+    const handleBurstToggle = () => setBurst(!burstOn);
+    document.addEventListener('pointermove', handleBurstMove, { passive: true });
+    wordmark?.addEventListener('click', handleBurstToggle);
+
     const dispose = () => {
+      document.removeEventListener('pointermove', handleBurstMove);
+      wordmark?.removeEventListener('click', handleBurstToggle);
       expTriggers.forEach((trigger) => trigger.removeEventListener('click', handleExpTrigger));
       expModals.forEach((modal) => {
         modal.querySelectorAll<HTMLButtonElement>('[data-exp-modal-close]').forEach((button) => button.removeEventListener('click', handleExpModalClose));

@@ -14,7 +14,6 @@ interface Props {
 
 const { project, expanded = false, showStack = false, showTagline = true, showType = true, hideStack = false, stackChips = false } = Astro.props;
 const images = getProjectImages(project.id);
-const detail = (project.body ?? '').replace(/^\s*## Overview\s*/m, '').trim() || project.data.tagline;
 const modalId = `project-modal-${project.id}`;
 ---
 
@@ -36,7 +35,7 @@ const modalId = `project-modal-${project.id}`;
       {showType && <span class:list={['project-type', `project-type-${project.data.type.toLowerCase()}`]}>{project.data.type}</span>}
       <h2><strong>{project.data.title}</strong><span class="project-arrow" aria-hidden="true">→</span></h2>
       {showTagline && <p class="project-tagline">{project.data.tagline}</p>}
-      {project.data.impact && <p class="project-impact"><i class="ph-duotone ph-trend-up" aria-hidden="true"></i>{project.data.impact}</p>}
+      {project.data.impact && <p class="project-impact"><i class="ph-bold ph-trend-up" aria-hidden="true"></i>{project.data.impact}</p>}
       {(expanded || showStack) && !hideStack && project.data.stack.length > 0 && (
         stackChips ? (
           <ul class="project-stack-chips" aria-label={`${project.data.title} technology stack`}>
@@ -59,14 +58,14 @@ const modalId = `project-modal-${project.id}`;
             <img data-split-main data-zoomable src={images[0]} alt={`${project.data.title} preview 1 of ${images.length}`} decoding="async" />
             {images.length > 1 && (
               <>
-                <button class="split-arrow split-arrow-prev" type="button" data-split-prev aria-label="Previous image"><i class="ph-duotone ph-caret-left" aria-hidden="true"></i></button>
-                <button class="split-arrow split-arrow-next" type="button" data-split-next aria-label="Next image"><i class="ph-duotone ph-caret-right" aria-hidden="true"></i></button>
+                <button class="split-arrow split-arrow-prev" type="button" data-split-prev aria-label="Previous image"><i class="ph-bold ph-caret-left" aria-hidden="true"></i></button>
+                <button class="split-arrow split-arrow-next" type="button" data-split-next aria-label="Next image"><i class="ph-bold ph-caret-right" aria-hidden="true"></i></button>
               </>
             )}
             <div class="split-zoom" data-split-zoom role="group" aria-label={`Zoom ${project.data.title} preview`}>
-              <button class="split-zoom-btn" type="button" data-split-zoom-out aria-label="Zoom out"><i class="ph-duotone ph-magnifying-glass-minus" aria-hidden="true"></i></button>
+              <button class="split-zoom-btn" type="button" data-split-zoom-out aria-label="Zoom out"><i class="ph-bold ph-magnifying-glass-minus" aria-hidden="true"></i></button>
               <button class="split-zoom-level" type="button" data-split-zoom-reset aria-label="Reset zoom"><span data-split-zoom-level>100%</span></button>
-              <button class="split-zoom-btn" type="button" data-split-zoom-in aria-label="Zoom in"><i class="ph-duotone ph-magnifying-glass-plus" aria-hidden="true"></i></button>
+              <button class="split-zoom-btn" type="button" data-split-zoom-in aria-label="Zoom in"><i class="ph-bold ph-magnifying-glass-plus" aria-hidden="true"></i></button>
             </div>
           </div>
           {images.length > 1 && (
@@ -87,8 +86,7 @@ const modalId = `project-modal-${project.id}`;
         <span class="split-badge">{project.data.type}</span>
         <h2 id={`${modalId}-title`}>{project.data.title}</h2>
         <p class="split-lede">{project.data.tagline}</p>
-        <p class="project-modal-description">{detail}</p>
-        {project.data.impact && <p class="project-modal-impact"><i class="ph-duotone ph-trend-up" aria-hidden="true"></i>{project.data.impact}</p>}
+        {project.data.impact && <p class="project-modal-impact"><i class="ph-bold ph-trend-up" aria-hidden="true"></i>{project.data.impact}</p>}
         {project.data.stack.length > 0 && (
           <>
             <p class="split-label">Tech stack</p>
@@ -99,7 +97,7 @@ const modalId = `project-modal-${project.id}`;
         )}
         {project.data.url && (
           <div class="split-actions">
-            <a class="split-primary" href={project.data.url} target="_blank" rel="noreferrer">{project.data.urlLabel ?? 'View project'} <i class="ph-duotone ph-arrow-square-out" aria-hidden="true"></i></a>
+            <a class="split-primary" href={project.data.url} target="_blank" rel="noreferrer">{project.data.urlLabel ?? 'View project'} <i class="ph-bold ph-arrow-square-out" aria-hidden="true"></i></a>
           </div>
         )}
       </div>
