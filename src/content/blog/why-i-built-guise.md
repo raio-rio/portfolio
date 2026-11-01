@@ -34,13 +34,9 @@ A local Windows desktop app plus a modern web UI. Each profile keeps its own bro
 
 ### Product tour
 
-![Profiles - final product](/images/blog/guise/assets/shot-profiles.svg)
+![Guise browser profiles view with three demo profiles, sidebar navigation and a New profile button](/images/projects/guise/01-cover.png)
 
-![Proxies - final product](/images/blog/guise/assets/shot-proxies.svg)
-
-![Automations - final product](/images/blog/guise/assets/shot-automations.svg)
-
-![Settings - final product](/images/blog/guise/assets/shot-settings.svg)
+![Guise landing page hero with the headline Every account in one device and a profile grid of twelve platform accounts](/images/projects/guise/02-website.png)
 
 ## Cost: $0 vs rented profiles
 

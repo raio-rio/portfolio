@@ -229,6 +229,12 @@ li + li { margin-top: 3px; }
 .split-thumb[aria-current="true"] { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); opacity: 1; }
 .split-thumb img { display: block; width: 100%; aspect-ratio: 16 / 10; object-fit: cover; }
 .split-count { margin: 0; color: var(--muted); font-size: 12px; font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.split-main[data-zoomed] { overflow: auto; }
+.split-main img[data-zoomable] { transform-origin: center center; transition: transform .18s ease; cursor: zoom-in; }
+.split-zoom { position: absolute; right: 10px; bottom: 10px; display: flex; align-items: center; gap: 2px; padding: 3px; border: 1px solid var(--line); border-radius: 999px; background: color-mix(in srgb, var(--page) 88%, transparent); backdrop-filter: blur(8px); }
+.split-zoom-btn, .split-zoom-level { display: grid; place-items: center; min-width: 28px; height: 28px; padding: 0 4px; border: 0; border-radius: 999px; background: transparent; color: var(--ink); cursor: pointer; font-size: 12px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.split-zoom-btn i { font-size: 15px; line-height: 1; }
+.split-zoom-btn:hover, .split-zoom-level:hover, .split-zoom-btn:focus-visible, .split-zoom-level:focus-visible { color: var(--accent); }
 .split-body { min-width: 0; padding: clamp(20px, 3vw, 32px); }
 .split-badge { display: inline-block; padding: 4px 12px; border-radius: 999px; background: color-mix(in srgb, var(--accent) 10%, transparent); color: var(--accent); font-size: 11px; font-weight: 700; letter-spacing: .04em; }
 .split-body h2 { margin: 12px 0 0; color: var(--ink); font-size: clamp(22px, 2.6vw, 28px); font-weight: 650; letter-spacing: -.03em; line-height: 1.15; }
