@@ -493,7 +493,6 @@ const awardRows = awards.map((award) => ({
   (() => {
     const fanSelector = '[data-project-fan]';
     const cardSelector = '[data-fan-card]';
-    const mobileView = () => window.matchMedia('(max-width: 600px)').matches;
     let front = 0;
     let dragging = false;
     let moved = false;
@@ -524,7 +523,6 @@ const awardRows = awards.map((award) => ({
     };
 
     document.addEventListener('click', (event) => {
-      if (mobileView()) return;
       if (moved) {
         moved = false;
         event.preventDefault();
@@ -545,7 +543,6 @@ const awardRows = awards.map((award) => ({
     }, true);
 
     document.addEventListener('pointerdown', (event) => {
-      if (mobileView()) return;
       const fan = event.target instanceof Element ? event.target.closest(fanSelector) : null;
       if (!fan || (event.pointerType === 'mouse' && event.button !== 0)) return;
       dragging = true;
@@ -682,7 +679,19 @@ const awardRows = awards.map((award) => ({
 
       // Rendered width of the travelling rio, scaled to the window so it reads the same everywhere.
       const targetWidth = () => Math.max(72, Math.min(120, window.innerWidth * 0.065));
-      const scaleFor = () => Math.min(1, targetWidth() / (heroH1.offsetWidth || 1));
+
+      // Everything the guide needs to stay in the gutter beside the content column.
+      // The width is capped to the available gutter so it can never sit over the
+      // projects (or any other) section on narrower desktop windows.
+      const layout = () => {
+        const vw = window.innerWidth;
+        const flowRect = flow?.getBoundingClientRect();
+        const contentLeft = flowRect ? flowRect.left : Math.max(0, (vw - Math.min(vw - 64, 1080)) / 2);
+        const gap = Math.max(16, Math.min(28, vw * 0.014));
+        const available = Math.max(48, contentLeft - gap * 2);
+        return { contentLeft, gap, width: Math.min(targetWidth(), available) };
+      };
+      const scaleFor = () => Math.min(1, layout().width / (heroH1.offsetWidth || 1));
 
       // The ghost box marks exactly where the hero rio sits in the layout.
       const heroAnchor = () => {
@@ -691,12 +700,8 @@ const awardRows = awards.map((award) => ({
       };
 
       const gutterTargets = () => {
-        const vw = window.innerWidth;
-        const flowRect = flow?.getBoundingClientRect();
-        const contentLeft = flowRect ? flowRect.left : Math.max(0, (vw - Math.min(vw - 64, 1080)) / 2);
-        const width = heroH1.offsetWidth * scaleFor();
-        const height = heroH1.offsetHeight * scaleFor();
-        const gap = Math.max(16, Math.min(28, vw * 0.014));
+        const { contentLeft, gap, width } = layout();
+        const height = (heroH1.offsetHeight / (heroH1.offsetWidth || 1)) * width;
         return {
           left: Math.max(gap, contentLeft - width - gap),
           y: (window.innerHeight - height) / 2,
@@ -737,7 +742,9 @@ const awardRows = awards.map((award) => ({
           x: () => gutterTargets().left,
           y: () => gutterTargets().y,
           scale: scaleFor,
-          ease: 'power2.inOut',
+          // Ease out hard so the guide clears the content column before the project
+          // cards rise into its band, then settles smoothly into the gutter.
+          ease: 'expo.out',
           immediateRender: false,
           scrollTrigger: {
             trigger: hero,

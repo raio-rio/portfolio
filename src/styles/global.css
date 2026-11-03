@@ -651,9 +651,11 @@ html.theme-dark .stack-icon i.devicon-wordpress-plain { filter: invert(1); }
   .row-card { width: min(52%, 240px); border-radius: 16px; }
   .row-card[data-fan-pos="left"] { transform: translateX(-40%) scale(.9); }
   .row-card[data-fan-pos="right"] { transform: translateX(40%) scale(.9); }
-  .row-card .project-gallery-frame, .row-card .project-impact { display: none; }
-  .row-card .project-card { padding: 12px; }
-  .row-card .project h2 strong { font-size: 14px; }
+  .row-card .project-gallery-frame { display: none; }
+  .row-card .project-card { min-height: 128px; padding: 12px; }
+  .row-card .project h2 strong { display: -webkit-box; min-height: calc(2 * 1.35em); overflow: hidden; font-size: 14px; line-height: 1.35; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+  .row-card .project-impact { display: -webkit-box; margin-top: 6px; overflow: hidden; font-size: 11px; line-height: 1.4; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+  .row-card .project-impact i { font-size: 12px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .row-card { transition: none; }
