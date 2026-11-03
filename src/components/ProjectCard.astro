@@ -9,10 +9,9 @@ interface Props {
   showTagline?: boolean;
   showType?: boolean;
   hideStack?: boolean;
-  stackChips?: boolean;
 }
 
-const { project, expanded = false, showStack = false, showTagline = true, showType = true, hideStack = false, stackChips = false } = Astro.props;
+const { project, expanded = false, showStack = false, showTagline = true, showType = true, hideStack = false } = Astro.props;
 const images = getProjectImages(project.id);
 const modalId = `project-modal-${project.id}`;
 ---
@@ -37,14 +36,7 @@ const modalId = `project-modal-${project.id}`;
       {showTagline && <p class="project-tagline">{project.data.tagline}</p>}
       {project.data.impact && <p class="project-impact"><i class="ph-bold ph-trend-up" aria-hidden="true"></i>{project.data.impact}</p>}
       {(expanded || showStack) && !hideStack && project.data.stack.length > 0 && (
-        stackChips ? (
-          <ul class="project-stack-chips" aria-label={`${project.data.title} technology stack`}>
-            {project.data.stack.slice(0, 6).map((tool) => <li>{tool}</li>)}
-            {project.data.stack.length > 6 && <li class="project-stack-more">+{project.data.stack.length - 6}</li>}
-          </ul>
-        ) : (
-          <p class="project-stack">Built with {project.data.stack.join(' · ')}</p>
-        )
+        <p class="project-stack">Built with {project.data.stack.join(' · ')}</p>
       )}
     </div>
   </button>
@@ -55,18 +47,7 @@ const modalId = `project-modal-${project.id}`;
       {images.length > 0 && (
         <div class="split-media" data-split-gallery>
           <div class="split-main" data-split-main-wrap>
-            <img data-split-main data-zoomable src={images[0]} alt={`${project.data.title} preview 1 of ${images.length}`} decoding="async" />
-            {images.length > 1 && (
-              <>
-                <button class="split-arrow split-arrow-prev" type="button" data-split-prev aria-label="Previous image"><i class="ph-bold ph-caret-left" aria-hidden="true"></i></button>
-                <button class="split-arrow split-arrow-next" type="button" data-split-next aria-label="Next image"><i class="ph-bold ph-caret-right" aria-hidden="true"></i></button>
-              </>
-            )}
-            <div class="split-zoom" data-split-zoom role="group" aria-label={`Zoom ${project.data.title} preview`}>
-              <button class="split-zoom-btn" type="button" data-split-zoom-out aria-label="Zoom out"><i class="ph-bold ph-magnifying-glass-minus" aria-hidden="true"></i></button>
-              <button class="split-zoom-level" type="button" data-split-zoom-reset aria-label="Reset zoom"><span data-split-zoom-level>100%</span></button>
-              <button class="split-zoom-btn" type="button" data-split-zoom-in aria-label="Zoom in"><i class="ph-bold ph-magnifying-glass-plus" aria-hidden="true"></i></button>
-            </div>
+            <img data-split-main src={images[0]} alt={`${project.data.title} preview 1 of ${images.length}`} decoding="async" />
           </div>
           {images.length > 1 && (
             <div class="split-thumb-row">
@@ -128,40 +109,9 @@ const modalId = `project-modal-${project.id}`;
     const main = gallery.querySelector<HTMLImageElement>('[data-split-main]');
     const thumbs = Array.from(gallery.querySelectorAll<HTMLButtonElement>('[data-split-thumb]'));
     const count = gallery.querySelector<HTMLElement>('[data-split-count]');
-    const wrap = gallery.querySelector<HTMLElement>('[data-split-main-wrap]');
-    const zoomLevel = gallery.querySelector<HTMLElement>('[data-split-zoom-level]');
     if (!(main instanceof HTMLImageElement)) return;
 
-    let scale = 1;
-    const applyZoom = () => {
-      main.style.transform = scale === 1 ? '' : `scale(${scale})`;
-      wrap?.toggleAttribute('data-zoomed', scale !== 1);
-      if (zoomLevel) zoomLevel.textContent = `${Math.round(scale * 100)}%`;
-      main.style.cursor = scale === 1 ? 'zoom-in' : 'zoom-out';
-    };
-    const setZoom = (next: number) => {
-      scale = Math.min(3, Math.max(1, Math.round(next * 4) / 4));
-      applyZoom();
-    };
-
-    gallery.querySelector<HTMLButtonElement>('[data-split-zoom-in]')?.addEventListener('click', (event) => {
-      event.stopPropagation();
-      setZoom(scale + 0.25);
-    });
-    gallery.querySelector<HTMLButtonElement>('[data-split-zoom-out]')?.addEventListener('click', (event) => {
-      event.stopPropagation();
-      setZoom(scale - 0.25);
-    });
-    gallery.querySelector<HTMLButtonElement>('[data-split-zoom-reset]')?.addEventListener('click', (event) => {
-      event.stopPropagation();
-      setZoom(1);
-    });
-    main.addEventListener('click', () => setZoom(scale === 1 ? 2 : 1));
-
-    if (thumbs.length < 2) {
-      applyZoom();
-      return;
-    }
+    if (thumbs.length < 2) return;
 
     const show = (index: number) => {
       const current = ((index % thumbs.length) + thumbs.length) % thumbs.length;
@@ -173,16 +123,9 @@ const modalId = `project-modal-${project.id}`;
       }
       thumbs.forEach((thumb, thumbIndex) => thumb.setAttribute('aria-current', String(thumbIndex === current)));
       if (count) count.textContent = String(current + 1);
-      setZoom(1);
     };
 
     gallery.setAttribute('data-split-index', '0');
     thumbs.forEach((thumb, index) => thumb.addEventListener('click', () => show(index)));
-    gallery.querySelector<HTMLButtonElement>('[data-split-prev]')?.addEventListener('click', () => {
-      show(Number.parseInt(gallery.getAttribute('data-split-index') ?? '0', 10) - 1);
-    });
-    gallery.querySelector<HTMLButtonElement>('[data-split-next]')?.addEventListener('click', () => {
-      show(Number.parseInt(gallery.getAttribute('data-split-index') ?? '0', 10) + 1);
-    });
   });
 </script>

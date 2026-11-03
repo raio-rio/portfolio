@@ -4,12 +4,11 @@ import { getCollection } from 'astro:content';
 import ProjectCard from '../components/ProjectCard.astro';
 import { experience } from '../data/experience';
 import { awards } from '../data/awards';
-import { stack } from '../data/stack';
 import { stackIcon } from '../lib/stack-icons';
 
 const projects = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
 const promorph = projects.find((project) => project.id === 'promorph');
-const fanProjects = [
+const featuredProjects = [
   ...(promorph ? [promorph] : []),
   ...projects.filter((project) => project.id !== 'promorph').slice(0, 2),
 ];
@@ -19,9 +18,41 @@ const recentPosts = (await getCollection('blog'))
   .slice(0, 3);
 const featurePost = recentPosts.find((post) => post.id === 'dashboard-from-a-drawer-phone') ?? recentPosts[0];
 const sidePosts = featurePost ? recentPosts.filter((post) => post.id !== featurePost.id).slice(0, 2) : [];
+const homePosts = [...(featurePost ? [featurePost] : []), ...sidePosts];
+
+// The important stacks only — 22 logos, duplicated under the hood for a neat loop.
+const featuredStack: string[] = [
+  'TypeScript',
+  'React',
+  'Next.js',
+  'JavaScript',
+  'Tailwind CSS',
+  'Vue.js',
+  'Node.js',
+  'Python',
+  'PostgreSQL',
+  'MongoDB',
+  'GraphQL',
+  'FastAPI',
+  'AWS',
+  'Docker',
+  'Kubernetes',
+  'GCP',
+  'GitHub Actions',
+  'PyTorch',
+  'TensorFlow',
+  'Jupyter',
+  'Claude Code',
+  'OpenAI',
+];
+const awardRows = awards.map((award) => ({
+  year: award.meta.split('·').pop()?.trim() ?? '',
+  title: award.title,
+  name: award.name,
+}));
 ---
 
-<Layout title="Rio Espinosa — Full Stack Developer & AI Engineer" description="Rio Espinosa builds AI/ML models, SaaS products, full-stack web apps, and blockchain solutions.">
+<Layout title="Rio - Full Stack Developer" description="Rio Espinosa builds AI/ML models, SaaS products, full-stack web apps, and blockchain solutions.">
   <div id="smooth-wrapper">
     <main id="smooth-content" class="express-home" aria-label="Rio Espinosa portfolio">
     <section class="express-hero" id="home" data-scroll-section="home">
@@ -102,135 +133,158 @@ const sidePosts = featurePost ? recentPosts.filter((post) => post.id !== feature
     <div class="home-flow">
       <section class="home-section home-section-projects" id="projects" data-scroll-section="projects" aria-labelledby="projects-title">
         <header class="home-section-head">
-          <h2 id="projects-title" class="section-ztext home-section-title"><a class="home-section-title-link" href="/projects/">Projects<i class="ph-bold ph-arrow-up-right" aria-hidden="true"></i></a></h2>
+          <h2 id="projects-title" class="section-ztext home-section-title">projects</h2>
+          <a class="home-section-link" href="/projects/">all projects<i class="ph-bold ph-arrow-right" aria-hidden="true"></i></a>
         </header>
-        <div class="project-fan" data-project-fan role="region" aria-label="Featured projects">
-          {fanProjects.map((project, index) => (
-            <article class="fan-card" data-fan-card data-fan-pos={index === 0 ? 'front' : index === 1 ? 'right' : 'left'}>
+        <div class="project-row" data-project-fan role="region" aria-label="Featured projects">
+          {featuredProjects.map((project, index) => (
+            <article class="row-card" data-fan-card data-fan-pos={index === 0 ? 'front' : index === 1 ? 'right' : 'left'}>
               <ProjectCard project={project} expanded showTagline={false} showType={false} hideStack />
             </article>
           ))}
         </div>
-        <div class="hero-posts" aria-label="Latest posts">
-          {featurePost && (
-            <a class="hero-post hero-post-feature" href={`/blog/${featurePost.id}/`}>
-              <img src="/images/blog/dashboard-from-a-drawer-phone/06-docked.jpg" alt="Hand holding a phone showing the LAN dashboard with month cost, usage gauges, to-do list and per-model spend, on a wooden desk beside a keyboard" loading="lazy" decoding="async" />
-              <span>{featurePost.data.title}</span>
-              <i class="ph-bold ph-arrow-up-right" aria-hidden="true"></i>
-            </a>
-          )}
-          {sidePosts.map((post) => (
-            <a class="hero-post" href={`/blog/${post.id}/`}>
-              <span>{post.data.title}</span>
-              <i class="ph-bold ph-arrow-up-right" aria-hidden="true"></i>
-            </a>
-          ))}
-          <a class="hero-post" href="/blog/">
-            <span>All posts</span>
-            <i class="ph-bold ph-arrow-right" aria-hidden="true"></i>
-          </a>
+        <ol class="hero-posts" aria-label="Latest posts">
+          {homePosts.map((post) => {
+            const displayDate = new Intl.DateTimeFormat('en-US', {
+              month: 'short',
+              day: 'numeric',
+              year: 'numeric',
+            }).format(new Date(`${post.data.date}T12:00:00Z`));
+            return (
+              <li>
+                <a class="hero-post-row" href={`/blog/${post.id}/`}>
+                  <span class="hero-post-title">{post.data.title}</span>
+                  <span class="hero-post-meta"><time datetime={post.data.date}>{displayDate}</time> · {post.data.readingTime}</span>
+                </a>
+              </li>
+            );
+          })}
+        </ol>
+        <div class="home-stack" role="group" aria-label="Core technology stack">
+          <div class="stack-marquee">
+            <ul class="stack-icons">
+              {featuredStack.map((tool) => {
+                const glyph = stackIcon(tool);
+                return (
+                  <li>
+                    {glyph
+                      ? <span class="stack-icon" role="img" aria-label={tool} data-label={tool}><i class={glyph} aria-hidden="true"></i></span>
+                      : <span class="stack-label">{tool}</span>}
+                  </li>
+                );
+              })}
+            </ul>
+            <ul class="stack-icons" aria-hidden="true">
+              {featuredStack.map((tool) => {
+                const glyph = stackIcon(tool);
+                return (
+                  <li>
+                    {glyph
+                      ? <span class="stack-icon" aria-hidden="true"><i class={glyph} aria-hidden="true"></i></span>
+                      : <span class="stack-label" aria-hidden="true">{tool}</span>}
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
         </div>
       </section>
 
       <section class="home-section" id="experience" data-scroll-section="experience" aria-labelledby="experience-title">
         <header class="home-section-head">
-          <h2 id="experience-title" class="section-ztext home-section-title">Experience</h2>
+          <h2 id="experience-title" class="section-ztext home-section-title">experience</h2>
+          <a class="home-section-link" href="/ESPINOSA_RESUME.pdf" target="_blank" rel="noreferrer">resume<i class="ph-bold ph-arrow-right" aria-hidden="true"></i></a>
         </header>
-        <div class="exp-bento home-section-body">
-          <section class="exp-tile" aria-labelledby="work-title">
-            <header class="panel-head">
-              <h2 id="work-title">Where I’ve Worked</h2>
-            </header>
 
-            <ol class="bento-roles">
-              {experience.map((item, index) => (
-                <li class="bento-role">
-                  <button class="work-trigger" type="button" data-exp-modal-trigger aria-controls={`exp-modal-${index}`} aria-haspopup="dialog" aria-label={`View details for ${item.role} at ${item.company}`}>
-                    <span class="work-trigger-copy">
-                      <span class="work-role">{item.role}</span>
-                      <span class="work-company">{item.company}</span>
-                    </span>
-                    <span class="bento-side">
-                      <span class="work-year">{item.year}</span>
-                      <span class="work-open" aria-hidden="true"><i class="ph-bold ph-arrow-up-right"></i></span>
-                    </span>
-                  </button>
-                  <dialog class="project-modal split-modal" id={`exp-modal-${index}`} data-exp-modal aria-labelledby={`exp-modal-${index}-title`}>
-                    <article class="project-modal-content split-modal-content">
-                      <button class="project-modal-close" type="button" data-exp-modal-close aria-label={`Close ${item.role} details`}>×</button>
-                      <div class="split-summary">
-                        <p class="eyebrow">{item.period} · {item.location}</p>
-                        <h2 id={`exp-modal-${index}-title`}>{item.role}</h2>
-                        <p class="work-company">{item.company}</p>
-                      </div>
-                      <div class="split-body">
-                        <p class="split-label">Highlights</p>
-                        <ul class="exp-modal-highlights">
-                          {item.highlights.map((highlight) => <li>{highlight}</li>)}
-                        </ul>
-                      </div>
-                    </article>
-                  </dialog>
-                </li>
-              ))}
-            </ol>
-          </section>
-          <div class="exp-side-grid">
-          {awards.map((award) => (
-            <article class="exp-tile">
-              <div class="award-body">
-                <h3 class="award-title">{award.title}</h3>
-                <span class="award-name">{award.name}</span>
-                <span class="award-meta">{award.meta}</span>
-              </div>
-            </article>
+        <ol class="exp-list">
+          {experience.map((item, index) => (
+            <li>
+              <button class="exp-row" type="button" data-exp-modal-trigger aria-controls={`exp-modal-${index}`} aria-haspopup="dialog" aria-label={`View details for ${item.role} at ${item.company}`}>
+                <span class="exp-row-year">{item.year}</span>
+                <span class="exp-row-role">{item.role}</span>
+                <span class="exp-row-company">{item.company}</span>
+                <span class="exp-row-open" aria-hidden="true"><i class="ph-bold ph-arrow-up-right"></i></span>
+              </button>
+              <dialog class="project-modal split-modal" id={`exp-modal-${index}`} data-exp-modal aria-labelledby={`exp-modal-${index}-title`}>
+                <article class="project-modal-content split-modal-content">
+                  <button class="project-modal-close" type="button" data-exp-modal-close aria-label={`Close ${item.role} details`}>×</button>
+                  <div class="split-summary">
+                    <p class="eyebrow">{item.period} · {item.location}</p>
+                    <h2 id={`exp-modal-${index}-title`}>{item.role}</h2>
+                    <p class="work-company">{item.company}</p>
+                  </div>
+                  <div class="split-body">
+                    <p class="split-label">Highlights</p>
+                    <ul class="exp-modal-highlights">
+                      {item.highlights.map((highlight) => <li>{highlight}</li>)}
+                    </ul>
+                  </div>
+                </article>
+              </dialog>
+            </li>
           ))}
-          {research && (
-            <article class="exp-tile exp-span">
-              <div class="research-item">
-                <h3>{research.data.title}</h3>
-                <p class="research-abstract">{research.data.tagline}</p>
+        </ol>
+
+        <div class="exp-extra">
+          <p class="exp-extra-label">awards &amp; research</p>
+          <ul class="exp-list">
+            {awardRows.map((award) => (
+              <li class="exp-row exp-row-static">
+                <span class="exp-row-year">{award.year}</span>
+                <span class="exp-row-role">{award.title}</span>
+                <span class="exp-row-company">{award.name}</span>
+              </li>
+            ))}
+            {research && (
+              <li class="exp-row exp-row-static">
+                <span class="exp-row-year">paper</span>
+                <span class="exp-row-role">{research.data.title}</span>
                 {research.data.url && (
-                  <a class="research-link" href={research.data.url} target="_blank" rel="noreferrer">
-                    View paper <i class="ph-bold ph-arrow-right" aria-hidden="true"></i>
+                  <a class="exp-row-company exp-row-link" href={research.data.url} target="_blank" rel="noreferrer">
+                    read paper<i class="ph-bold ph-arrow-up-right" aria-hidden="true"></i>
                   </a>
                 )}
-              </div>
-            </article>
-          )}
+              </li>
+            )}
+          </ul>
+        </div>
+      </section>
+
+      <section class="home-section home-section-about" id="about" aria-labelledby="about-title">
+        <h2 id="about-title" class="about-sr-title">about</h2>
+        <div class="about-grid">
+          <figure class="about-portrait">
+            <img src="/images/portrait-placeholder.svg" alt="Portrait placeholder — swap in a photo of Rio Espinosa" width="400" height="500" loading="lazy" decoding="async" />
+          </figure>
+          <div class="about-copy">
+            <div class="about-head">
+              <h3 class="about-name">Rio Espinosa</h3>
+              <button class="about-email" type="button" data-copy-email aria-label="Copy Rio Espinosa’s email address">
+                <i class="ph-bold ph-copy" aria-hidden="true"></i><span>copy email</span>
+              </button>
+            </div>
+            <p>Full-stack developer based just outside Manila, building products end to end and fussing over the little things that separate something that works from something that feels considered: the transitions, the spacing, the states nobody plans for.</p>
+            <p>Lately I’ve been leading multi-tenant SaaS builds and the AI behind them — the last one went from an empty repo to production in roughly three months.</p>
           </div>
         </div>
       </section>
 
-      <section class="home-section" id="stack" data-scroll-section="stack" aria-labelledby="stack-title">
-        <header class="home-section-head">
-          <h2 id="stack-title" class="section-ztext home-section-title">Stack</h2>
-        </header>
-        <div class="project-grid stack-grid home-section-body" data-stack-grid aria-label="Complete technology stack">
-          {stack.map(({ category, icon, tools }) => (
-            <article class:list={['project-grid-card', 'stack-grid-card']}>
-              <h2><i class:list={['ph-bold', icon]} aria-hidden="true"></i>{category}</h2>
-              <ul class="stack-icons" aria-label={`${category} tools`}>
-                {tools.map((tool) => {
-                  const glyph = stackIcon(tool);
-                  return (
-                    <li>
-                      {glyph ? (
-                        <span class="stack-icon" role="img" aria-label={tool} data-label={tool}><i class={glyph} aria-hidden="true"></i></span>
-                      ) : (
-                        <span class="stack-text">{tool}</span>
-                      )}
-                    </li>
-                  );
-                })}
-              </ul>
-            </article>
-          ))}
+      <footer class="home-footer">
+        <div class="home-footer-main">
+          <p class="home-footer-brand">rio espinosa</p>
+          <nav class="home-footer-nav" aria-label="Footer">
+            <a href="/#projects">projects</a>
+            <a href="/#experience">experience</a>
+            <a href="/blog/">writing</a>
+            <a href="/projects/">all projects</a>
+          </nav>
         </div>
-      </section>
+      </footer>
     </div>
     </main>
   </div>
+
+  <div class="scroll-rio" data-scroll-rio></div>
 
 </Layout>
 
@@ -362,6 +416,7 @@ const sidePosts = featurePost ? recentPosts.filter((post) => post.id !== feature
     contactForm?.addEventListener('submit', handleContactSubmit);
 
     const heroWordmark = home.querySelector<HTMLElement>('.hero-wordmark');
+    const rioFloat = document.querySelector<HTMLElement>('[data-scroll-rio]');
     const handleHeroClick = (event: MouseEvent) => {
       if (!(event.target instanceof Element)) return;
       if (event.target.closest('a, button, dialog')) return;
@@ -372,6 +427,16 @@ const sidePosts = featurePost ? recentPosts.filter((post) => post.id !== feature
       contactDialog.showModal();
     };
     heroWordmark?.addEventListener('click', handleHeroClick);
+    const handleRioClick = (event: MouseEvent) => {
+      // At the page end the rio becomes a "back to hero" control.
+      if (rioFloat?.dataset.mode === 'home') {
+        event.preventDefault();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        return;
+      }
+      handleHeroClick(event);
+    };
+    rioFloat?.addEventListener('click', handleRioClick);
 
     const expTriggers = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-exp-modal-trigger]'));
     const expModals = Array.from(document.querySelectorAll<HTMLDialogElement>('[data-exp-modal]'));
@@ -411,6 +476,7 @@ const sidePosts = featurePost ? recentPosts.filter((post) => post.id !== feature
       contactDialog?.removeEventListener('click', handleDialogBackdrop);
       contactForm?.removeEventListener('submit', handleContactSubmit);
       heroWordmark?.removeEventListener('click', handleHeroClick);
+      rioFloat?.removeEventListener('click', handleRioClick);
     };
     cleanupHome = dispose;
   };
@@ -427,6 +493,7 @@ const sidePosts = featurePost ? recentPosts.filter((post) => post.id !== feature
   (() => {
     const fanSelector = '[data-project-fan]';
     const cardSelector = '[data-fan-card]';
+    const mobileView = () => window.matchMedia('(max-width: 600px)').matches;
     let front = 0;
     let dragging = false;
     let moved = false;
@@ -457,6 +524,7 @@ const sidePosts = featurePost ? recentPosts.filter((post) => post.id !== feature
     };
 
     document.addEventListener('click', (event) => {
+      if (mobileView()) return;
       if (moved) {
         moved = false;
         event.preventDefault();
@@ -477,6 +545,7 @@ const sidePosts = featurePost ? recentPosts.filter((post) => post.id !== feature
     }, true);
 
     document.addEventListener('pointerdown', (event) => {
+      if (mobileView()) return;
       const fan = event.target instanceof Element ? event.target.closest(fanSelector) : null;
       if (!fan || (event.pointerType === 'mouse' && event.button !== 0)) return;
       dragging = true;
@@ -518,4 +587,254 @@ const sidePosts = featurePost ? recentPosts.filter((post) => post.id !== feature
 
     paint();
   })();
+</script>
+
+<script>
+  import { gsap } from 'gsap';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  let scrollRioMedia: ReturnType<typeof gsap.matchMedia> | undefined;
+
+  // Adopt the hero's real 3D wordmark into a fixed layer so it can shrink and travel,
+  // leaving a ghost box behind that keeps the hero layout exactly as it was.
+  const adoptHeroWordmark = () => {
+    const layer = document.querySelector<HTMLElement>('[data-scroll-rio]');
+    const heroMark = document.querySelector<HTMLElement>('.hero-core > .hero-wordmark');
+    if (!layer || !heroMark) return null;
+
+    let shell = layer.querySelector<HTMLElement>('.hero-wordmark');
+    if (!shell) {
+      shell = document.createElement('div');
+      shell.className = 'hero-wordmark scroll-rio-wordmark';
+      layer.append(shell);
+    }
+
+    const heroH1 = shell.querySelector<HTMLElement>('h1.hero-ztext:not(.scroll-rio-up)') ?? heroMark.querySelector<HTMLElement>('h1.hero-ztext:not(.scroll-rio-up)');
+    if (!heroH1) return null;
+
+    let ghost = heroMark.querySelector<HTMLElement>('.hero-wordmark-ghost');
+    if (!shell.contains(heroH1)) {
+      if (!ghost) {
+        ghost = document.createElement('div');
+        ghost.className = 'hero-wordmark-ghost';
+        ghost.setAttribute('aria-hidden', 'true');
+        heroMark.append(ghost);
+      }
+      shell.append(heroH1);
+    }
+    if (!ghost) return null;
+
+    // Second 3D wordmark that reads "up." — shown at the page end as the return control.
+    let upH1 = shell.querySelector<HTMLElement>('.scroll-rio-up');
+    if (!upH1) {
+      upH1 = document.createElement('h1');
+      upH1.className = 'hero-ztext scroll-rio-up';
+      upH1.id = 'rio-up-wordmark';
+      upH1.setAttribute('aria-hidden', 'true');
+      upH1.innerHTML = '<span class="rio-letters">up</span><span class="hero-wordmark-dot" aria-hidden="true">.</span>';
+      shell.append(upH1);
+    }
+    const Ztextify = (window as Window & {
+      Ztextify?: new (selector: string, options: Record<string, string | number | boolean>) => unknown;
+    }).Ztextify;
+    if (Ztextify && !upH1.querySelector('.z-text')) {
+      // Same interactive config as the hero wordmark so up. tilts with the pointer too.
+      new Ztextify('#rio-up-wordmark.hero-ztext', {
+        depth: '.18em',
+        direction: 'both',
+        event: 'pointer',
+        eventRotation: '45deg',
+        fade: false,
+        layers: 12,
+        perspective: '700px',
+      });
+    }
+    // Pin the copy to the travelling origin. This must run after Ztextify, which
+    // stamps position:relative inline on its target and would otherwise win.
+    upH1.style.position = 'absolute';
+    upH1.style.top = '0';
+    upH1.style.left = '0';
+
+    const syncGhost = () => {
+      ghost.style.width = `${heroH1.offsetWidth}px`;
+      ghost.style.height = `${heroH1.offsetHeight}px`;
+    };
+    syncGhost();
+
+    return { layer, shell, heroH1, upH1, ghost, syncGhost };
+  };
+
+  const initScrollRio = () => {
+    scrollRioMedia?.revert();
+    scrollRioMedia = gsap.matchMedia();
+
+    scrollRioMedia.add('(min-width: 1280px) and (prefers-reduced-motion: no-preference)', () => {
+      const adopted = adoptHeroWordmark();
+      if (!adopted) return;
+
+      const { layer, shell, heroH1, upH1, ghost, syncGhost } = adopted;
+      const heroMark = document.querySelector<HTMLElement>('.hero-core > .hero-wordmark');
+      const hero = document.querySelector<HTMLElement>('#home');
+      const flow = document.querySelector<HTMLElement>('.home-flow');
+      if (!heroMark || !hero) return;
+
+      // Rendered width of the travelling rio, scaled to the window so it reads the same everywhere.
+      const targetWidth = () => Math.max(72, Math.min(120, window.innerWidth * 0.065));
+      const scaleFor = () => Math.min(1, targetWidth() / (heroH1.offsetWidth || 1));
+
+      // The ghost box marks exactly where the hero rio sits in the layout.
+      const heroAnchor = () => {
+        const rect = ghost.getBoundingClientRect();
+        return { left: rect.left, top: rect.top + window.scrollY };
+      };
+
+      const gutterTargets = () => {
+        const vw = window.innerWidth;
+        const flowRect = flow?.getBoundingClientRect();
+        const contentLeft = flowRect ? flowRect.left : Math.max(0, (vw - Math.min(vw - 64, 1080)) / 2);
+        const width = heroH1.offsetWidth * scaleFor();
+        const height = heroH1.offsetHeight * scaleFor();
+        const gap = Math.max(16, Math.min(28, vw * 0.014));
+        return {
+          left: Math.max(gap, contentLeft - width - gap),
+          y: (window.innerHeight - height) / 2,
+        };
+      };
+
+      const setPointer = (enabled: boolean) => {
+        layer.style.pointerEvents = enabled ? 'auto' : 'none';
+      };
+
+      // The wordmark is interactive at the hero (contact dialog) and again at the
+      // very bottom (return to hero), so both phases feed one shared state.
+      let atHero = true;
+      let atBottom = false;
+      const syncPointer = () => {
+        setPointer(atHero || atBottom);
+        layer.dataset.mode = atBottom ? 'home' : 'guide';
+      };
+
+      const topY = () => Math.max(72, window.innerHeight * 0.09);
+
+      gsap.set([heroH1, upH1], { transformOrigin: 'left top' });
+      gsap.set([heroH1, upH1], { x: () => heroAnchor().left, y: () => heroAnchor().top, scale: 1 });
+      gsap.set(shell, { x: 0, y: 0 });
+      gsap.set(upH1, { autoAlpha: 0 });
+      syncPointer();
+
+      // 1. Shrink out of the hero and settle into the left gutter.
+      //    Extended past the hero so the travel reads over more scrolling, with an
+      //    eased, lagging scrub so it glides and settles instead of snapping.
+      const intro = gsap.fromTo([heroH1, upH1],
+        {
+          x: () => heroAnchor().left,
+          y: () => heroAnchor().top,
+          scale: 1,
+        },
+        {
+          x: () => gutterTargets().left,
+          y: () => gutterTargets().y,
+          scale: scaleFor,
+          ease: 'power2.inOut',
+          immediateRender: false,
+          scrollTrigger: {
+            trigger: hero,
+            start: 'top top',
+            end: '+=130%',
+            scrub: 1.2,
+            invalidateOnRefresh: true,
+            onUpdate: (self) => {
+              atHero = self.progress < 0.04;
+              syncPointer();
+            },
+            onLeaveBack: () => {
+              atHero = true;
+              syncPointer();
+            },
+            onLeave: () => {
+              atHero = false;
+              syncPointer();
+            },
+          },
+        },
+      );
+
+      // 2. At the very bottom, lift the rio to the top edge as a "back to hero" control.
+      //    Runs on the shell so it composes with the hero tween's y instead of fighting it.
+      gsap.fromTo(shell,
+        { y: 0 },
+        {
+          y: () => topY() - gutterTargets().y,
+          ease: 'power2.inOut',
+          immediateRender: false,
+          scrollTrigger: {
+            start: () => ScrollTrigger.maxScroll(window) - window.innerHeight * 0.18,
+            end: () => ScrollTrigger.maxScroll(window),
+            scrub: 1.2,
+            invalidateOnRefresh: true,
+            onUpdate: (self) => {
+              const bottom = self.progress > 0.9;
+              if (bottom && !atBottom) wipe.play(0);
+              else if (!bottom && atBottom) wipe.reverse();
+              atBottom = bottom;
+              syncPointer();
+            },
+            onLeave: () => {
+              if (!atBottom) wipe.play(0);
+              atBottom = true;
+              syncPointer();
+            },
+            onLeaveBack: () => {
+              if (atBottom) wipe.reverse();
+              atBottom = false;
+              syncPointer();
+            },
+          },
+        },
+      );
+
+      // 3. Rise wipe at the very bottom: rio. slides up and out while up. rises
+      //    into its slot. Driven by the lift tween above (a proven firing path):
+      //    crossing into the bottom plays it, scrolling back reverses it and
+      //    reveals rio. again — with the fades riding the same motion.
+      const wipe = gsap.timeline({ paused: true })
+        .fromTo(heroH1,
+          { yPercent: 0, autoAlpha: 1 },
+          { yPercent: -115, autoAlpha: 0, duration: 0.55, ease: 'power3.inOut' },
+          0,
+        )
+        .fromTo(upH1,
+          { yPercent: 115, autoAlpha: 0 },
+          { yPercent: 0, autoAlpha: 1, duration: 0.55, ease: 'power3.inOut' },
+          0.06,
+        );
+
+      // Keep the ghost in sync when the hero font resizes.
+      const onResize = () => {
+        syncGhost();
+        ScrollTrigger.refresh();
+      };
+      window.addEventListener('resize', onResize);
+
+      return () => {
+        window.removeEventListener('resize', onResize);
+        intro.scrollTrigger?.kill();
+        // Hand the wordmark back to the hero when this layout no longer applies.
+        if (layer.contains(heroH1)) {
+          gsap.set(heroH1, { clearProps: 'transform' });
+          gsap.set(shell, { clearProps: 'transform' });
+          gsap.set(upH1, { clearProps: 'transform' });
+          gsap.set(upH1, { autoAlpha: 0 });
+          ghost.remove();
+          heroMark.append(heroH1);
+        }
+        setPointer(true);
+      };
+    });
+  };
+
+  document.addEventListener('astro:page-load', initScrollRio);
+  initScrollRio();
 </script>
