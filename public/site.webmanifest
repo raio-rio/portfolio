@@ -12,12 +12,6 @@
       "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "any"
-    },
-    {
-      "src": "/images/pic.jpg",
-      "sizes": "any",
-      "type": "image/jpeg",
-      "purpose": "any"
     }
   ]
 }

@@ -117,8 +117,7 @@ li + li { margin-top: 3px; }
 .project h2 { margin: 0; color: var(--muted); }
 .project h2 strong { color: var(--muted); font-weight: 600; transition: color .2s ease; }
 .project:hover h2 strong, .project:focus-within h2 strong { color: var(--accent); }
-.project-arrow { display: inline-block; margin-left: 5px; color: var(--accent); opacity: 0; transform: translate(-4px, 4px); transition: opacity .2s ease, transform .24s cubic-bezier(.2,.8,.2,1); }
-.project:hover .project-arrow, .project:focus-within .project-arrow { opacity: 1; transform: translate(0, 0); }
+.project:hover h2 strong, .project:focus-within h2 strong { color: var(--accent); }
 .project p { max-width: 670px; }
 .project-tagline { margin-top: 4px; }
 .project-impact, .project-modal-impact { display: flex; align-items: baseline; gap: 6px; margin-top: 8px; color: var(--ink); font-size: 13px; font-weight: 650; letter-spacing: -.01em; }
@@ -572,6 +571,9 @@ html.theme-dark .stack-icon i.devicon-wordpress-plain { filter: invert(1); }
 .scroll-rio .hero-wordmark { width: auto; max-width: none; }
 /* The "up." wordmark sits on the same origin as the rio so both share one transform. */
 .scroll-rio-up { position: absolute; top: 0; left: 0; visibility: hidden; }
+.scroll-rio-arrow { display: inline-block; color: #0064d2; line-height: 1; }
+.scroll-rio-arrow i { font-size: 1em; line-height: 1; }
+.scroll-rio .z-layer:not(:first-child) .scroll-rio-arrow { color: color-mix(in srgb, var(--ink) 16%, var(--page)); }
 .hero-wordmark-ghost { display: block; pointer-events: none; }
 .home-flow { width: min(100% - 64px, 1080px); margin: 0 auto; padding-bottom: clamp(64px, 8vw, 120px); }
 .home-section { padding: clamp(32px, 4vw, 56px) 0; scroll-margin-top: 92px; }

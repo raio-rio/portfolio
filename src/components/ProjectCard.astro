@@ -32,7 +32,7 @@ const modalId = `project-modal-${project.id}`;
   <button class:list={['project-card', { 'project-card-expanded': expanded }]} type="button" data-project-modal-trigger aria-controls={modalId} aria-haspopup="dialog" aria-label={`View ${project.data.title} details`}>
     <div class="project-card-copy">
       {showType && <span class:list={['project-type', `project-type-${project.data.type.toLowerCase()}`]}>{project.data.type}</span>}
-      <h2><strong>{project.data.title}</strong><span class="project-arrow" aria-hidden="true">→</span></h2>
+      <h2><strong>{project.data.title}</strong></h2>
       {showTagline && <p class="project-tagline">{project.data.tagline}</p>}
       {project.data.impact && <p class="project-impact"><i class="ph-bold ph-trend-up" aria-hidden="true"></i>{project.data.impact}</p>}
       {(expanded || showStack) && !hideStack && project.data.stack.length > 0 && (

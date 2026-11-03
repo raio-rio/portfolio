@@ -237,7 +237,7 @@ const awardRows = awards.map((award) => ({
             ))}
             {research && (
               <li class="exp-row exp-row-static">
-                <span class="exp-row-year">paper</span>
+                <span class="exp-row-year">2024</span>
                 <span class="exp-row-role">{research.data.title}</span>
                 {research.data.url && (
                   <a class="exp-row-company exp-row-link" href={research.data.url} target="_blank" rel="noreferrer">
@@ -254,7 +254,7 @@ const awardRows = awards.map((award) => ({
         <h2 id="about-title" class="about-sr-title">about</h2>
         <div class="about-grid">
           <figure class="about-portrait">
-            <img src="/images/portrait-placeholder.svg" alt="Portrait placeholder — swap in a photo of Rio Espinosa" width="400" height="500" loading="lazy" decoding="async" />
+            <img src="/images/portrait.jpg" alt="Rio Espinosa" width="800" height="1000" loading="lazy" decoding="async" />
           </figure>
           <div class="about-copy">
             <div class="about-head">
@@ -263,8 +263,8 @@ const awardRows = awards.map((award) => ({
                 <i class="ph-bold ph-copy" aria-hidden="true"></i><span>copy email</span>
               </button>
             </div>
-            <p>Full-stack developer based just outside Manila, building products end to end and fussing over the little things that separate something that works from something that feels considered: the transitions, the spacing, the states nobody plans for.</p>
-            <p>Lately I’ve been leading multi-tenant SaaS builds and the AI behind them — the last one went from an empty repo to production in roughly three months.</p>
+            <p>Full-Stack Developer based just outside Manila, Philippines. Into building things on and off the software world, exploring AI and its capabilities and experimenting with new technologies that can turn random ideas into little projects.</p>
+            <p>Currently into exploring AI as a medium to better improve workflows not only in my industry but for every other industry as well. One automation at a time.</p>
           </div>
         </div>
       </section>
@@ -630,14 +630,15 @@ const awardRows = awards.map((award) => ({
       upH1.className = 'hero-ztext scroll-rio-up';
       upH1.id = 'rio-up-wordmark';
       upH1.setAttribute('aria-hidden', 'true');
-      upH1.innerHTML = '<span class="rio-letters">up</span><span class="hero-wordmark-dot" aria-hidden="true">.</span>';
+      upH1.innerHTML = '<span class="scroll-rio-arrow"><i class="ph-bold ph-arrow-up"></i></span>';
       shell.append(upH1);
     }
     const Ztextify = (window as Window & {
       Ztextify?: new (selector: string, options: Record<string, string | number | boolean>) => unknown;
     }).Ztextify;
     if (Ztextify && !upH1.querySelector('.z-text')) {
-      // Same interactive config as the hero wordmark so up. tilts with the pointer too.
+      // Same interactive config as the hero wordmark so the arrow's 3D layers
+      // tilt with the pointer too.
       new Ztextify('#rio-up-wordmark.hero-ztext', {
         depth: '.18em',
         direction: 'both',

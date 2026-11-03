@@ -72,7 +72,7 @@ for (const file of readDir(join(root, 'src/content/projects'))) {
 }
 
 // --- Site-level checks ---
-for (const probe of ['/images/pic.jpg', '/favicon.svg', '/site.webmanifest', '/ESPINOSA_RESUME.pdf']) {
+for (const probe of ['/images/portrait.jpg', '/favicon.svg', '/site.webmanifest', '/ESPINOSA_RESUME.pdf']) {
   if (!existsSync(join(root, 'public', probe))) {
     warnings.push(`public${probe} is missing (referenced by layout/manifest)`);
   }

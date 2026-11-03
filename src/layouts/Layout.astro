@@ -15,7 +15,7 @@ interface Props {
   structuredData?: Record<string, unknown>;
 }
 
-const { title, description, path = '/', type = 'website', image: imagePath = '/images/pic.jpg', imageAlt = 'Rio Espinosa, Full Stack Developer & AI Engineer', publishedDate, structuredData } = Astro.props;
+const { title, description, path = '/', type = 'website', image: imagePath = '/images/portrait.jpg', imageAlt = 'Rio Espinosa, Full Stack Developer & AI Engineer', publishedDate, structuredData } = Astro.props;
 const analyticsSrc = import.meta.env.PUBLIC_ANALYTICS_SRC as string | undefined;
 const analyticsWebsiteId = import.meta.env.PUBLIC_ANALYTICS_WEBSITE_ID as string | undefined;
 const site = Astro.site ?? new URL('https://programmingrio.top');
@@ -27,7 +27,7 @@ const person = {
   jobTitle: 'Full Stack Developer & AI Engineer',
   url: site.href,
   email: 'contact@rioespinosa.com',
-  image: new URL('/images/pic.jpg', site).href,
+  image: new URL('/images/portrait.jpg', site).href,
   address: { '@type': 'PostalAddress', addressLocality: 'Cainta', addressCountry: 'PH' },
   sameAs: ['https://github.com/raio-rio/', 'https://www.linkedin.com/in/rioespinosa02/', 'https://www.instagram.com/_sprio/'],
   knowsAbout: ['Artificial intelligence', 'Machine learning', 'SaaS', 'Full-stack development', 'Blockchain'],
