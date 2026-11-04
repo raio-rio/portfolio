@@ -8,10 +8,13 @@ import { stackIcon } from '../lib/stack-icons';
 
 const projects = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
 const promorph = projects.find((project) => project.id === 'promorph');
+const guise = projects.find((project) => project.id === 'guise');
+const jobber = projects.find((project) => project.id === 'jobber');
 const featuredProjects = [
   ...(promorph ? [promorph] : []),
-  ...projects.filter((project) => project.id !== 'promorph').slice(0, 2),
-];
+  ...(guise ? [guise] : []),
+  ...(jobber ? [jobber] : []),
+].slice(0, 3);
 const research = projects.find((project) => project.id === 'promorph');
 const recentPosts = (await getCollection('blog'))
   .sort((a, b) => b.data.date.localeCompare(a.data.date))

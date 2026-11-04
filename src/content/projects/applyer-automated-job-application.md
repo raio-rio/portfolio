@@ -4,7 +4,7 @@ type: Personal
 tagline: Watches remote job boards around the clock, scores new listings against my resume, and drafts tailored applications for strong fits within minutes of posting.
 stack: [Python, FastAPI, Next.js 16, React 19, TypeScript, Tailwind CSS, SQLite, Camoufox (stealth headless browser), BeautifulSoup, OpenAI-compatible LLMs, Discord webhooks, SSE streaming, Caddy, pm2]
 impact: Polls every 15 min · strong fits applied within minutes, not hours
-order: 2
+order: 2.5
 ---
 
 ## Overview
