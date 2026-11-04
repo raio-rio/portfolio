@@ -5,9 +5,26 @@ const currentPath = normalizePath(Astro.url.pathname);
 
 <header class="site-nav" transition:persist="site-nav">
   <nav aria-label="Primary navigation">
-    <a class="site-nav-brand" href="/" aria-label="Rio Espinosa home">
+    <a class="site-nav-brand" href="/" aria-label="Rio Espinosa home" aria-describedby="site-nav-time-comparison">
       <span class="site-nav-time">
         <time data-rio-time>--:--</time>
+      </span>
+      <span class="site-nav-time-popout" id="site-nav-time-comparison">
+        <span class="site-nav-time-row">
+          <i class="site-nav-weather-icon ph-bold ph-sun" data-local-time-icon aria-hidden="true"></i>
+          <span class="site-nav-time-copy">
+            <span class="site-nav-time-label">Your local time</span>
+            <time class="site-nav-time-value" data-local-time>--:--</time>
+          </span>
+        </span>
+        <span class="site-nav-time-row">
+          <i class="site-nav-weather-icon ph-bold ph-sun" data-rio-time-icon aria-hidden="true"></i>
+          <span class="site-nav-time-copy">
+            <span class="site-nav-time-label">Rio · PHT</span>
+            <time class="site-nav-time-value" data-rio-time-value>--:--</time>
+          </span>
+        </span>
+        <span class="site-nav-time-difference" data-time-difference>Calculating time difference…</span>
       </span>
     </a>
     <div class="site-nav-links" data-dock>
@@ -36,6 +53,11 @@ const currentPath = normalizePath(Astro.url.pathname);
   gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
 
   const rioTime = document.querySelector<HTMLTimeElement>('[data-rio-time]');
+  const localTime = document.querySelector<HTMLTimeElement>('[data-local-time]');
+  const rioTimeValue = document.querySelector<HTMLTimeElement>('[data-rio-time-value]');
+  const localTimeIcon = document.querySelector<HTMLElement>('[data-local-time-icon]');
+  const rioTimeIcon = document.querySelector<HTMLElement>('[data-rio-time-icon]');
+  const timeDifference = document.querySelector<HTMLElement>('[data-time-difference]');
   const dock = document.querySelector<HTMLElement>('[data-dock]');
   const dockItems = dock ? Array.from(dock.querySelectorAll<HTMLElement>('[data-dock-item]')) : [];
   const siteNav = document.querySelector<HTMLElement>('.site-nav');
@@ -80,19 +102,59 @@ const currentPath = normalizePath(Astro.url.pathname);
     });
   };
 
+  const localTimeFormatter = new Intl.DateTimeFormat(undefined, {
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true,
+  });
   const phTimeFormatter = new Intl.DateTimeFormat('en-US', {
     timeZone: 'Asia/Manila',
     hour: 'numeric',
     minute: '2-digit',
     hour12: true,
   });
+  const phHourFormatter = new Intl.DateTimeFormat('en-US', {
+    timeZone: 'Asia/Manila',
+    hour: 'numeric',
+    hourCycle: 'h23',
+  });
+  const setDayPeriodIcon = (icon: HTMLElement | null, isDaytime: boolean) => {
+    icon?.classList.toggle('ph-sun', isDaytime);
+    icon?.classList.toggle('ph-moon', !isDaytime);
+    icon?.classList.toggle('is-daytime', isDaytime);
+    icon?.classList.toggle('is-nighttime', !isDaytime);
+  };
   const updateTimes = () => {
     const now = new Date();
+    const rioHour = Number(phHourFormatter.format(now));
+    const isRioDaytime = rioHour >= 6 && rioHour < 18;
+    const isLocalDaytime = now.getHours() >= 6 && now.getHours() < 18;
     const isoTime = now.toISOString();
 
     if (rioTime) {
       rioTime.textContent = phTimeFormatter.format(now);
       rioTime.dateTime = isoTime;
+    }
+    if (localTime) {
+      localTime.textContent = localTimeFormatter.format(now);
+      localTime.dateTime = isoTime;
+    }
+    if (rioTimeValue) {
+      rioTimeValue.textContent = phTimeFormatter.format(now);
+      rioTimeValue.dateTime = isoTime;
+    }
+
+    setDayPeriodIcon(localTimeIcon, isLocalDaytime);
+    setDayPeriodIcon(rioTimeIcon, isRioDaytime);
+
+    if (timeDifference) {
+      const rioMinusLocalHours = Math.round((8 + now.getTimezoneOffset() / 60) * 100) / 100;
+      const absoluteDifference = Math.abs(rioMinusLocalHours);
+      const formattedDifference = new Intl.NumberFormat(undefined, { maximumFractionDigits: 2 }).format(absoluteDifference);
+      const unit = absoluteDifference === 1 ? 'hour' : 'hours';
+
+      if (rioMinusLocalHours === 0) timeDifference.textContent = 'Same time · 0-hour difference';
+      else timeDifference.textContent = `Rio is ${formattedDifference} ${unit} ${rioMinusLocalHours > 0 ? 'ahead' : 'behind'}`;
     }
   };
 
@@ -127,6 +189,43 @@ const currentPath = normalizePath(Astro.url.pathname);
         dock.removeEventListener('pointermove', updateDock);
         dock.removeEventListener('pointerleave', reset);
         gsap.set(dockItems, { clearProps: 'transform' });
+      };
+    });
+  }
+
+  const brand = document.querySelector<HTMLElement>('.site-nav-brand');
+  const timePopout = document.querySelector<HTMLElement>('.site-nav-time-popout');
+
+  if (brand && timePopout) {
+    const media = gsap.matchMedia();
+
+    media.add('(min-width: 681px)', () => {
+      const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const showTimeComparison = () => {
+        updateTimes();
+        gsap.killTweensOf(timePopout);
+        if (reducedMotion) gsap.set(timePopout, { autoAlpha: 1, y: 0, scale: 1 });
+        else gsap.fromTo(timePopout,
+          { autoAlpha: 0, y: -8, scale: 0.92 },
+          { autoAlpha: 1, y: 0, scale: 1, duration: 0.28, ease: 'back.out(1.5)', overwrite: true },
+        );
+      };
+      const hideTimeComparison = () => {
+        if (reducedMotion) gsap.set(timePopout, { autoAlpha: 0, y: -6, scale: 0.96 });
+        else gsap.to(timePopout, { autoAlpha: 0, y: -6, scale: 0.96, duration: 0.16, ease: 'power2.in', overwrite: true });
+      };
+
+      brand.addEventListener('pointerenter', showTimeComparison);
+      brand.addEventListener('pointerleave', hideTimeComparison);
+      brand.addEventListener('focusin', showTimeComparison);
+      brand.addEventListener('focusout', hideTimeComparison);
+
+      return () => {
+        brand.removeEventListener('pointerenter', showTimeComparison);
+        brand.removeEventListener('pointerleave', hideTimeComparison);
+        brand.removeEventListener('focusin', showTimeComparison);
+        brand.removeEventListener('focusout', hideTimeComparison);
+        gsap.set(timePopout, { clearProps: 'opacity,visibility,transform' });
       };
     });
   }

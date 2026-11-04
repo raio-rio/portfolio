@@ -128,6 +128,11 @@ const awardRows = awards.map((award) => ({
         </div>
       </dialog>
       </div>
+      <button class="hero-scroll-cue" type="button" data-scroll-cue aria-label="Scroll to projects">
+        <span>scroll</span>
+        <i aria-hidden="true"></i>
+      </button>
+      <span class="hero-cue-sentinel" data-hero-top aria-hidden="true"></span>
     </section>
 
     <div class="home-flow">
@@ -487,6 +492,50 @@ const awardRows = awards.map((award) => ({
     window.scrollTo({ top: 0, behavior: 'smooth' });
     initializeHome();
   });
+
+  // Hero scroll cue: glide to projects, respecting reduced motion.
+  document.addEventListener('click', (event) => {
+    if (!(event.target instanceof Element)) return;
+    const cue = event.target.closest<HTMLElement>('[data-scroll-cue]');
+    if (!cue) return;
+    event.preventDefault();
+    const target = document.querySelector<HTMLElement>('#projects');
+    if (!target) return;
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    target.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' });
+  });
+
+  // Fade the cue away once the page moves, and bring it back at the top.
+  // Geometry-based (IntersectionObserver) rather than scroll math so it stays
+  // correct on restore/back-forward and after client-side navigation, with a
+  // passive scroll check as a second trigger for browsers that delay the observer.
+  let cueObserver: IntersectionObserver | undefined;
+  let cueScroll: (() => void) | undefined;
+  const initHeroCue = () => {
+    cueObserver?.disconnect();
+    cueObserver = undefined;
+    if (cueScroll) window.removeEventListener('scroll', cueScroll);
+    cueScroll = undefined;
+    const cue = document.querySelector<HTMLElement>('[data-scroll-cue]');
+    const sentinel = document.querySelector<HTMLElement>('[data-hero-top]');
+    if (!cue || !sentinel) return;
+    const apply = () => {
+      const passed = sentinel.getBoundingClientRect().bottom <= 0;
+      cue.classList.toggle('is-hidden', passed);
+    };
+    cue.classList.remove('is-hidden');
+    if ('IntersectionObserver' in window) {
+      cueObserver = new IntersectionObserver(([entry]) => {
+        cue.classList.toggle('is-hidden', !entry.isIntersecting);
+      }, { threshold: 0 });
+      cueObserver.observe(sentinel);
+    }
+    cueScroll = apply;
+    window.addEventListener('scroll', apply, { passive: true });
+    apply();
+  };
+  document.addEventListener('astro:page-load', initHeroCue);
+  initHeroCue();
 </script>
 
 <script is:inline>
@@ -819,15 +868,28 @@ const awardRows = awards.map((award) => ({
           0.06,
         );
 
-      // Keep the ghost in sync when the hero font resizes.
-      const onResize = () => {
+      // Re-measure the hero box before any refresh (resize, orientation, font load),
+      // then refresh so the guide's function-based x/y/scale are re-evaluated.
+      const invalidateGuide = () => {
         syncGhost();
+        intro.invalidate();
+      };
+      const onRefreshInit = () => {
+        invalidateGuide();
+      };
+      ScrollTrigger.addEventListener('refreshInit', onRefreshInit);
+
+      const onResize = () => {
+        invalidateGuide();
         ScrollTrigger.refresh();
       };
       window.addEventListener('resize', onResize);
+      window.addEventListener('orientationchange', onResize);
 
       return () => {
         window.removeEventListener('resize', onResize);
+        window.removeEventListener('orientationchange', onResize);
+        ScrollTrigger.removeEventListener('refreshInit', onRefreshInit);
         intro.scrollTrigger?.kill();
         // Hand the wordmark back to the hero when this layout no longer applies.
         if (layer.contains(heroH1)) {
