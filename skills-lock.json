@@ -1,6 +1,12 @@
 {
   "version": 1,
   "skills": {
+    "glassmorphism": {
+      "source": "iart-ai/web-animation-skills",
+      "sourceType": "github",
+      "skillPath": "skills/glassmorphism/SKILL.md",
+      "computedHash": "c4324b3381b3252afb6644a4ad12facc2226d51a47778fa7f1bb6a1cb800cc2b"
+    },
     "gsap-core": {
       "source": "greensock/gsap-skills",
       "sourceType": "github",

@@ -1,9 +1,9 @@
 ---
 title: "Guise: A non-detectable browser profile manager"
 type: Personal
-tagline: Every account in one device.
-impact: Two engines · pinned fingerprints · works offline
-stack: [Tauri, Rust, Next.js, React, TypeScript, Tailwind CSS, FastAPI, Python, SQLite, Camoufox, Playwright]
+tagline: Local-first desktop workspace where each account gets its own isolated browser, identity and proxy — record once, replay with human timing.
+impact: Dual-engine automation · pinned fingerprints · offline-first
+stack: [Tauri, Rust, Next.js, React, TypeScript, Tailwind CSS, FastAPI, Python, SQLite, Camoufox, Playwright, Fingerprinting, Proxy Isolation, Profile Isolation]
 order: 1
 url: https://joinguise.vercel.app/
 urlLabel: Visit site

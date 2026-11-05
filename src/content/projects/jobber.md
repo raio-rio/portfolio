@@ -1,9 +1,9 @@
 ---
-title: Jobber
+title: "Jobber: Opportunity-intelligence for remote jobs"
 type: Personal
-tagline: Opportunity-intelligence MVP — live remote jobs, deterministic filters, 0–100 ranked fit, full cost ledger.
-stack: [Next.js 16, React 19, TypeScript, Tailwind CSS, FastAPI, Supabase Postgres, Treg API, TypeSafe, Docker Compose]
-impact: 4 job sources · 7-signal scoring · 0–100 ranked ledger
+tagline: Finds live remote jobs, filters mismatches deterministically, and ranks fit 0–100 with explainable AI judgments and a full cost ledger.
+stack: [Next.js 16, React 19, TypeScript, Tailwind CSS, FastAPI, Supabase Postgres, Treg API, TypeSafe, Jev AI Model, Docker Compose]
+impact: 4 live job sources · TypeSafe AI ranking · auditable cost ledger
 order: 2
 ---
 

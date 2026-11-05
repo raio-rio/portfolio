@@ -59,13 +59,26 @@ const awardRows = awards.map((award) => ({
   <div id="smooth-wrapper">
     <main id="smooth-content" class="express-home" aria-label="Rio Espinosa portfolio">
     <section class="express-hero" id="home" data-scroll-section="home">
+      <div class="hero-ambient" aria-hidden="true">
+        <span class="hero-orb hero-orb-a"></span>
+        <span class="hero-orb hero-orb-b"></span>
+        <span class="hero-orb hero-orb-c"></span>
+      </div>
+      <div class="hero-circle" aria-hidden="true">
+        <span class="hero-circle-ring hero-circle-ring-a"></span>
+        <span class="hero-circle-ring hero-circle-ring-b"></span>
+        <div class="hero-circle-jelly" data-hero-circle-jelly>
+          <span class="glass-grain" aria-hidden="true"></span>
+          <span class="glass-sweep" aria-hidden="true"></span>
+        </div>
+      </div>
       <div class="express-hero-surface">
       <div class="hero-center">
         <div class="hero-orbit">
           <div class="hero-core">
             <div class="hero-wordmark" aria-label="Rio Espinosa">
               <p class="hero-kicker">hi! it’s</p>
-              <h1 class="hero-ztext"><span class="rio-letters">rio</span><span class="hero-wordmark-dot" aria-hidden="true">.</span></h1>
+              <h1 class="hero-ztext"><span class="rio-letters">rio</span></h1>
             </div>
             <p class="hero-tagline">a Full Stack Developer/AI Enthusiast</p>
             <nav class="hero-actions" aria-label="Social links">
@@ -147,7 +160,7 @@ const awardRows = awards.map((award) => ({
         <div class="project-row" data-project-fan role="region" aria-label="Featured projects">
           {featuredProjects.map((project, index) => (
             <article class="row-card" data-fan-card data-fan-pos={index === 0 ? 'front' : index === 1 ? 'right' : 'left'}>
-              <ProjectCard project={project} expanded showTagline={false} showType={false} hideStack />
+              <ProjectCard project={project} expanded showTagline showType={false} showImpact={false} />
             </article>
           ))}
         </div>
@@ -645,6 +658,39 @@ const awardRows = awards.map((award) => ({
   gsap.registerPlugin(ScrollTrigger);
 
   let scrollRioMedia: ReturnType<typeof gsap.matchMedia> | undefined;
+  let circleEntranceTween: gsap.core.Timeline | undefined;
+  let circleEntranceTarget: HTMLElement | null = null;
+
+  // The circle arrives like a settling drop of water: a soft squash that
+  // overshoots once and relaxes back to a perfect disc.
+  const initHeroCircleEntrance = () => {
+    const jelly = document.querySelector<HTMLElement>('[data-hero-circle-jelly]');
+    if (!jelly || jelly === circleEntranceTarget) return;
+    circleEntranceTarget = jelly;
+    circleEntranceTween?.kill();
+    circleEntranceTween = undefined;
+
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      gsap.set(jelly, { clearProps: 'all' });
+      return;
+    }
+
+    circleEntranceTween = gsap.timeline()
+      .fromTo(jelly,
+        { scaleX: 0.92, scaleY: 0.96, autoAlpha: 0.55 },
+        { scaleX: 1.015, scaleY: 0.99, autoAlpha: 1, duration: 0.6, ease: 'power2.out' },
+      )
+      .to(jelly, { scaleX: 0.996, scaleY: 1.004, duration: 0.42, ease: 'sine.inOut' })
+      .to(jelly, { scaleX: 1, scaleY: 1, duration: 0.52, ease: 'power2.out' });
+
+    const rings = Array.from(document.querySelectorAll<HTMLElement>('.hero-circle-ring'));
+    if (rings.length) {
+      gsap.fromTo(rings,
+        { autoAlpha: 0, scale: 1.02 },
+        { autoAlpha: 1, scale: 1, duration: 0.9, ease: 'power2.out', stagger: 0.08 },
+      );
+    }
+  };
 
   // Adopt the hero's real 3D wordmark into a fixed layer so it can shrink and travel,
   // leaving a ghost box behind that keeps the hero layout exactly as it was.
@@ -782,6 +828,138 @@ const awardRows = awards.map((award) => ({
       gsap.set(upH1, { autoAlpha: 0 });
       syncPointer();
 
+      // The hero circle is a landmark that scrolls away with the hero. Capture where
+      // it sits in page coordinates while the hero is at rest, then compare the
+      // travelling rio against that fixed landmark so the glass rim appears on exit.
+      const circleAnchor = () => {
+        const circle = hero.querySelector<HTMLElement>('.hero-circle');
+        if (!circle) return null;
+        const rect = circle.getBoundingClientRect();
+        return {
+          x: rect.left + rect.width / 2,
+          y: rect.top + rect.height / 2 + window.scrollY,
+          radius: rect.width / 2,
+        };
+      };
+      let circleCache = circleAnchor();
+
+      // Distance from the circle's centre to the wordmark's nearest point, in page space.
+      // Measure the text itself (not the h1) so the glass rim does not inflate the box.
+      const textBox = () => {
+        const text = heroH1.querySelector<HTMLElement>('.z-text') ?? heroH1;
+        return text.getBoundingClientRect();
+      };
+      const distanceFromCircle = (anchor: { x: number; y: number }) => {
+        const w = textBox();
+        const left = w.left;
+        const right = w.right;
+        const top = w.top + window.scrollY;
+        const bottom = w.bottom + window.scrollY;
+        const nx = Math.max(left, Math.min(anchor.x, right));
+        const ny = Math.max(top, Math.min(anchor.y, bottom));
+        return Math.hypot(nx - anchor.x, ny - anchor.y);
+      };
+
+      // 0 while the rio is inside the circle, 1 once it has fully cleared the edge.
+      const bubbleStrength = () => {
+        const anchor = circleCache;
+        if (!anchor || atBottom) return 0;
+        const distance = distanceFromCircle(anchor);
+        const cleared = distance - anchor.radius;
+        return gsap.utils.clamp(0, 1, cleared / (heroH1.offsetWidth * 0.45 || 1));
+      };
+
+      // Surface-tension state: the hero disc wobbles when the glass rim leaves
+      // or returns; the wordmark itself carries a letter-shaped glass edge.
+      const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      let lastScrollY = 0;
+      let detached = false;
+      let primed = false;
+
+      const wobbleCircle = () => {
+        const circle = hero.querySelector<HTMLElement>('[data-hero-circle-jelly]');
+        if (!circle || reducedMotion) return;
+        circleEntranceTween?.kill();
+        circleEntranceTween = undefined;
+        gsap.killTweensOf(circle);
+        const amp = gsap.utils.random(0.035, 0.055);
+        const dur = gsap.utils.random(0.14, 0.19);
+        gsap.timeline()
+          .to(circle, { scaleX: 1 + amp, scaleY: 1 - amp * 0.95, duration: dur, ease: 'power2.out' })
+          .to(circle, { scaleX: 1 - amp * 0.68, scaleY: 1 + amp * 0.62, duration: dur * 1.5, ease: 'sine.inOut' })
+          .to(circle, { scaleX: 1 + amp * 0.3, scaleY: 1 - amp * 0.2, duration: dur * 2, ease: 'sine.inOut' })
+          .to(circle, { scaleX: 1, scaleY: 1, duration: dur * 2.7, ease: 'power2.out' });
+
+        const pulseRing = (ring: HTMLElement | null, amount: number, delay: number) => {
+          if (!ring) return;
+          gsap.killTweensOf(ring);
+          const spread = 1 + amount * gsap.utils.random(0.85, 1.15);
+          gsap.timeline()
+            .fromTo(ring,
+              { scale: 1, opacity: 1 },
+              { scale: spread, opacity: 0.4, duration: gsap.utils.random(0.48, 0.68), ease: 'power2.out' },
+              delay,
+            )
+            .set(ring, { scale: 1, opacity: 1 });
+        };
+        pulseRing(hero.querySelector<HTMLElement>('.hero-circle-ring-a'), 0.025, 0);
+        pulseRing(hero.querySelector<HTMLElement>('.hero-circle-ring-b'), 0.035, 0.06);
+      };
+
+      const applyGlassRim = (on: boolean) => {
+        shell.classList.toggle('is-glass', on);
+      };
+
+      const showCarrier = () => {
+        detached = true;
+        applyGlassRim(true);
+        wobbleCircle();
+      };
+
+      const hideCarrier = () => {
+        detached = false;
+        applyGlassRim(false);
+        wobbleCircle();
+      };
+
+      // Called from the intro tween's own tick (so it follows the scrub's lag too),
+      // from scroll frames, and on refresh.
+      const updateBubble = () => {
+        const strength = bubbleStrength();
+        const scrollY = window.scrollY;
+        const scrollingUp = scrollY < lastScrollY - 0.5;
+        lastScrollY = scrollY;
+
+        if (!primed) {
+          detached = strength > 0.22;
+          applyGlassRim(detached);
+          primed = true;
+          return;
+        }
+
+        // Let the surface close while the top is still one scroll away, so the
+        // jiggle is seen with the circle on screen.
+        const nearTop = window.innerHeight * 0.35;
+        const returning = (scrollingUp && scrollY <= nearTop) || strength <= 0.22;
+        if (detached && returning) {
+          hideCarrier();
+        } else if (strength > 0.28 && !detached) {
+          showCarrier();
+        }
+      };
+
+      const bubbleTrigger = ScrollTrigger.create({
+        trigger: hero,
+        start: 'top top',
+        end: () => ScrollTrigger.maxScroll(window),
+        invalidateOnRefresh: true,
+        onUpdate: updateBubble,
+        onRefresh: () => {
+          circleCache = circleAnchor();
+          updateBubble();
+        },
+      });
+
       // 1. Shrink out of the hero and settle into the left gutter.
       //    Extended past the hero so the travel reads over more scrolling, with an
       //    eased, lagging scrub so it glides and settles instead of snapping.
@@ -799,6 +977,7 @@ const awardRows = awards.map((award) => ({
           // cards rise into its band, then settles smoothly into the gutter.
           ease: 'expo.out',
           immediateRender: false,
+          onUpdate: updateBubble,
           scrollTrigger: {
             trigger: hero,
             start: 'top top',
@@ -840,35 +1019,37 @@ const awardRows = awards.map((award) => ({
               else if (!bottom && atBottom) wipe.reverse();
               atBottom = bottom;
               syncPointer();
+              updateBubble();
             },
             onLeave: () => {
               if (!atBottom) wipe.play(0);
               atBottom = true;
               syncPointer();
+              updateBubble();
             },
             onLeaveBack: () => {
               if (atBottom) wipe.reverse();
               atBottom = false;
               syncPointer();
+              updateBubble();
             },
           },
         },
       );
 
-      // 3. Rise wipe at the very bottom: rio. slides up and out while up. rises
-      //    into its slot. Driven by the lift tween above (a proven firing path):
-      //    crossing into the bottom plays it, scrolling back reverses it and
-      //    reveals rio. again — with the fades riding the same motion.
+      // 3. Cross fade at the very bottom: rio. fades out while up. fades in on the
+      //    same spot. Driven by the lift tween above: crossing into the bottom
+      //    plays it, scrolling back reverses it.
       const wipe = gsap.timeline({ paused: true })
         .fromTo(heroH1,
-          { yPercent: 0, autoAlpha: 1 },
-          { yPercent: -115, autoAlpha: 0, duration: 0.55, ease: 'power3.inOut' },
+          { autoAlpha: 1 },
+          { autoAlpha: 0, duration: 0.32, ease: 'power2.out' },
           0,
         )
         .fromTo(upH1,
-          { yPercent: 115, autoAlpha: 0 },
-          { yPercent: 0, autoAlpha: 1, duration: 0.55, ease: 'power3.inOut' },
-          0.06,
+          { autoAlpha: 0 },
+          { autoAlpha: 1, duration: 0.36, ease: 'power2.in' },
+          0.05,
         );
 
       // Re-measure the hero box before any refresh (resize, orientation, font load),
@@ -894,6 +1075,15 @@ const awardRows = awards.map((award) => ({
         window.removeEventListener('orientationchange', onResize);
         ScrollTrigger.removeEventListener('refreshInit', onRefreshInit);
         intro.scrollTrigger?.kill();
+        bubbleTrigger.kill();
+        shell.classList.remove('is-glass');
+        const circleJelly = hero.querySelector<HTMLElement>('[data-hero-circle-jelly]');
+        if (circleJelly) {
+          gsap.killTweensOf(circleJelly);
+          gsap.set(circleJelly, { clearProps: 'all' });
+        }
+        detached = false;
+        primed = false;
         // Hand the wordmark back to the hero when this layout no longer applies.
         if (layer.contains(heroH1)) {
           gsap.set(heroH1, { clearProps: 'transform' });
@@ -910,4 +1100,6 @@ const awardRows = awards.map((award) => ({
 
   document.addEventListener('astro:page-load', initScrollRio);
   initScrollRio();
+  document.addEventListener('astro:page-load', initHeroCircleEntrance);
+  initHeroCircleEntrance();
 </script>

@@ -1,6 +1,7 @@
 ---
 import type { CollectionEntry } from 'astro:content';
 import { getProjectImages } from '../lib/project-images';
+import { stackIcon } from '../lib/stack-icons';
 
 interface Props {
   project: CollectionEntry<'projects'>;
@@ -8,10 +9,11 @@ interface Props {
   showStack?: boolean;
   showTagline?: boolean;
   showType?: boolean;
+  showImpact?: boolean;
   hideStack?: boolean;
 }
 
-const { project, expanded = false, showStack = false, showTagline = true, showType = true, hideStack = false } = Astro.props;
+const { project, expanded = false, showStack = false, showTagline = true, showType = true, showImpact = true, hideStack = false } = Astro.props;
 const images = getProjectImages(project.id);
 const modalId = `project-modal-${project.id}`;
 ---
@@ -34,9 +36,20 @@ const modalId = `project-modal-${project.id}`;
       {showType && <span class:list={['project-type', `project-type-${project.data.type.toLowerCase()}`]}>{project.data.type}</span>}
       <h2><strong>{project.data.title}</strong></h2>
       {showTagline && <p class="project-tagline">{project.data.tagline}</p>}
-      {project.data.impact && <p class="project-impact"><i class="ph-bold ph-trend-up" aria-hidden="true"></i>{project.data.impact}</p>}
+      {showImpact && project.data.impact && <p class="project-impact"><i class="ph-bold ph-trend-up" aria-hidden="true"></i>{project.data.impact}</p>}
       {(expanded || showStack) && !hideStack && project.data.stack.length > 0 && (
-        <p class="project-stack">Built with {project.data.stack.join(' · ')}</p>
+        <ul class="project-stack-icons" aria-label={`${project.data.title} technology stack`}>
+          {project.data.stack.map((tool) => {
+            const glyph = stackIcon(tool);
+            return (
+              <li>
+                {glyph
+                  ? <span class="stack-icon" role="img" aria-label={tool} data-label={tool}><i class={glyph} aria-hidden="true"></i></span>
+                  : <span class="stack-text" role="img" aria-label={tool} title={tool}>{tool}</span>}
+              </li>
+            );
+          })}
+        </ul>
       )}
     </div>
   </button>
