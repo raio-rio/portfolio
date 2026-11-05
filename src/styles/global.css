@@ -273,10 +273,10 @@ html.theme-dark .hero-wordmark h1 { filter: drop-shadow(0 16px 26px rgb(0 0 0 / 
 .hero-wordmark .z-layer:not(:first-child) { color: color-mix(in srgb, var(--ink) 16%, var(--page)); }
 .hero-wordmark .z-layer:not(:first-child) .rio-letters { color: inherit; }
 .hero-wordmark .z-layer:not(:first-child) .hero-wordmark-dot { color: color-mix(in srgb, var(--ink) 16%, var(--page)); }
-/* Default wordmark colors: blue rio, green dot. The cycle below starts on this pair. */
-.hero-wordmark .rio-letters { color: #0064d2; }
-.hero-wordmark-dot { color: #86b817; }
-/* Default wordmark colors: blue rio, green dot. */
+/* Default wordmark colors: ink rio, ember dot. */
+.hero-wordmark .rio-letters { color: var(--ink); }
+.hero-wordmark-dot { color: #ff4d00; }
+/* Default wordmark colors: ink rio, ember dot. */
 .section-ztext { display: inline-block; filter: drop-shadow(0 8px 14px rgb(30 50 120 / .22)); }
 html.theme-dark .section-ztext { filter: drop-shadow(0 8px 16px rgb(0 0 0 / .6)); }
 .section-ztext .z-text, .section-ztext .z-layers { will-change: transform; }
