@@ -5,6 +5,7 @@ import ProjectCard from '../components/ProjectCard.astro';
 import { experience } from '../data/experience';
 import { awards } from '../data/awards';
 import { stackIcon } from '../lib/stack-icons';
+import { buildMembraneShape, MEMBRANE_BOX_PAD } from '../lib/liquid-membrane';
 
 const projects = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
 const promorph = projects.find((project) => project.id === 'promorph');
@@ -53,6 +54,9 @@ const awardRows = awards.map((award) => ({
   title: award.title,
   name: award.name,
 }));
+// The membrane is a sampled SVG path; render its resting circle server-side so
+// the glass has its full silhouette before the client script runs.
+const membraneRest = buildMembraneShape(null, 144);
 ---
 
 <Layout title="Rio - Full Stack Developer" description="Rio Espinosa builds AI/ML models, SaaS products, full-stack web apps, and blockchain solutions.">
@@ -65,11 +69,26 @@ const awardRows = awards.map((award) => ({
         <span class="hero-orb hero-orb-c"></span>
       </div>
       <div class="hero-circle" aria-hidden="true">
-        <span class="hero-circle-ring hero-circle-ring-a"></span>
-        <span class="hero-circle-ring hero-circle-ring-b"></span>
-        <div class="hero-circle-jelly" data-hero-circle-jelly>
-          <span class="glass-grain" aria-hidden="true"></span>
-          <span class="glass-sweep" aria-hidden="true"></span>
+        <div class="hero-membrane" data-hero-circle-jelly data-hero-membrane style={`--membrane-pad: ${MEMBRANE_BOX_PAD * 100}%`}>
+          <div class="hero-circle-jelly">
+            <span class="glass-grain" aria-hidden="true"></span>
+            <span class="glass-sweep" aria-hidden="true"></span>
+          </div>
+          <svg class="hero-membrane-rim" viewBox="0 0 1000 1000" aria-hidden="true" focusable="false">
+            <defs>
+              <clipPath id="hero-membrane-clip" clipPathUnits="objectBoundingBox">
+                <path data-hero-membrane-clip d={membraneRest.clip}></path>
+              </clipPath>
+              <linearGradient id="hero-membrane-rim-gradient" gradientUnits="userSpaceOnUse" x1="140" y1="70" x2="880" y2="930">
+                <stop offset="0" stop-color="#ffffff" stop-opacity=".95"></stop>
+                <stop offset=".4" stop-color="#ffffff" stop-opacity=".22"></stop>
+                <stop offset=".62" stop-color="#ffffff" stop-opacity=".08"></stop>
+                <stop offset="1" stop-color="#ffffff" stop-opacity=".4"></stop>
+              </linearGradient>
+            </defs>
+            <path class="hero-membrane-edge" data-hero-membrane-rim d={membraneRest.rim}></path>
+            <path class="hero-membrane-gloss" data-hero-membrane-gloss d={membraneRest.rim}></path>
+          </svg>
         </div>
       </div>
       <div class="express-hero-surface">
@@ -654,6 +673,11 @@ const awardRows = awards.map((award) => ({
 <script>
   import { gsap } from 'gsap';
   import { ScrollTrigger } from 'gsap/ScrollTrigger';
+  import {
+    buildMembraneShape,
+    measureMembraneContact,
+    membraneMotion,
+  } from '../lib/liquid-membrane';
 
   gsap.registerPlugin(ScrollTrigger);
 
@@ -682,14 +706,6 @@ const awardRows = awards.map((award) => ({
       )
       .to(jelly, { scaleX: 0.996, scaleY: 1.004, duration: 0.42, ease: 'sine.inOut' })
       .to(jelly, { scaleX: 1, scaleY: 1, duration: 0.52, ease: 'power2.out' });
-
-    const rings = Array.from(document.querySelectorAll<HTMLElement>('.hero-circle-ring'));
-    if (rings.length) {
-      gsap.fromTo(rings,
-        { autoAlpha: 0, scale: 1.02 },
-        { autoAlpha: 1, scale: 1, duration: 0.9, ease: 'power2.out', stagger: 0.08 },
-      );
-    }
   };
 
   // Adopt the hero's real 3D wordmark into a fixed layer so it can shrink and travel,
@@ -792,12 +808,6 @@ const awardRows = awards.map((award) => ({
       };
       const scaleFor = () => Math.min(1, layout().width / (heroH1.offsetWidth || 1));
 
-      // The ghost box marks exactly where the hero rio sits in the layout.
-      const heroAnchor = () => {
-        const rect = ghost.getBoundingClientRect();
-        return { left: rect.left, top: rect.top + window.scrollY };
-      };
-
       const gutterTargets = () => {
         const { contentLeft, gap, width } = layout();
         const height = (heroH1.offsetHeight / (heroH1.offsetWidth || 1)) * width;
@@ -820,7 +830,23 @@ const awardRows = awards.map((award) => ({
         layer.dataset.mode = atBottom ? 'home' : 'guide';
       };
 
+      // The hero stays in normal document flow. The wordmark position is a pure
+      // function of scroll (no scrub lag), so exiting and re-entering the
+      // circle follow the exact same route. The ripple runs on its own clock.
+      const INTRO_SCROLL = 1.3;
+      const INTRO_EASE = 'expo.out';
+      const INTRO_SCRUB = true;
+
       const topY = () => Math.max(72, window.innerHeight * 0.09);
+
+      // Measure the ghost relative to the hero rather than in page coordinates.
+      // Both boxes move together as the page scrolls, so the anchor stays
+      // stable even when a refresh happens mid-transition.
+      const heroAnchor = () => {
+        const heroRect = hero.getBoundingClientRect();
+        const ghostRect = ghost.getBoundingClientRect();
+        return { left: ghostRect.left - heroRect.left, top: ghostRect.top - heroRect.top };
+      };
 
       gsap.set([heroH1, upH1], { transformOrigin: 'left top' });
       gsap.set([heroH1, upH1], { x: () => heroAnchor().left, y: () => heroAnchor().top, scale: 1 });
@@ -828,124 +854,122 @@ const awardRows = awards.map((award) => ({
       gsap.set(upH1, { autoAlpha: 0 });
       syncPointer();
 
-      // The hero circle is a landmark that scrolls away with the hero. Capture where
-      // it sits in page coordinates while the hero is at rest, then compare the
-      // travelling rio against that fixed landmark so the glass rim appears on exit.
-      const circleAnchor = () => {
+      // Live viewport bounds keep the contact correct as the circle scrolls
+      // and the rio travels away from it.
+      const circleBounds = () => {
         const circle = hero.querySelector<HTMLElement>('.hero-circle');
         if (!circle) return null;
         const rect = circle.getBoundingClientRect();
         return {
           x: rect.left + rect.width / 2,
-          y: rect.top + rect.height / 2 + window.scrollY,
+          y: rect.top + rect.height / 2,
           radius: rect.width / 2,
         };
       };
-      let circleCache = circleAnchor();
 
-      // Distance from the circle's centre to the wordmark's nearest point, in page space.
-      // Measure the text itself (not the h1) so the glass rim does not inflate the box.
+      // Measure the visible text itself, not the h1, so its 3D layers do not
+      // inflate the contact box.
       const textBox = () => {
         const text = heroH1.querySelector<HTMLElement>('.z-text') ?? heroH1;
         return text.getBoundingClientRect();
       };
-      const distanceFromCircle = (anchor: { x: number; y: number }) => {
-        const w = textBox();
-        const left = w.left;
-        const right = w.right;
-        const top = w.top + window.scrollY;
-        const bottom = w.bottom + window.scrollY;
-        const nx = Math.max(left, Math.min(anchor.x, right));
-        const ny = Math.max(top, Math.min(anchor.y, bottom));
-        return Math.hypot(nx - anchor.x, ny - anchor.y);
+
+      const membrane = hero.querySelector<HTMLElement>('[data-hero-membrane]');
+      const membraneClip = membrane?.querySelector<SVGPathElement>('[data-hero-membrane-clip]');
+      const membraneRim = membrane?.querySelector<SVGPathElement>('[data-hero-membrane-rim]');
+      const membraneGloss = membrane?.querySelector<SVGPathElement>('[data-hero-membrane-gloss]');
+      let lastMembraneClip = membraneClip?.getAttribute('d') ?? '';
+      let lastMembraneRim = membraneRim?.getAttribute('d') ?? '';
+
+      // Post-release ripples run on their own slow clock so they stay visible
+      // after the scroll stops. They are re-armed once the text is back inside.
+      const ripple = { amplitude: 0, phase: 0 };
+      let rippleTween: gsap.core.Timeline | undefined;
+      let ripplePlaying = false;
+      let rippleArmed = true;
+
+      const startRipple = () => {
+        ripplePlaying = true;
+        rippleTween?.kill();
+        ripple.amplitude = 0;
+        ripple.phase = 0;
+        // Slow, time-based settle: the wave keeps travelling for ~4s after the
+        // release, so it can be watched after the scroll stops.
+        rippleTween = gsap.timeline({
+          onUpdate: paintMembrane,
+          onComplete: () => {
+            ripplePlaying = false;
+            ripple.amplitude = 0;
+            paintMembrane();
+          },
+        })
+          .to(ripple, { amplitude: 0.62, phase: 2.2, duration: 0.7, ease: 'power2.out' })
+          .to(ripple, { amplitude: 0.34, phase: 7.4, duration: 2.7, ease: 'power1.out' })
+          .to(ripple, { amplitude: 0, phase: 8.6, duration: 0.9, ease: 'sine.inOut' });
       };
 
-      // 0 while the rio is inside the circle, 1 once it has fully cleared the edge.
-      const bubbleStrength = () => {
-        const anchor = circleCache;
-        if (!anchor || atBottom) return 0;
-        const distance = distanceFromCircle(anchor);
-        const cleared = distance - anchor.radius;
-        return gsap.utils.clamp(0, 1, cleared / (heroH1.offsetWidth * 0.45 || 1));
+      const stopRipple = () => {
+        rippleTween?.kill();
+        rippleTween = undefined;
+        ripplePlaying = false;
+        rippleArmed = true;
+        ripple.amplitude = 0;
+        ripple.phase = 0;
       };
 
-      // Surface-tension state: the hero disc wobbles when the glass rim leaves
-      // or returns; the wordmark itself carries a letter-shaped glass edge.
-      const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      let lastScrollY = 0;
-      let detached = false;
-      let primed = false;
-
-      const wobbleCircle = () => {
-        const circle = hero.querySelector<HTMLElement>('[data-hero-circle-jelly]');
-        if (!circle || reducedMotion) return;
-        circleEntranceTween?.kill();
-        circleEntranceTween = undefined;
-        gsap.killTweensOf(circle);
-        const amp = gsap.utils.random(0.035, 0.055);
-        const dur = gsap.utils.random(0.14, 0.19);
-        gsap.timeline()
-          .to(circle, { scaleX: 1 + amp, scaleY: 1 - amp * 0.95, duration: dur, ease: 'power2.out' })
-          .to(circle, { scaleX: 1 - amp * 0.68, scaleY: 1 + amp * 0.62, duration: dur * 1.5, ease: 'sine.inOut' })
-          .to(circle, { scaleX: 1 + amp * 0.3, scaleY: 1 - amp * 0.2, duration: dur * 2, ease: 'sine.inOut' })
-          .to(circle, { scaleX: 1, scaleY: 1, duration: dur * 2.7, ease: 'power2.out' });
-
-        const pulseRing = (ring: HTMLElement | null, amount: number, delay: number) => {
-          if (!ring) return;
-          gsap.killTweensOf(ring);
-          const spread = 1 + amount * gsap.utils.random(0.85, 1.15);
-          gsap.timeline()
-            .fromTo(ring,
-              { scale: 1, opacity: 1 },
-              { scale: spread, opacity: 0.4, duration: gsap.utils.random(0.48, 0.68), ease: 'power2.out' },
-              delay,
-            )
-            .set(ring, { scale: 1, opacity: 1 });
-        };
-        pulseRing(hero.querySelector<HTMLElement>('.hero-circle-ring-a'), 0.025, 0);
-        pulseRing(hero.querySelector<HTMLElement>('.hero-circle-ring-b'), 0.035, 0.06);
+      // The intro tween covers the first 130% of the hero. Its scroll progress
+      // is the same source that moves the wordmark; contact geometry decides
+      // exactly when the surface builds and lets go.
+      const guideProgress = () => {
+        const end = window.innerHeight * INTRO_SCROLL;
+        return end > 0 ? gsap.utils.clamp(0, 1, window.scrollY / end) : 0;
       };
 
-      const applyGlassRim = (on: boolean) => {
-        shell.classList.toggle('is-glass', on);
-      };
+      const paintMembrane = () => {
+        if (!membrane || !membraneClip || !membraneRim) return;
+        const anchor = circleBounds();
+        if (!anchor) return;
 
-      const showCarrier = () => {
-        detached = true;
-        applyGlassRim(true);
-        wobbleCircle();
-      };
+        const box = textBox();
+        const contact = measureMembraneContact(
+          {
+            left: box.left,
+            top: box.top,
+            right: box.right,
+            bottom: box.bottom,
+          },
+          { x: anchor.x, y: anchor.y, radius: anchor.radius },
+        );
 
-      const hideCarrier = () => {
-        detached = false;
-        applyGlassRim(false);
-        wobbleCircle();
-      };
-
-      // Called from the intro tween's own tick (so it follows the scrub's lag too),
-      // from scroll frames, and on refresh.
-      const updateBubble = () => {
-        const strength = bubbleStrength();
-        const scrollY = window.scrollY;
-        const scrollingUp = scrollY < lastScrollY - 0.5;
-        lastScrollY = scrollY;
-
-        if (!primed) {
-          detached = strength > 0.22;
-          applyGlassRim(detached);
-          primed = true;
-          return;
+        if (contact.clearance < -0.06) {
+          if (ripplePlaying || ripple.amplitude > 0) stopRipple();
+          rippleArmed = true;
+        } else if (contact.clearance > 0.01 && rippleArmed && !ripplePlaying) {
+          rippleArmed = false;
+          startRipple();
         }
 
-        // Let the surface close while the top is still one scroll away, so the
-        // jiggle is seen with the circle on screen.
-        const nearTop = window.innerHeight * 0.35;
-        const returning = (scrollingUp && scrollY <= nearTop) || strength <= 0.22;
-        if (detached && returning) {
-          hideCarrier();
-        } else if (strength > 0.28 && !detached) {
-          showCarrier();
+        const motion = membraneMotion(contact, guideProgress(), ripple);
+        const shape = buildMembraneShape(motion, 144);
+
+        if (shape.clip !== lastMembraneClip) {
+          lastMembraneClip = shape.clip;
+          membraneClip.setAttribute('d', shape.clip);
         }
+        if (shape.rim !== lastMembraneRim) {
+          lastMembraneRim = shape.rim;
+          membraneRim.setAttribute('d', shape.rim);
+          membraneGloss?.setAttribute('d', shape.rim);
+        }
+      };
+
+      const resetMembrane = () => {
+        const rest = buildMembraneShape(null, 144);
+        membraneClip?.setAttribute('d', rest.clip);
+        membraneRim?.setAttribute('d', rest.rim);
+        membraneGloss?.setAttribute('d', rest.rim);
+        lastMembraneClip = rest.clip;
+        lastMembraneRim = rest.rim;
       };
 
       const bubbleTrigger = ScrollTrigger.create({
@@ -953,16 +977,15 @@ const awardRows = awards.map((award) => ({
         start: 'top top',
         end: () => ScrollTrigger.maxScroll(window),
         invalidateOnRefresh: true,
-        onUpdate: updateBubble,
+        onUpdate: paintMembrane,
         onRefresh: () => {
-          circleCache = circleAnchor();
-          updateBubble();
+          paintMembrane();
         },
       });
 
-      // 1. Shrink out of the hero and settle into the left gutter.
-      //    Extended past the hero so the travel reads over more scrolling, with an
-      //    eased, lagging scrub so it glides and settles instead of snapping.
+      // 1. Shrink out of the hero and settle into the left gutter. The hero
+      //    remains in normal flow; the post-release ripple runs on its own
+      //    slow clock below so it can settle after the scroll stops.
       const intro = gsap.fromTo([heroH1, upH1],
         {
           x: () => heroAnchor().left,
@@ -973,16 +996,14 @@ const awardRows = awards.map((award) => ({
           x: () => gutterTargets().left,
           y: () => gutterTargets().y,
           scale: scaleFor,
-          // Ease out hard so the guide clears the content column before the project
-          // cards rise into its band, then settles smoothly into the gutter.
-          ease: 'expo.out',
+          ease: INTRO_EASE,
           immediateRender: false,
-          onUpdate: updateBubble,
+          onUpdate: paintMembrane,
           scrollTrigger: {
             trigger: hero,
             start: 'top top',
-            end: '+=130%',
-            scrub: 1.2,
+            end: () => `+=${window.innerHeight * INTRO_SCROLL}`,
+            scrub: INTRO_SCRUB,
             invalidateOnRefresh: true,
             onUpdate: (self) => {
               atHero = self.progress < 0.04;
@@ -1019,19 +1040,19 @@ const awardRows = awards.map((award) => ({
               else if (!bottom && atBottom) wipe.reverse();
               atBottom = bottom;
               syncPointer();
-              updateBubble();
+              paintMembrane();
             },
             onLeave: () => {
               if (!atBottom) wipe.play(0);
               atBottom = true;
               syncPointer();
-              updateBubble();
+              paintMembrane();
             },
             onLeaveBack: () => {
               if (atBottom) wipe.reverse();
               atBottom = false;
               syncPointer();
-              updateBubble();
+              paintMembrane();
             },
           },
         },
@@ -1062,6 +1083,7 @@ const awardRows = awards.map((award) => ({
         invalidateGuide();
       };
       ScrollTrigger.addEventListener('refreshInit', onRefreshInit);
+      paintMembrane();
 
       const onResize = () => {
         invalidateGuide();
@@ -1076,14 +1098,13 @@ const awardRows = awards.map((award) => ({
         ScrollTrigger.removeEventListener('refreshInit', onRefreshInit);
         intro.scrollTrigger?.kill();
         bubbleTrigger.kill();
-        shell.classList.remove('is-glass');
+        stopRipple();
+        resetMembrane();
         const circleJelly = hero.querySelector<HTMLElement>('[data-hero-circle-jelly]');
         if (circleJelly) {
           gsap.killTweensOf(circleJelly);
           gsap.set(circleJelly, { clearProps: 'all' });
         }
-        detached = false;
-        primed = false;
         // Hand the wordmark back to the hero when this layout no longer applies.
         if (layer.contains(heroH1)) {
           gsap.set(heroH1, { clearProps: 'transform' });
