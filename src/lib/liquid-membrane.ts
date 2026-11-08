@@ -12,7 +12,7 @@
 const TAU = Math.PI * 2;
 
 /** Fraction of the resting diameter added around the disc for the membrane box. */
-export const MEMBRANE_BOX_PAD = 0.12;
+export const MEMBRANE_BOX_PAD = 0.2;
 /** The membrane box is the resting diameter plus padding on both sides. */
 export const MEMBRANE_BOX_SCALE = 1 + MEMBRANE_BOX_PAD * 2;
 /** Resting radius in objectBoundingBox units of the padded membrane box. */
@@ -115,6 +115,8 @@ export const measureMembraneContact = (
 export type MembraneMotion = {
   /** Live contact direction, in radians. */
   angle: number;
+  /** Frozen centre of the ripple, where the rio crossed the rim. */
+  rippleAngle: number;
   /** Width of the arc covered by the text, in radians. */
   span: number;
   /** 0..1 tension while the text approaches / presses into the rim. */
@@ -132,7 +134,7 @@ export type MembraneMotion = {
 };
 
 /** Peak radial deformation, as a fraction of the resting radius. */
-const AMPLITUDE = 0.095;
+const AMPLITUDE = 0.17;
 /** Radians of ripple phase per disc-radius the text travels past the rim. */
 const RIPPLE_PHASE_RATE = 6;
 /** How quickly the ripple envelope fades once the text has broken through. */
@@ -143,6 +145,8 @@ export type MembraneRippleState = {
   amplitude: number;
   /** Phase in radians; advancing this makes the wave travel around the rim. */
   phase: number;
+  /** Centre of the wave, frozen where the rio crossed the rim. */
+  angle: number;
 };
 
 /**
@@ -181,37 +185,33 @@ export const membraneMotion = (
   const phase = rippleState
     ? rippleState.phase
     : Math.max(0, contact.clearance) * RIPPLE_PHASE_RATE;
+  const rippleAngle = rippleState ? rippleState.angle : contact.angle;
 
   // The swell starts wide enough to wrap the letters and tightens as the
   // surface tension rises right before the release.
-  const width = 0.16 + 0.13 * (1 - tension) + Math.min(contact.span, 1) * 0.16;
+  const width = 0.24 + 0.12 * (1 - tension) + Math.min(contact.span, 1) * 0.22;
 
-  return { angle: contact.angle, span: contact.span, tension, release, snap, ripple, phase, width };
+  return { angle: contact.angle, rippleAngle, span: contact.span, tension, release, snap, ripple, phase, width };
 };
 
 /**
  * Radial displacement (in disc radii) for one angle.
  *
- * The core is a Gaussian swell around the contact, the pair of soft shoulders
- * broadens it so the surface wraps the letters rather than spiking, and the
- * damped cosine is the ripple that travels around the rim after the release.
+ * A wide Gaussian swell pulls the rim toward the text; the damped cosine is the
+ * ripple that travels around the rim after the release.
  */
 export const membraneDisplacement = (angle: number, motion: MembraneMotion) => {
   const delta = wrapAngle(angle - motion.angle);
   const width = motion.width;
   const core = Math.exp(-(delta * delta) / (2 * width * width));
 
-  const shoulderOffset = width * 2;
-  const shoulderWidth = width * 0.6;
-  const shoulder = Math.exp(
-    -Math.pow(Math.abs(delta) - shoulderOffset, 2) / (2 * shoulderWidth * shoulderWidth),
-  );
-
-  const localPull = motion.tension * (core + 0.18 * shoulder);
+  const localPull = motion.tension * core;
   const localSnap = 0.4 * motion.snap * core;
 
-  const rippleMask = Math.exp(-Math.abs(delta) * 0.25);
-  const wave = Math.cos(6 * delta - motion.phase) * rippleMask;
+  // The wave keeps its own centre so it stays where the rio crossed the rim.
+  const waveDelta = wrapAngle(angle - motion.rippleAngle);
+  const rippleMask = Math.exp(-Math.abs(waveDelta) * 0.25);
+  const wave = Math.cos(6 * waveDelta - motion.phase) * rippleMask;
   const breathe = Math.cos(motion.phase * 0.7);
   const ripple = motion.ripple * (0.55 * wave + 0.06 * breathe);
 
@@ -223,22 +223,18 @@ export const membraneDisplacement = (angle: number, motion: MembraneMotion) => {
 export type MembraneShape = {
   /** Path in objectBoundingBox units, 0..1. */
   clip: string;
-  /** Same path in a 0..1000 viewBox for the visible rim. */
-  rim: string;
   /** Largest radial displacement used, useful for debugging. */
   offset: number;
 };
 
 /**
- * Samples the membrane once and returns both path flavours:
- * the CSS clip path and the visible rim path.
+ * Samples the membrane once and returns the clip path used by the glass.
  */
 export const buildMembraneShape = (
   motion: MembraneMotion | null = null,
   samples = 144,
 ): MembraneShape => {
   const clip: string[] = [];
-  const rim: string[] = [];
   let offset = 0;
 
   for (let index = 0; index < samples; index += 1) {
@@ -251,11 +247,9 @@ export const buildMembraneShape = (
     const y = 0.5 + Math.sin(angle) * radius;
 
     clip.push(`${index === 0 ? 'M' : 'L'}${x.toFixed(5)} ${y.toFixed(5)}`);
-    rim.push(`${index === 0 ? 'M' : 'L'}${(x * 1000).toFixed(2)} ${(y * 1000).toFixed(2)}`);
   }
 
   clip.push('Z');
-  rim.push('Z');
 
-  return { clip: clip.join(''), rim: rim.join(''), offset };
+  return { clip: clip.join(''), offset };
 };
