@@ -6,6 +6,7 @@ const devicons: Record<string, string> = {
   TypeScript: 'devicon-typescript-plain',
   React: 'devicon-react-original',
   'React 19': 'devicon-react-original',
+  'Next.js': 'devicon-nextjs-plain',
   'Next.js 16': 'devicon-nextjs-plain',
   'Framer Motion': 'devicon-framermotion-original',
   'Tailwind CSS': 'devicon-tailwindcss-original',

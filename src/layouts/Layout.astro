@@ -59,7 +59,7 @@ const schema = {
     <link rel="apple-touch-icon" href="/favicon.svg" />
     <link rel="manifest" href="/site.webmanifest" />
     <link rel="alternate" type="application/rss+xml" title="Rio Espinosa — Blog" href={new URL('/rss.xml', site)} />
-    <link rel="preload" href="/fonts/clash-display-600.woff2" as="font" type="font/woff2" crossorigin="anonymous" />
+    <link rel="preload" href="/fonts/space-grotesk-700.woff2" as="font" type="font/woff2" crossorigin="anonymous" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400..900&display=swap" rel="stylesheet" />
@@ -150,7 +150,8 @@ const schema = {
     else window.open(trigger.href, '_blank', 'noopener,noreferrer');
   });
 
-  // 3D is hero-only: the rio wordmark. All other titles render flat.
+  // 3D: the hero wordmark and the home section titles both follow the pointer.
+  // The section titles keep a smaller depth so they stay readable.
   const initZtext = () => {
     const Ztextify = (window as Window & {
       Ztextify?: new (selector: string, options: Record<string, string | number | boolean>) => unknown;
@@ -166,6 +167,20 @@ const schema = {
         direction: 'both',
         event: reduced ? 'none' : 'pointer',
         eventRotation: '45deg',
+        fade: false,
+        layers: 12,
+        perspective: '700px',
+      });
+    });
+
+    document.querySelectorAll<HTMLElement>('.home-section-title').forEach((el, i) => {
+      if (el.querySelector('.z-text')) return;
+      if (!el.id) el.id = `section-ztext-${i}`;
+      new Ztextify(`#${CSS.escape(el.id)}.home-section-title`, {
+        depth: '.24em',
+        direction: 'both',
+        event: reduced ? 'none' : 'pointer',
+        eventRotation: '14deg',
         fade: false,
         layers: 12,
         perspective: '700px',
